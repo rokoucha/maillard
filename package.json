@@ -5,9 +5,12 @@
   "private": true,
   "type": "module",
   "dependencies": {
+    "@progfay/scrapbox-parser": "^9.1.5",
     "next": "^15.0.2",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "serve": "^14.2.4",
+    "valibot": "1.0.0-beta.3"
   },
   "devDependencies": {
     "@types/node": "22.9.0",
@@ -18,7 +21,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "serve out",
     "lint": "next lint"
   }
 }
