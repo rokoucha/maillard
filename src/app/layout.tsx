@@ -1,8 +1,5 @@
 import { type Metadata } from 'next'
 import pkg from '../../package.json' assert { type: 'json' }
-import { Footer } from '../components/Footer'
-import { Header } from '../components/Header'
-import { Main } from '../components/Main'
 import { BASE_URL, SITE_NAME } from '../lib/env'
 import './styles.css'
 
@@ -48,11 +45,7 @@ export default function RootLayout({
 }: RootLayoutProps): React.ReactNode {
   return (
     <html lang="en">
-      <body>
-        <Header siteName={SITE_NAME} />
-        <Main>{children}</Main>
-        <Footer name={pkg.name} version={pkg.version} />
-      </body>
+      <body>{children}</body>
     </html>
   )
 }
