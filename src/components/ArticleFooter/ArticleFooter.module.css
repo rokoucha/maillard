@@ -1,0 +1,32 @@
+.hr {
+  border-top: 1px solid grey;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.title_text {
+  margin-block: 1rem;
+}
+
+.article_list {
+  align-content: flex-start;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  @media screen and (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+.article_item {
+  max-width: calc((768px - 1.5rem * 2) / 2);
+  width: 100%;
+  @media screen and (max-width: 768px) {
+    max-width: 100%;
+  }
+}

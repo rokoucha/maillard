@@ -1,7 +1,5 @@
 .wrapper {
-  border-bottom-color: grey;
-  border-bottom-style: solid;
-  border-bottom-width: 1px;
+  border-bottom: 1px solid grey;
   margin-bottom: 1rem;
 }
 

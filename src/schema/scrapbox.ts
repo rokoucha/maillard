@@ -9,6 +9,18 @@ export const ErrorResponse = v.object({
 })
 export type ErrorResponse = v.InferOutput<typeof ErrorResponse>
 
+export const RelatedPage = v.object({
+  id: v.string(),
+  title: v.string(),
+  image: v.nullable(v.string()),
+  descriptions: v.array(v.string()),
+  linksLc: v.array(v.string()),
+  created: v.number(),
+  updated: v.number(),
+  accessed: v.number(),
+})
+export type RelatedPage = v.InferOutput<typeof RelatedPage>
+
 export const Page = v.object({
   id: v.string(),
   title: v.string(),
@@ -32,18 +44,7 @@ export const Page = v.object({
   links: v.array(v.string()),
   files: v.array(v.string()),
   relatedPages: v.object({
-    links1hop: v.array(
-      v.object({
-        id: v.string(),
-        title: v.string(),
-        image: v.nullable(v.string()),
-        descriptions: v.array(v.string()),
-        linksLc: v.array(v.string()),
-        created: v.number(),
-        updated: v.number(),
-        accessed: v.number(),
-      }),
-    ),
+    links1hop: v.array(RelatedPage),
   }),
 })
 export type Page = v.InferOutput<typeof Page>

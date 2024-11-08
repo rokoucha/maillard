@@ -1,11 +1,10 @@
 import { type Metadata } from 'next'
 import pkg from '../../package.json' assert { type: 'json' }
-import { BASE_URL, SITE_NAME } from '../lib/env'
-
 import { Footer } from '../components/Footer'
 import { Header } from '../components/Header'
 import { Main } from '../components/Main'
-import '../styles.css'
+import { BASE_URL, SITE_NAME } from '../lib/env'
+import './styles.css'
 
 export const dynamic = 'error'
 

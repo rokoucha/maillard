@@ -39,9 +39,7 @@ export async function searchTitle(): Promise<PageMinimum[]> {
 
   return pages.filter(
     (page) =>
-      !SCRAPBOX_COLLECT_PAGE ||
-      page.title === SCRAPBOX_COLLECT_PAGE ||
-      page.links.includes(SCRAPBOX_COLLECT_PAGE),
+      !SCRAPBOX_COLLECT_PAGE || page.links.includes(SCRAPBOX_COLLECT_PAGE),
   )
 }
 

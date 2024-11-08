@@ -1,0 +1,35 @@
+.wrapper {
+  border-bottom: 1px solid grey;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-bottom: 0.25rem;
+}
+
+.title {
+  margin: 0;
+}
+
+.info_container {
+  color: 'grey';
+  column-gap: 0.8rem;
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 0.8rem;
+}
+
+.info {
+  display: flex;
+  flex-direction: row;
+  line-height: 1rem;
+  &:not(:last-child)::after {
+    content: ',';
+  }
+}
+
+.info_label {
+  margin-right: 0.3rem;
+  &::after {
+    content: ':';
+  }
+}

@@ -1,0 +1,78 @@
+.wrapper {
+  border: 1px solid grey;
+  border-radius: 0.5rem;
+}
+
+.thumbnail {
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+  display: block;
+  height: 10rem;
+  margin-inline: auto;
+  object-fit: cover;
+  width: 100%;
+}
+
+.thumbnail_alt {
+  display: block;
+  font-size: 7rem;
+  height: 10rem;
+  text-align: center;
+}
+
+.container {
+  border-top: 1px solid grey;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  height: 10rem;
+  overflow: hidden;
+  padding: 0.5rem 1rem;
+}
+
+.title_text {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.date_text {
+  color: grey;
+  font-family: monospace;
+  font-size: 0.8rem;
+}
+
+.description_text {
+  font-size: 1rem;
+  margin: 0;
+  overflow-wrap: anywhere;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.link_list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  list-style: none;
+  margin: 0;
+  overflow: hidden;
+  padding: 0;
+}
+
+.link {
+  border-radius: 0.3rem;
+  border: 1px solid dodgerblue;
+  color: dodgerblue;
+  display: block;
+  font-size: 0.75rem;
+  overflow-wrap: anywhere;
+  padding: 0.25rem;
+  &::before {
+    content: '#';
+  }
+}

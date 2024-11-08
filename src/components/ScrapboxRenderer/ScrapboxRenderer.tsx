@@ -3,11 +3,11 @@ import { CodeBlock } from '../CodeBlock'
 import { ContentNode } from '../ContentNode'
 import { Table } from '../Table'
 
-type PageContentProps = Readonly<{
+type Props = Readonly<{
   text: string
 }>
 
-export function PageContent({ text }: PageContentProps): React.ReactNode {
+export function ScrapboxRenderer({ text }: Props): React.ReactNode {
   const parsed = parse(text)
 
   return parsed.map((b, i) => {

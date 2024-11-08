@@ -1,8 +1,11 @@
 import { type Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { PageContent } from '../../components/PageContent'
+import { ArticleFooter } from '../../components/ArticleFooter'
+import { ArticleHeader } from '../../components/ArticleHeader'
+import { ScrapboxRenderer } from '../../components/ScrapboxRenderer'
 import { SCRAPBOX_INDEX_PAGE, SITE_NAME } from '../../lib/env'
 import { getPage, searchTitle } from '../../lib/scrapbox'
+import styles from './page.module.css'
 
 export async function generateStaticParams(): Promise<
   {
@@ -14,7 +17,7 @@ export async function generateStaticParams(): Promise<
   return [
     { slug: [''] },
     ...pages.map((page) => ({
-      slug: [page.title],
+      slug: [encodeURIComponent(page.title)],
     })),
   ]
 }
@@ -79,11 +82,19 @@ export default async function Page({
   const text = page.lines.map((line) => line.text).join('\n')
 
   return (
-    <div>
-      <h1>{page.title}</h1>
-      <div>
-        <PageContent text={text} />
-      </div>
+    <div className={styles.container}>
+      <ArticleHeader
+        createdAt={new Date(page.created * 1000)}
+        title={page.title}
+        updatedAt={new Date(page.updated * 1000)}
+      />
+      <section>
+        <ScrapboxRenderer text={text} />
+      </section>
+      <ArticleFooter
+        persistent={page.persistent}
+        relatedPages={page.relatedPages.links1hop}
+      />
     </div>
   )
 }
