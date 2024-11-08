@@ -1,4 +1,5 @@
 import { type Metadata } from 'next'
+import { PHASE_PRODUCTION_BUILD } from 'next/dist/shared/lib/constants'
 import { notFound } from 'next/navigation'
 import pkg from '../../../package.json' assert { type: 'json' }
 import { ArticleFooter } from '../../components/ArticleFooter'
@@ -19,16 +20,20 @@ export async function generateStaticParams(): Promise<
   const pages = await searchTitle()
 
   return pages.map((page) => ({
-    slug: [encodeURIComponent(page.title)],
+    slug: [
+      process.env.NEXT_PHASE === PHASE_PRODUCTION_BUILD
+        ? page.title
+        : encodeURIComponent(page.title),
+    ],
   }))
 }
 
 type Props = Readonly<{
-  params: Promise<{ slug: string }>
+  params: Promise<{ slug: string[] }>
 }>
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const slug = await params.then((p) => p.slug)
+  const slug = await params.then((p) => p.slug.join('/'))
 
   const page = await getPage(slug).catch((e) => {
     console.error(e)
@@ -69,9 +74,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function Page({
   params,
 }: {
-  params: Promise<{ slug: string }>
+  params: Promise<{ slug: string[] }>
 }): Promise<React.ReactNode> {
-  const slug = await params.then((p) => p.slug)
+  const slug = await params.then((p) => p.slug.join('/'))
 
   const page = await getPage(slug).catch((e) => {
     console.error(e)
