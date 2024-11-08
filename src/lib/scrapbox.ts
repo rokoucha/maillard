@@ -8,7 +8,6 @@ import {
 import {
   SCRAPBOX_COLLECT_PAGE,
   SCRAPBOX_CONNECT_SID,
-  SCRAPBOX_INDEX_PAGE,
   SCRAPBOX_PROJECT,
 } from './env'
 
@@ -44,8 +43,6 @@ export async function searchTitle(): Promise<PageMinimum[]> {
 }
 
 export async function getPage(title: string): Promise<Page> {
-  title = title || SCRAPBOX_INDEX_PAGE
-
   const url = new URL(
     `https://scrapbox.io/api/pages/${SCRAPBOX_PROJECT}/${title}`,
   )
