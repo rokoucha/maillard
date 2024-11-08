@@ -2,6 +2,11 @@ import { type Metadata } from 'next'
 import pkg from '../../package.json' assert { type: 'json' }
 import { BASE_URL, SITE_NAME } from '../lib/env'
 
+import { Footer } from '../components/Footer'
+import { Header } from '../components/Header'
+import { Main } from '../components/Main'
+import '../styles.css'
+
 export const dynamic = 'error'
 
 export const metadata = {
@@ -44,7 +49,11 @@ export default function RootLayout({
 }: RootLayoutProps): React.ReactNode {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <Header siteName={SITE_NAME} />
+        <Main>{children}</Main>
+        <Footer name={pkg.name} version={pkg.version} />
+      </body>
     </html>
   )
 }

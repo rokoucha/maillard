@@ -1,0 +1,13 @@
+.wrapper {
+}
+
+.container {
+  box-sizing: border-box;
+  margin: 0 auto;
+  max-width: 1200px;
+  padding-inline: 1rem;
+  width: 100%;
+  @media screen and (min-width: 1200px) {
+    padding-inline: 0;
+  }
+}
