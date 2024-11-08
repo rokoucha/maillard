@@ -41,7 +41,6 @@ export const Page = v.object({
       updated: v.number(),
     }),
   ),
-  links: v.array(v.string()),
   files: v.array(v.string()),
   relatedPages: v.object({
     links1hop: v.array(RelatedPage),
