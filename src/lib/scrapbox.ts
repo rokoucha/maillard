@@ -77,6 +77,7 @@ export async function getPage(title: string): Promise<Page> {
       .replaceAll(`#${SCRAPBOX_COLLECT_PAGE}`, '')
       .replaceAll(`[${SCRAPBOX_COLLECT_PAGE}]`, ''),
   }))
+  data.links = data.links.filter((link) => link !== SCRAPBOX_COLLECT_PAGE)
 
   return data
 }
