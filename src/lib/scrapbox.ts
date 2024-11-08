@@ -2,15 +2,15 @@ import * as v from 'valibot'
 import {
   GetPageResponse,
   Page,
-  PageDetail,
   PageMinimum,
-  Pages,
-  SearchTitle,
+  SearchTitleResponse,
 } from '../schema/scrapbox'
-
-const SCRAPBOX_CONNECT_SID = process.env.SCRAPBOX_CONNECT_SID
-const SCRAPBOX_INDEX_PAGE = process.env.SCRAPBOX_INDEX_PAGE ?? ''
-const SCRAPBOX_PROJECT = process.env.SCRAPBOX_PROJECT ?? ''
+import {
+  SCRAPBOX_COLLECT_PAGE,
+  SCRAPBOX_CONNECT_SID,
+  SCRAPBOX_INDEX_PAGE,
+  SCRAPBOX_PROJECT,
+} from './env'
 
 const headers = {
   ...(SCRAPBOX_CONNECT_SID && {
@@ -18,47 +18,6 @@ const headers = {
   }),
   'User-Agent': 'Maillard/0.0',
 } satisfies HeadersInit
-
-if (!SCRAPBOX_PROJECT) {
-  throw new Error('SCRAPBOX_PROJECT is not set')
-}
-
-if (!SCRAPBOX_INDEX_PAGE) {
-  throw new Error('SCRAPBOX_INDEX_PAGE is not set')
-}
-
-const PAGES_LIMIT_MAX = 1000
-
-type Sort =
-  | 'updated'
-  | 'created'
-  | 'accessed'
-  | 'linked'
-  | 'views'
-  | 'title'
-  | 'updatedByMe'
-
-export async function getPages(sort: Sort = 'updated'): Promise<PageDetail[]> {
-  const pages: PageDetail[] = []
-  let skip = 0
-  while (true) {
-    const url = new URL(`https://scrapbox.io/api/pages/${SCRAPBOX_PROJECT}`)
-    url.searchParams.append('limit', String(PAGES_LIMIT_MAX))
-    url.searchParams.append('skip', String(skip))
-    url.searchParams.append('sort', sort)
-
-    const res = await fetch(url, { headers })
-    const data = await v.parseAsync(Pages, await res.json())
-    pages.push(...data.pages)
-
-    skip = data.skip + data.limit
-    if (skip >= data.count) {
-      break
-    }
-  }
-
-  return pages
-}
 
 export async function searchTitle(): Promise<PageMinimum[]> {
   const pages: PageMinimum[] = []
@@ -72,13 +31,18 @@ export async function searchTitle(): Promise<PageMinimum[]> {
     }
 
     const res = await fetch(url, { headers })
-    const data = await v.parseAsync(SearchTitle, await res.json())
+    const data = await v.parseAsync(SearchTitleResponse, await res.json())
     pages.push(...data)
 
     followingId = res.headers.get('X-Following-Id') ?? ''
   } while (followingId)
 
-  return pages
+  return pages.filter(
+    (page) =>
+      !SCRAPBOX_COLLECT_PAGE ||
+      page.title === SCRAPBOX_COLLECT_PAGE ||
+      page.links.includes(SCRAPBOX_COLLECT_PAGE),
+  )
 }
 
 export async function getPage(title: string): Promise<Page> {
