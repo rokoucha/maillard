@@ -1,6 +1,6 @@
 import { parse } from '@progfay/scrapbox-parser'
 import { CodeBlock } from '../CodeBlock'
-import { ContentNode } from '../ContentNode/ContentNode'
+import { ContentNode } from '../ContentNode'
 import { Table } from '../Table'
 
 type PageContentProps = Readonly<{
