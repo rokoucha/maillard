@@ -1,4 +1,5 @@
 import { Node } from '@progfay/scrapbox-parser'
+import { SCRAPBOX_PROJECT } from '../../lib/env'
 
 type ContentNodeProps = Readonly<{
   node: Node
@@ -49,7 +50,7 @@ export function ContentNode({ node }: ContentNodeProps): React.ReactNode {
     case 'icon': {
       return (
         <img
-          src={`https://scrapbox.io/api/pages/${node.pathType === 'relative' ? 'rokoucha/' : ''}${node.path}/icon`}
+          src={`https://scrapbox.io/api/pages/${node.pathType === 'relative' ? SCRAPBOX_PROJECT : ''}${node.path}/icon`}
         />
       )
     }
@@ -136,7 +137,7 @@ export function ContentNode({ node }: ContentNodeProps): React.ReactNode {
     case 'strongIcon': {
       return (
         <img
-          src={`https://scrapbox.io/api/pages/${node.pathType === 'relative' ? 'rokoucha/' : ''}${node.path}/icon`}
+          src={`https://scrapbox.io/api/pages/${node.pathType === 'relative' ? SCRAPBOX_PROJECT : ''}${node.path}/icon`}
         />
       )
     }
