@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import {
   BASE_URL,
   SCRAPBOX_INDEX_PAGE,
@@ -9,7 +9,7 @@ import { getPage, searchTitle } from '../../../lib/scrapbox'
 
 export const dynamic = 'force-static'
 
-export async function GET(req: NextRequest): Promise<Response> {
+export async function GET(): Promise<Response> {
   const indexPage = await getPage(SCRAPBOX_INDEX_PAGE)
 
   const pages = await searchTitle()
@@ -20,7 +20,7 @@ export async function GET(req: NextRequest): Promise<Response> {
     version: 'https://jsonfeed.org/version/1.1',
     title: SITE_NAME,
     home_page_url: baseUrl.href,
-    feed_url: req.url,
+    feed_url: `${baseUrl.href}/api/feed`,
     icon: indexPage.image,
     language: SITE_LANG,
     items: pages.map((page) => ({
