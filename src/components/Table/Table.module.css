@@ -1,0 +1,28 @@
+.filename {
+  background-color: lavenderblush;
+  border-radius: 0.2rem;
+  font-family: monospace;
+  padding: 0.2rem 0.4rem;
+  font-size: 0.8rem;
+}
+
+.link {
+  color: navy;
+  text-decoration: underline;
+}
+
+.table {
+  border-collapse: collapse;
+}
+
+.column {
+  padding: 0.1rem 0.5rem;
+}
+
+.column:nth-child(2n) {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.column:nth-child(2n + 1) {
+  background-color: rgba(0, 0, 0, 0.06);
+}

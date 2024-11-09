@@ -62,7 +62,11 @@ export function ScrapboxRenderer({ text, title }: Props): React.ReactNode {
       case 'table': {
         return (
           <IndentWrapper key={i} indent={b.indent}>
-            <Table cells={b.cells} filename={b.fileName} />
+            <Table
+              cells={b.cells}
+              filename={b.fileName}
+              href={`https://scrapbox.io/api/table/${SCRAPBOX_PROJECT}/${title}/${b.fileName}.csv`}
+            />
           </IndentWrapper>
         )
       }
