@@ -3,6 +3,7 @@ import { SCRAPBOX_PROJECT } from '../../lib/env'
 import { Code } from './Node/Code'
 import { CommandLine } from './Node/CommandLine'
 import { Decoration } from './Node/Decoration'
+import { Formula } from './Node/Formula'
 
 type ContentNodeProps = Readonly<{
   node: Node
@@ -33,7 +34,7 @@ export function ContentNode({ node }: ContentNodeProps): React.ReactNode {
     }
 
     case 'formula': {
-      return <code>{node.formula}</code>
+      return <Formula>{node.formula}</Formula>
     }
 
     case 'googleMap': {
