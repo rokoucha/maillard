@@ -2,6 +2,7 @@ import { parse } from '@progfay/scrapbox-parser'
 import { CodeBlock } from '../CodeBlock'
 import { ContentNode } from '../ContentNode'
 import { Table } from '../Table'
+import styles from './ScrapboxRenderer.module.css'
 
 type Props = Readonly<{
   text: string
@@ -17,14 +18,28 @@ export function ScrapboxRenderer({ text }: Props): React.ReactNode {
       }
 
       case 'line': {
+        if (b.nodes.length === 0) {
+          return <br />
+        }
+
+        if (b.indent === 0) {
+          return (
+            <div>
+              {b.nodes.map((n) => (
+                <ContentNode node={n} />
+              ))}
+            </div>
+          )
+        }
+
         return (
-          <div>
-            {b.nodes.length === 0 ? (
-              <br />
-            ) : (
-              b.nodes.map((n) => <ContentNode node={n} />)
-            )}
-          </div>
+          <ul style={{ paddingLeft: `${b.indent}rem` }} className={styles.ul}>
+            <li>
+              {b.nodes.map((n) => (
+                <ContentNode node={n} />
+              ))}
+            </li>
+          </ul>
         )
       }
 
