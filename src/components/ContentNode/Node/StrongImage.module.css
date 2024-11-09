@@ -1,0 +1,6 @@
+.strong_image {
+  display: inline-block;
+  max-height: none;
+  max-width: 95%;
+  vertical-align: bottom;
+}
