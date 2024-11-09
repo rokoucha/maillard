@@ -17,13 +17,13 @@ export function ScrapboxRenderer({ text }: Props): React.ReactNode {
       }
 
       case 'line': {
-        if (b.nodes.length === 0) return <br key={i} />
-
         return (
           <div>
-            {b.nodes.map((n, i) => (
-              <ContentNode key={i} node={n} />
-            ))}
+            {b.nodes.length === 0 ? (
+              <br key={i} />
+            ) : (
+              b.nodes.map((n, i) => <ContentNode key={i} node={n} />)
+            )}
           </div>
         )
       }
