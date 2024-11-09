@@ -1,0 +1,20 @@
+.commandline {
+  background-color: gainsboro;
+  border-radius: 0.2rem;
+  font-family: monospace;
+  padding-inline: 0.2rem;
+}
+
+.prompt_user {
+  &::before {
+    content: '$';
+    color: slateblue;
+  }
+}
+
+.prompt_root {
+  &::before {
+    content: '#';
+    color: slateblue;
+  }
+}

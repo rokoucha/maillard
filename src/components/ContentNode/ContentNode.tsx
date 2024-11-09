@@ -1,6 +1,7 @@
 import { Node } from '@progfay/scrapbox-parser'
 import { SCRAPBOX_PROJECT } from '../../lib/env'
 import { Code } from './Node/Code'
+import { CommandLine } from './Node/CommandLine'
 
 type ContentNodeProps = Readonly<{
   node: Node
@@ -17,11 +18,7 @@ export function ContentNode({ node }: ContentNodeProps): React.ReactNode {
     }
 
     case 'commandLine': {
-      return (
-        <code>
-          {node.symbol} {node.text}
-        </code>
-      )
+      return <CommandLine symbol={node.symbol}>{node.text}</CommandLine>
     }
 
     case 'decoration': {
