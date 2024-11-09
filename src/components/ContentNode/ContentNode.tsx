@@ -7,6 +7,7 @@ import { Formula } from './Node/Formula'
 import { GoogleMap } from './Node/GoogleMap'
 import { HashTag } from './Node/HashTag'
 import { Helpfeel } from './Node/Helpfeel'
+import { Icon } from './Node/Icon'
 
 type ContentNodeProps = Readonly<{
   node: Node
@@ -61,9 +62,16 @@ export function ContentNode({ node }: ContentNodeProps): React.ReactNode {
     }
 
     case 'icon': {
+      const absolutePath =
+        node.pathType === 'relative'
+          ? `/${SCRAPBOX_PROJECT}/${node.path}`
+          : node.path
+
       return (
-        <img
-          src={`https://scrapbox.io/api/pages/${node.pathType === 'relative' ? `${SCRAPBOX_PROJECT}/` : ''}${node.path}/icon`}
+        <Icon
+          href={`https://scrapbox.io${absolutePath}`}
+          path={node.path}
+          src={`https://scrapbox.io/api/pages${absolutePath}/icon`}
         />
       )
     }
