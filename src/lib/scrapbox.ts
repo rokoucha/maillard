@@ -45,6 +45,9 @@ export async function searchTitle(): Promise<PageMinimum[]> {
     .sort((a, b) => b.updated - a.updated)
     .map((p) => ({
       ...p,
+      image: p.image?.startsWith('https://i.gyazo.com')
+        ? p.image.replace(/\/raw$/, '')
+        : p.image,
       links: new Set(p.links)
         .values()
         .filter((link) => link !== SCRAPBOX_COLLECT_PAGE)
@@ -93,6 +96,9 @@ export async function getPage(title: string): Promise<Page> {
         .replaceAll(`[${SCRAPBOX_COLLECT_PAGE}]`, ''),
     )
     .filter((description) => description)
+  data.image = data.image?.startsWith('https://i.gyazo.com')
+    ? data.image.replace(/\/raw$/, '')
+    : data.image
 
   return data
 }
