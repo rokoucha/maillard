@@ -1,0 +1,7 @@
+.numberlist {
+  padding-left: 0.5rem;
+}
+
+li:has(> ol) {
+  list-style-type: none;
+}

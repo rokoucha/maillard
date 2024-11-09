@@ -10,6 +10,7 @@ import { Helpfeel } from './Node/Helpfeel'
 import { Icon } from './Node/Icon'
 import { Image } from './Node/Image'
 import { Link } from './Node/Link'
+import { NumberList } from './Node/NumberList'
 
 type ContentNodeProps = Readonly<{
   node: Node
@@ -119,12 +120,11 @@ export function ContentNode({ node }: ContentNodeProps): React.ReactNode {
 
     case 'numberList': {
       return (
-        <>
-          {node.number}{' '}
+        <NumberList number={node.number}>
           {node.nodes.map((n, i) => (
             <ContentNode key={i} node={n} />
           ))}
-        </>
+        </NumberList>
       )
     }
 
