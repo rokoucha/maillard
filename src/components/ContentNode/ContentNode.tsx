@@ -82,7 +82,7 @@ export function ContentNode({ node }: ContentNodeProps): React.ReactNode {
     }
 
     case 'image': {
-      return <Image link={node.link} src={node.src} />
+      return <Image link={node.link || node.src} src={node.src} />
     }
 
     case 'link': {
