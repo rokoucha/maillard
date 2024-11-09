@@ -21,7 +21,7 @@ function IndentWrapper({
 
   return (
     <ul style={{ paddingLeft: `${indent}rem` }} className={styles.ul}>
-      <li>{children}</li>
+      <li className={styles.li}>{children}</li>
     </ul>
   )
 }
