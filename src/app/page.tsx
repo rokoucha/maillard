@@ -1,14 +1,14 @@
 import { type Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import pkg from '../../package.json' assert { type: 'json' }
-import { ArticleFooter } from '../components/ArticleFooter'
 import { ArticleHeader } from '../components/ArticleHeader'
 import { Footer } from '../components/Footer'
 import { Header } from '../components/Header'
 import { Main } from '../components/Main'
+import { PageList } from '../components/PageList'
 import { ScrapboxRenderer } from '../components/ScrapboxRenderer'
 import { BASE_URL, SCRAPBOX_INDEX_PAGE, SITE_NAME } from '../lib/env'
-import { getPage } from '../lib/scrapbox'
+import { getPage, searchTitle } from '../lib/scrapbox'
 import styles from './page.module.css'
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -54,6 +54,10 @@ export default async function Page(): Promise<React.ReactNode> {
 
   const text = page.lines.map((line) => line.text).join('\n')
 
+  const pages = await searchTitle().then((p) =>
+    p.filter((p) => p.id !== SCRAPBOX_INDEX_PAGE),
+  )
+
   return (
     <>
       <Header siteName={SITE_NAME} />
@@ -67,10 +71,7 @@ export default async function Page(): Promise<React.ReactNode> {
           <section className={styles.main}>
             <ScrapboxRenderer text={text} title={page.title} />
           </section>
-          <ArticleFooter
-            persistent={page.persistent}
-            relatedPages={page.relatedPages.links1hop}
-          />
+          <PageList pages={pages} />
         </div>
       </Main>
       <Footer name={pkg.name} version={pkg.version} />

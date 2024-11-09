@@ -31,15 +31,24 @@ export async function searchTitle(): Promise<PageMinimum[]> {
 
     const res = await fetch(url, { headers })
     const data = await v.parseAsync(SearchTitleResponse, await res.json())
-    pages.push(...data)
+    pages.push(...data.slice(followingId ? 1 : 0))
 
     followingId = res.headers.get('X-Following-Id') ?? ''
   } while (followingId)
 
-  return pages.filter(
-    (page) =>
-      !SCRAPBOX_COLLECT_PAGE || page.links.includes(SCRAPBOX_COLLECT_PAGE),
-  )
+  return pages
+    .filter(
+      (page) =>
+        !SCRAPBOX_COLLECT_PAGE || page.links.includes(SCRAPBOX_COLLECT_PAGE),
+    )
+    .sort((a, b) => b.updated - a.updated)
+    .map((p) => ({
+      ...p,
+      links: new Set(p.links)
+        .values()
+        .filter((link) => link !== SCRAPBOX_COLLECT_PAGE)
+        .toArray(),
+    }))
 }
 
 export async function getPage(title: string): Promise<Page> {

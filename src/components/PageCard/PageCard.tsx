@@ -1,16 +1,20 @@
 import clsx from 'clsx'
 import Link from 'next/link'
-import { RelatedPage } from '../../schema/scrapbox'
 import styles from './PageCard.module.css'
 
 export type Props = Readonly<{
   className?: string | undefined
-  page: RelatedPage
+  page: {
+    date: Date
+    descriptions?: string[] | undefined
+    title: string
+    image: string | null
+    links: string[]
+  }
 }>
 
 export function PageCard({ className, page }: Props): React.ReactNode {
-  const createdAt = new Date(page.created * 1000)
-  const description = page.descriptions.join(' ')
+  const description = page.descriptions?.join(' ')
 
   return (
     <article className={clsx(styles.wrapper, className)}>
@@ -27,17 +31,19 @@ export function PageCard({ className, page }: Props): React.ReactNode {
             <h1 className={styles.title_text}>{page.title}</h1>
           </Link>
           <time className={styles.date_text}>
-            {createdAt.getFullYear()}-
-            {String(createdAt.getMonth() + 1).padStart(2, '0')}-
-            {String(createdAt.getDate()).padStart(2, '0')}
+            {page.date.getFullYear()}-
+            {String(page.date.getMonth() + 1).padStart(2, '0')}-
+            {String(page.date.getDate()).padStart(2, '0')}
           </time>
         </header>
-        <section>
-          <p className={styles.description_text}>{description}</p>
-        </section>
+        {description && (
+          <section>
+            <p className={styles.description_text}>{description}</p>
+          </section>
+        )}
         <footer>
           <ul className={styles.link_list}>
-            {page.linksLc?.map((title) => (
+            {page.links.map((title) => (
               <li key={title}>
                 <Link
                   className={styles.link}
