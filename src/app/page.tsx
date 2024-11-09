@@ -42,7 +42,7 @@ export default async function Page(): Promise<React.ReactNode> {
   const text = page.lines.map((line) => line.text).join('\n')
 
   const pages = await searchTitle().then((p) =>
-    p.filter((p) => p.id !== SCRAPBOX_INDEX_PAGE),
+    p.filter((p) => p.title !== SCRAPBOX_INDEX_PAGE),
   )
 
   return (
@@ -58,7 +58,7 @@ export default async function Page(): Promise<React.ReactNode> {
           <section className={styles.main}>
             <ScrapboxRenderer text={text} title={page.title} />
           </section>
-          <PageList pages={pages} />
+          {pages.length > 0 && <PageList pages={pages} />}
         </div>
       </Main>
       <Footer name={pkg.name} version={pkg.version} />
