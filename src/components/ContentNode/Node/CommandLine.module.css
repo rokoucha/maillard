@@ -9,6 +9,7 @@
   &::before {
     content: '$';
     color: slateblue;
+    margin-left: 0.2rem;
   }
 }
 
@@ -16,5 +17,6 @@
   &::before {
     content: '#';
     color: slateblue;
+    margin-left: 0.2rem;
   }
 }
