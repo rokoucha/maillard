@@ -1,3 +1,5 @@
+import hljs from 'highlight.js'
+import 'highlight.js/styles/github.css'
 import styles from './Code.module.css'
 
 type Props = Readonly<{
@@ -5,5 +7,12 @@ type Props = Readonly<{
 }>
 
 export function Code({ children }: Props): React.ReactNode {
-  return <code className={styles.code}>{children}</code>
+  const code = hljs.highlightAuto(children)
+
+  return (
+    <code
+      className={styles.code}
+      dangerouslySetInnerHTML={{ __html: code.value }}
+    />
+  )
 }

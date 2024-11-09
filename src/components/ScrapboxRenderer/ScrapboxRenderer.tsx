@@ -34,12 +34,17 @@ export function ScrapboxRenderer({ text, title }: Props): React.ReactNode {
   return parsed.map((b, i) => {
     switch (b.type) {
       case 'codeBlock': {
+        const [[_, filename, extension]] = b.fileName
+          .matchAll(/^(.*?)(?:\(([^)]+)\))?$/g)
+          .toArray()
+
         return (
           <IndentWrapper key={i} indent={b.indent}>
             <CodeBlock
               content={b.content}
-              filename={b.fileName}
-              href={`https://scrapbox.io/api/code/${SCRAPBOX_PROJECT}/${title}/${b.fileName}`}
+              extension={extension}
+              filename={filename}
+              href={`https://scrapbox.io/api/code/${SCRAPBOX_PROJECT}/${title}/${filename}`}
             />
           </IndentWrapper>
         )

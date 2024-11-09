@@ -15,8 +15,19 @@
   background-color: whitesmoke;
   border-radius: 0.2rem;
   font-family: monospace;
-  font-family: monospace;
   margin: 0;
   overflow: scroll;
   padding: 0.5rem 1rem;
+  position: relative;
+}
+
+.language {
+  background-color: lavender;
+  border-radius: 0.2rem;
+  font-family: monospace;
+  padding: 0.2rem 0.4rem;
+  font-size: 0.8rem;
+  position: absolute;
+  right: 0.5rem;
+  top: 0.5rem;
 }
