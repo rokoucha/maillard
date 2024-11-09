@@ -13,7 +13,7 @@ export function ScrapboxRenderer({ text }: Props): React.ReactNode {
   return parsed.map((b, i) => {
     switch (b.type) {
       case 'codeBlock': {
-        return <CodeBlock content={b.content} filename={b.fileName} />
+        return <CodeBlock key={i} content={b.content} filename={b.fileName} />
       }
 
       case 'line': {
@@ -27,7 +27,7 @@ export function ScrapboxRenderer({ text }: Props): React.ReactNode {
       }
 
       case 'table': {
-        return <Table cells={b.cells} filename={b.fileName} />
+        return <Table key={i} cells={b.cells} filename={b.fileName} />
       }
 
       case 'title': {
