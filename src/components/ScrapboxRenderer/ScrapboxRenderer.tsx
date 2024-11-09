@@ -29,11 +29,11 @@ function IndentWrapper({
 export function ScrapboxRenderer({ text }: Props): React.ReactNode {
   const parsed = parse(text)
 
-  return parsed.map((b) => {
+  return parsed.map((b, i) => {
     switch (b.type) {
       case 'codeBlock': {
         return (
-          <IndentWrapper indent={b.indent}>
+          <IndentWrapper key={i} indent={b.indent}>
             <CodeBlock content={b.content} filename={b.fileName} />
           </IndentWrapper>
         )
@@ -41,11 +41,11 @@ export function ScrapboxRenderer({ text }: Props): React.ReactNode {
 
       case 'line': {
         if (b.nodes.length === 0) {
-          return <br />
+          return <br key={i} />
         }
 
         return (
-          <IndentWrapper indent={b.indent}>
+          <IndentWrapper key={i} indent={b.indent}>
             {b.nodes.map((n) => (
               <ContentNode node={n} />
             ))}
@@ -55,7 +55,7 @@ export function ScrapboxRenderer({ text }: Props): React.ReactNode {
 
       case 'table': {
         return (
-          <IndentWrapper indent={b.indent}>
+          <IndentWrapper key={i} indent={b.indent}>
             <Table cells={b.cells} filename={b.fileName} />
           </IndentWrapper>
         )
