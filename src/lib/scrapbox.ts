@@ -1,4 +1,5 @@
 import * as v from 'valibot'
+import pkg from '../../package.json' assert { type: 'json' }
 import {
   GetPageResponse,
   Page,
@@ -15,7 +16,7 @@ const headers = {
   ...(SCRAPBOX_CONNECT_SID && {
     Cookie: `connect.sid=${SCRAPBOX_CONNECT_SID}`,
   }),
-  'User-Agent': 'Maillard/0.0',
+  'User-Agent': `${pkg.name}/${pkg.version}`,
 } satisfies HeadersInit
 
 export async function searchTitle(): Promise<PageMinimum[]> {
