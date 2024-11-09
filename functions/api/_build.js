@@ -26,6 +26,7 @@ export async function onRequest(context) {
   }
 
   await context.env.KV.delete(TIMER_KEY)
+  await context.env.KV.delete(EXCLUSIVE_KEY)
 
   return await fetch(context.env.WEBHOOK_URL, { method: 'post' })
 }
