@@ -9,6 +9,7 @@ import { HashTag } from './Node/HashTag'
 import { Helpfeel } from './Node/Helpfeel'
 import { Icon } from './Node/Icon'
 import { Image } from './Node/Image'
+import { Link } from './Node/Link'
 
 type ContentNodeProps = Readonly<{
   node: Node
@@ -110,10 +111,9 @@ export function ContentNode({ node }: ContentNodeProps): React.ReactNode {
       }
 
       return (
-        <a href={href} {...(external ? { target: '_blank' } : {})}>
+        <Link external={external} href={href}>
           {node.content || node.href}
-          {external && ' ↗'}
-        </a>
+        </Link>
       )
     }
 
