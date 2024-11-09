@@ -17,6 +17,8 @@ export function ScrapboxRenderer({ text }: Props): React.ReactNode {
       }
 
       case 'line': {
+        if (b.nodes.length === 0) return <br key={i} />
+
         return (
           <div>
             {b.nodes.map((n, i) => (
