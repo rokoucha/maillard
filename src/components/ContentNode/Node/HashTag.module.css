@@ -1,0 +1,13 @@
+.hashtag {
+  border-radius: 0.2rem;
+  border: 1px solid dodgerblue;
+  color: dodgerblue;
+  padding: 0.25rem;
+  &::before {
+    content: '#';
+    padding-right: 0.1rem;
+  }
+  &:hover {
+    filter: brightness(0.5);
+  }
+}

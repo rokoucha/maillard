@@ -5,6 +5,7 @@ import { CommandLine } from './Node/CommandLine'
 import { Decoration } from './Node/Decoration'
 import { Formula } from './Node/Formula'
 import { GoogleMap } from './Node/GoogleMap'
+import { HashTag } from './Node/HashTag'
 
 type ContentNodeProps = Readonly<{
   node: Node
@@ -51,7 +52,7 @@ export function ContentNode({ node }: ContentNodeProps): React.ReactNode {
     }
 
     case 'hashTag': {
-      return <a href={node.href}>#{node.href}</a>
+      return <HashTag>{node.href}</HashTag>
     }
 
     case 'helpfeel': {
