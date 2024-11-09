@@ -1,0 +1,15 @@
+.helpfeel {
+  background-color: linen;
+  border-radius: 0.2rem;
+  color: darkred;
+  font-size: 0.8rem;
+  line-height: 2rem;
+  padding: 0.1rem 0.2rem;
+  &::before {
+    color: orangered;
+    content: '?';
+    font-family: monospace;
+    font-size: 1rem;
+    margin-right: 0.2rem;
+  }
+}

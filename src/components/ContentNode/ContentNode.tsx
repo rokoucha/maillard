@@ -6,6 +6,7 @@ import { Decoration } from './Node/Decoration'
 import { Formula } from './Node/Formula'
 import { GoogleMap } from './Node/GoogleMap'
 import { HashTag } from './Node/HashTag'
+import { Helpfeel } from './Node/Helpfeel'
 
 type ContentNodeProps = Readonly<{
   node: Node
@@ -56,7 +57,7 @@ export function ContentNode({ node }: ContentNodeProps): React.ReactNode {
     }
 
     case 'helpfeel': {
-      return <code>{node.text}</code>
+      return <Helpfeel>{node.text}</Helpfeel>
     }
 
     case 'icon': {
