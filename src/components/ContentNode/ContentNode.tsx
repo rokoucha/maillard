@@ -4,6 +4,7 @@ import { Code } from './Node/Code'
 import { CommandLine } from './Node/CommandLine'
 import { Decoration } from './Node/Decoration'
 import { Formula } from './Node/Formula'
+import { GoogleMap } from './Node/GoogleMap'
 
 type ContentNodeProps = Readonly<{
   node: Node
@@ -39,9 +40,13 @@ export function ContentNode({ node }: ContentNodeProps): React.ReactNode {
 
     case 'googleMap': {
       return (
-        <a href={node.url}>
-          {node.place || `${node.latitude} ${node.longitude}`}
-        </a>
+        <GoogleMap
+          latitude={node.latitude}
+          longitude={node.longitude}
+          place={node.place}
+          url={node.url}
+          zoom={node.zoom}
+        />
       )
     }
 
