@@ -1,0 +1,48 @@
+.strong_1 {
+  font-weight: bold;
+}
+
+.strong_2 {
+  font-size: 1.2rem;
+  line-height: 28px;
+}
+
+.strong_3 {
+  font-size: 1.4rem;
+  line-height: 32px;
+}
+
+.strong_4 {
+  font-size: 1.6rem;
+  line-height: 36px;
+}
+
+.strong_5 {
+  font-size: 1.8rem;
+  line-height: 40px;
+}
+
+.strong_6 {
+  font-size: 2rem;
+  line-height: 44px;
+}
+
+.strong_7 {
+  font-size: 2.2rem;
+  line-height: 48px;
+}
+
+.strong_8 {
+  font-size: 2.4rem;
+  line-height: 52px;
+}
+
+.strong_9 {
+  font-size: 2.6rem;
+  line-height: 56px;
+}
+
+.strong_10 {
+  font-size: 2.8rem;
+  line-height: 60px;
+}

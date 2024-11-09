@@ -2,6 +2,7 @@ import { Node } from '@progfay/scrapbox-parser'
 import { SCRAPBOX_PROJECT } from '../../lib/env'
 import { Code } from './Node/Code'
 import { CommandLine } from './Node/CommandLine'
+import { Decoration } from './Node/Decoration'
 
 type ContentNodeProps = Readonly<{
   node: Node
@@ -22,7 +23,13 @@ export function ContentNode({ node }: ContentNodeProps): React.ReactNode {
     }
 
     case 'decoration': {
-      return node.nodes.map((n) => <ContentNode node={n} />)
+      return (
+        <Decoration decorations={node.decos}>
+          {node.nodes.map((n, i) => (
+            <ContentNode key={i} node={n} />
+          ))}
+        </Decoration>
+      )
     }
 
     case 'formula': {
@@ -124,11 +131,11 @@ export function ContentNode({ node }: ContentNodeProps): React.ReactNode {
 
     case 'strong': {
       return (
-        <strong>
+        <Decoration decorations={['*-1']}>
           {node.nodes.map((n, i) => (
             <ContentNode key={i} node={n} />
           ))}
-        </strong>
+        </Decoration>
       )
     }
 
