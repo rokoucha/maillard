@@ -24,38 +24,31 @@ export function PageCard({ className, page }: Props): React.ReactNode {
         ) : (
           <span className={styles.thumbnail_alt}>📄</span>
         )}
-      </Link>
-      <div className={styles.container}>
-        <header>
-          <Link href={`/${encodeURIComponent(page.title)}`}>
+        <div className={styles.container}>
+          <header>
             <h1 className={styles.title_text}>{page.title}</h1>
-          </Link>
-          <time className={styles.date_text}>
-            {page.date.getFullYear()}-
-            {String(page.date.getMonth() + 1).padStart(2, '0')}-
-            {String(page.date.getDate()).padStart(2, '0')}
-          </time>
-        </header>
-        {description && (
-          <section>
-            <p className={styles.description_text}>{description}</p>
-          </section>
-        )}
-        <footer>
-          <ul className={styles.link_list}>
-            {page.links.map((title) => (
-              <li key={title}>
-                <Link
-                  className={styles.link}
-                  href={`/${encodeURIComponent(title)}`}
-                >
+            <time className={styles.date_text}>
+              {page.date.getFullYear()}-
+              {String(page.date.getMonth() + 1).padStart(2, '0')}-
+              {String(page.date.getDate()).padStart(2, '0')}
+            </time>
+          </header>
+          {description && (
+            <section>
+              <p className={styles.description_text}>{description}</p>
+            </section>
+          )}
+          <footer>
+            <ul className={styles.link_list}>
+              {page.links.map((title) => (
+                <li key={title} className={styles.link}>
                   {title}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </footer>
-      </div>
+                </li>
+              ))}
+            </ul>
+          </footer>
+        </div>
+      </Link>
     </article>
   )
 }
