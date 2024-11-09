@@ -3,7 +3,7 @@ const TIMEOUT_MS = 1000 * 60 * 5 // 5 minutes
 const WAIT_MS = 60000 // 1 minute
 
 export async function onRequest(context) {
-  const now = Date.now()
+  let now = Date.now()
 
   const value = await context.env.KV.get(TIMER_KEY)
 
