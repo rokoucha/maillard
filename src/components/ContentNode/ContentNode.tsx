@@ -102,7 +102,7 @@ export function ContentNode({ node }: ContentNodeProps): React.ReactNode {
         <>
           {node.number}{' '}
           {node.nodes.map((n, i) => (
-            <ContentNode node={n} />
+            <ContentNode key={i} node={n} />
           ))}
         </>
       )
@@ -115,8 +115,8 @@ export function ContentNode({ node }: ContentNodeProps): React.ReactNode {
     case 'quote': {
       return (
         <blockquote>
-          {node.nodes.map((n) => (
-            <ContentNode node={n} />
+          {node.nodes.map((n, i) => (
+            <ContentNode key={i} node={n} />
           ))}
         </blockquote>
       )
@@ -125,8 +125,8 @@ export function ContentNode({ node }: ContentNodeProps): React.ReactNode {
     case 'strong': {
       return (
         <strong>
-          {node.nodes.map((n) => (
-            <ContentNode node={n} />
+          {node.nodes.map((n, i) => (
+            <ContentNode key={i} node={n} />
           ))}
         </strong>
       )

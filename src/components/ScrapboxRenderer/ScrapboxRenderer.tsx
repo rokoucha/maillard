@@ -46,8 +46,8 @@ export function ScrapboxRenderer({ text }: Props): React.ReactNode {
 
         return (
           <IndentWrapper key={i} indent={b.indent}>
-            {b.nodes.map((n) => (
-              <ContentNode node={n} />
+            {b.nodes.map((n, i) => (
+              <ContentNode key={i} node={n} />
             ))}
           </IndentWrapper>
         )
