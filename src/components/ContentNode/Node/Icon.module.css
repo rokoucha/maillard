@@ -6,3 +6,10 @@
   top: -0.15rem;
   vertical-align: middle;
 }
+
+.strong {
+  height: 4rem;
+  max-height: none;
+  max-width: 95%;
+  vertical-align: bottom;
+}
