@@ -95,7 +95,7 @@ export default async function Page({
             updatedAt={new Date(page.updated * 1000)}
           />
           <section className={styles.main}>
-            <ScrapboxRenderer text={text} />
+            <ScrapboxRenderer text={text} title={page.title} />
           </section>
           <ArticleFooter
             persistent={page.persistent}

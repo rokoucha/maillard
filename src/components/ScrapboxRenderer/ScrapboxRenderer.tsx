@@ -1,12 +1,9 @@
 import { parse } from '@progfay/scrapbox-parser'
+import { SCRAPBOX_PROJECT } from '../../lib/env'
 import { CodeBlock } from '../CodeBlock'
 import { ContentNode } from '../ContentNode'
 import { Table } from '../Table'
 import styles from './ScrapboxRenderer.module.css'
-
-type Props = Readonly<{
-  text: string
-}>
 
 function IndentWrapper({
   children,
@@ -26,7 +23,12 @@ function IndentWrapper({
   )
 }
 
-export function ScrapboxRenderer({ text }: Props): React.ReactNode {
+type Props = Readonly<{
+  text: string
+  title: string
+}>
+
+export function ScrapboxRenderer({ text, title }: Props): React.ReactNode {
   const parsed = parse(text)
 
   return parsed.map((b, i) => {
@@ -34,7 +36,11 @@ export function ScrapboxRenderer({ text }: Props): React.ReactNode {
       case 'codeBlock': {
         return (
           <IndentWrapper key={i} indent={b.indent}>
-            <CodeBlock content={b.content} filename={b.fileName} />
+            <CodeBlock
+              content={b.content}
+              filename={b.fileName}
+              href={`https://scrapbox.io/api/code/${SCRAPBOX_PROJECT}/${title}/${b.fileName}`}
+            />
           </IndentWrapper>
         )
       }
