@@ -33,6 +33,16 @@ export async function generateMetadata(): Promise<Metadata> {
       },
     },
     metadataBase: new URL(BASE_URL),
+    alternates: {
+      types: {
+        'application/feed+json': [
+          {
+            title: SITE_NAME,
+            url: `/api/feed`,
+          },
+        ],
+      },
+    },
   }
 }
 

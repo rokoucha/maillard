@@ -47,6 +47,7 @@ export async function searchTitle(): Promise<PageMinimum[]> {
       links: new Set(p.links)
         .values()
         .filter((link) => link !== SCRAPBOX_COLLECT_PAGE)
+        .map((link) => link.replaceAll('_', ' '))
         .toArray(),
     }))
 }
@@ -84,6 +85,13 @@ export async function getPage(title: string): Promise<Page> {
       .replaceAll(`[${SCRAPBOX_COLLECT_PAGE}]`, ''),
   }))
   data.links = data.links.filter((link) => link !== SCRAPBOX_COLLECT_PAGE)
+  data.descriptions = data.descriptions
+    .map((description) =>
+      description
+        .replaceAll(`#${SCRAPBOX_COLLECT_PAGE}`, '')
+        .replaceAll(`[${SCRAPBOX_COLLECT_PAGE}]`, ''),
+    )
+    .filter((description) => description)
 
   return data
 }

@@ -12,23 +12,10 @@ import { getPage, searchTitle } from '../lib/scrapbox'
 import styles from './page.module.css'
 
 export async function generateMetadata(): Promise<Metadata> {
-  const page = await getPage(SCRAPBOX_INDEX_PAGE).catch((e) => {
-    console.error(e)
-    notFound()
-  })
+  const page = await getPage(SCRAPBOX_INDEX_PAGE)
 
   return {
     description: page.descriptions.join('\n'),
-    alternates: {
-      types: {
-        'application/feed+json': [
-          {
-            title: SITE_NAME,
-            url: `/api/feed`,
-          },
-        ],
-      },
-    },
     openGraph: {
       title: { absolute: SITE_NAME },
       description: page.descriptions.join('\n'),

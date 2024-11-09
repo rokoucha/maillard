@@ -35,24 +35,11 @@ type Props = Readonly<{
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const slug = await params.then((p) => p.slug.join('/'))
 
-  const page = await getPage(slug).catch((e) => {
-    console.error(e)
-    notFound()
-  })
+  const page = await getPage(slug)
 
   return {
     title: page.title,
     description: page.descriptions.join('\n'),
-    alternates: {
-      types: {
-        'application/feed+json': [
-          {
-            title: SITE_NAME,
-            url: `/api/feed/${encodeURIComponent(page.title)}`,
-          },
-        ],
-      },
-    },
     openGraph: {
       title: page.title,
       description: page.descriptions.join('\n'),
