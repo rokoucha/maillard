@@ -5,7 +5,7 @@ const WAIT_MS = 60000 // 1 minute
 export async function onRequest(context) {
   const now = Date.now()
 
-  let value = await context.env.KV.get(TIMER_KEY)
+  const value = await context.env.KV.get(TIMER_KEY)
 
   if (value === null) {
     await context.env.KV.put(TIMER_KEY, now)
@@ -13,11 +13,11 @@ export async function onRequest(context) {
   }
 
   while (now - value < TIMEOUT_MS) {
-    value = await env.KV.get(TIMER_KEY)
+    now = Date.now()
     await new Promise((resolve) => setTimeout(resolve, WAIT_MS))
   }
 
-  await context.env.KV.put(TIMER_KEY, now)
+  await context.env.KV.delete(TIMER_KEY)
 
   return await fetch(context.env.WEBHOOK_URL, { method: 'post' })
 }
