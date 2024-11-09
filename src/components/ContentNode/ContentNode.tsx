@@ -24,7 +24,7 @@ export function ContentNode({ node }: ContentNodeProps): React.ReactNode {
     }
 
     case 'decoration': {
-      return node.nodes.map((n, i) => <ContentNode key={i} node={n} />)
+      return node.nodes.map((n) => <ContentNode node={n} />)
     }
 
     case 'formula': {
@@ -117,8 +117,8 @@ export function ContentNode({ node }: ContentNodeProps): React.ReactNode {
     case 'quote': {
       return (
         <blockquote>
-          {node.nodes.map((n, i) => (
-            <ContentNode key={i} node={n} />
+          {node.nodes.map((n) => (
+            <ContentNode node={n} />
           ))}
         </blockquote>
       )
@@ -127,8 +127,8 @@ export function ContentNode({ node }: ContentNodeProps): React.ReactNode {
     case 'strong': {
       return (
         <strong>
-          {node.nodes.map((n, i) => (
-            <ContentNode key={i} node={n} />
+          {node.nodes.map((n) => (
+            <ContentNode node={n} />
           ))}
         </strong>
       )

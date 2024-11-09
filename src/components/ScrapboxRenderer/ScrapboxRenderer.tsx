@@ -10,26 +10,26 @@ type Props = Readonly<{
 export function ScrapboxRenderer({ text }: Props): React.ReactNode {
   const parsed = parse(text)
 
-  return parsed.map((b, i) => {
+  return parsed.map((b) => {
     switch (b.type) {
       case 'codeBlock': {
-        return <CodeBlock key={i} content={b.content} filename={b.fileName} />
+        return <CodeBlock content={b.content} filename={b.fileName} />
       }
 
       case 'line': {
         return (
           <div>
             {b.nodes.length === 0 ? (
-              <br key={i} />
+              <br />
             ) : (
-              b.nodes.map((n, i) => <ContentNode key={i} node={n} />)
+              b.nodes.map((n) => <ContentNode node={n} />)
             )}
           </div>
         )
       }
 
       case 'table': {
-        return <Table key={i} cells={b.cells} filename={b.fileName} />
+        return <Table cells={b.cells} filename={b.fileName} />
       }
 
       case 'title': {
