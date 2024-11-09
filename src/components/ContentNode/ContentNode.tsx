@@ -8,6 +8,7 @@ import { GoogleMap } from './Node/GoogleMap'
 import { HashTag } from './Node/HashTag'
 import { Helpfeel } from './Node/Helpfeel'
 import { Icon } from './Node/Icon'
+import { Image } from './Node/Image'
 
 type ContentNodeProps = Readonly<{
   node: Node
@@ -77,11 +78,7 @@ export function ContentNode({ node }: ContentNodeProps): React.ReactNode {
     }
 
     case 'image': {
-      return (
-        <a href={node.link}>
-          <img src={node.src} />
-        </a>
-      )
+      return <Image link={node.link} src={node.src} />
     }
 
     case 'link': {
