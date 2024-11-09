@@ -6,6 +6,7 @@ export const {
   SCRAPBOX_CONNECT_SID,
   SCRAPBOX_INDEX_PAGE,
   SCRAPBOX_PROJECT,
+  SITE_LANG,
   SITE_NAME,
 } = v.parse(
   v.object({
@@ -14,6 +15,7 @@ export const {
     SCRAPBOX_CONNECT_SID: v.optional(v.string()),
     SCRAPBOX_INDEX_PAGE: v.string(),
     SCRAPBOX_PROJECT: v.string(),
+    SITE_LANG: v.optional(v.string()),
     SITE_NAME: v.string(),
   }),
   process.env,

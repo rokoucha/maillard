@@ -1,40 +1,40 @@
 import { type Metadata } from 'next'
 import pkg from '../../package.json' assert { type: 'json' }
-import { BASE_URL, SITE_NAME } from '../lib/env'
+import { BASE_URL, SCRAPBOX_INDEX_PAGE, SITE_LANG, SITE_NAME } from '../lib/env'
+import { getPage } from '../lib/scrapbox'
 import './styles.css'
 
 export const dynamic = 'error'
 
-export const metadata = {
-  title: {
-    default: SITE_NAME,
-    template: `%s - ${SITE_NAME}`,
-  },
-  robots: {
-    follow: false,
-    index: false,
-  },
-  applicationName: pkg.name,
-  generator: pkg.name,
-  openGraph: {
+export async function generateMetadata(): Promise<Metadata> {
+  const indexPage = await getPage(SCRAPBOX_INDEX_PAGE)
+
+  return {
     title: {
       default: SITE_NAME,
       template: `%s - ${SITE_NAME}`,
     },
-    siteName: SITE_NAME,
-    locale: process.env.SITE_LANG,
-  },
-  icons: undefined,
-  twitter: {
-    card: 'summary',
-    title: {
-      default: SITE_NAME,
-      template: `%s - ${SITE_NAME}`,
+    applicationName: pkg.name,
+    generator: pkg.name,
+    openGraph: {
+      title: {
+        default: SITE_NAME,
+        template: `%s - ${SITE_NAME}`,
+      },
+      siteName: SITE_NAME,
+      locale: SITE_LANG,
     },
-    images: undefined,
-  },
-  metadataBase: new URL(BASE_URL),
-} satisfies Metadata
+    icons: indexPage.image,
+    twitter: {
+      card: 'summary',
+      title: {
+        default: SITE_NAME,
+        template: `%s - ${SITE_NAME}`,
+      },
+    },
+    metadataBase: new URL(BASE_URL),
+  }
+}
 
 type RootLayoutProps = Readonly<{
   children: React.ReactNode

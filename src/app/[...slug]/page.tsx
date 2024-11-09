@@ -47,13 +47,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       types: {
         'application/feed+json': [
           {
-            title: process.env.SITE_NAME,
+            title: SITE_NAME,
             url: `/api/feed/${encodeURIComponent(page.title)}`,
           },
         ],
       },
     },
-    icons: page.image,
     openGraph: {
       title: page.title,
       description: page.descriptions.join('\n'),

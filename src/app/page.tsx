@@ -7,7 +7,7 @@ import { Footer } from '../components/Footer'
 import { Header } from '../components/Header'
 import { Main } from '../components/Main'
 import { ScrapboxRenderer } from '../components/ScrapboxRenderer'
-import { SCRAPBOX_INDEX_PAGE, SITE_NAME } from '../lib/env'
+import { BASE_URL, SCRAPBOX_INDEX_PAGE, SITE_NAME } from '../lib/env'
 import { getPage } from '../lib/scrapbox'
 import styles from './page.module.css'
 
@@ -23,13 +23,12 @@ export async function generateMetadata(): Promise<Metadata> {
       types: {
         'application/feed+json': [
           {
-            title: process.env.SITE_NAME,
+            title: SITE_NAME,
             url: `/api/feed`,
           },
         ],
       },
     },
-    icons: page.image,
     openGraph: {
       title: { absolute: SITE_NAME },
       description: page.descriptions.join('\n'),
@@ -38,7 +37,7 @@ export async function generateMetadata(): Promise<Metadata> {
       publishedTime: new Date(page.created * 1000).toISOString(),
       tags: page.links,
       type: 'article',
-      url: process.env.BASE_URL,
+      url: BASE_URL,
     },
     twitter: {
       title: { absolute: SITE_NAME },
