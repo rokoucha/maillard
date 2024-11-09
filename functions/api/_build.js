@@ -5,7 +5,7 @@ const WAIT_MS = 60000 // 1 minute
 export async function onRequest(context) {
   let now = Date.now()
 
-  const value = await context.env.KV.get(TIMER_KEY)
+  let value = await context.env.KV.get(TIMER_KEY)
 
   if (value === null) {
     await context.env.KV.put(TIMER_KEY, now)
