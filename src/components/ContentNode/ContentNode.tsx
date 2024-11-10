@@ -99,25 +99,28 @@ export function ContentNode({
 
     case 'link': {
       let href = ''
-      let external = false
+      let type: 'internal' | 'external' | undefined = undefined
       switch (node.pathType) {
         case 'relative': {
           const page = pagesMap.get(node.href)
-          href = page
-            ? `/${page.title}`
-            : `https://scrapbox.io/${SCRAPBOX_PROJECT}/${node.href}`
+          if (page) {
+            href = `/${page.title}`
+          } else {
+            href = `https://scrapbox.io/${SCRAPBOX_PROJECT}/${node.href}`
+            type = 'internal'
+          }
           break
         }
 
         case 'absolute': {
           href = node.href
-          external = true
+          type = 'external'
           break
         }
 
         case 'root': {
           href = `https://scrapbox.io${node.href}`
-          external = true
+          type = 'external'
           break
         }
 
@@ -129,7 +132,7 @@ export function ContentNode({
       }
 
       return (
-        <Link external={external} href={href}>
+        <Link href={href} type={type}>
           {node.content || node.href}
         </Link>
       )

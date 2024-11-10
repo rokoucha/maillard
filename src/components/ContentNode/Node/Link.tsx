@@ -4,16 +4,19 @@ import styles from './Link.module.css'
 
 type Props = Readonly<{
   children: React.ReactNode
-  external: boolean
   href: string
+  type?: 'external' | 'internal' | undefined
 }>
 
-export function Link({ children, external, href }: Props): React.ReactNode {
+export function Link({ children, href, type }: Props): React.ReactNode {
   return (
     <NextLink
-      className={clsx(styles.link, { [styles.external]: external })}
+      className={clsx(styles.link, {
+        [styles.external]: type === 'external',
+        [styles.internal]: type === 'internal',
+      })}
       href={href}
-      {...(external ? { target: '_blank' } : {})}
+      {...(type === 'external' ? { target: '_blank' } : {})}
     >
       {children}
     </NextLink>
