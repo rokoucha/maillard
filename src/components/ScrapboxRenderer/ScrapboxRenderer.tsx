@@ -77,6 +77,7 @@ export function ScrapboxRenderer({
               cells={b.cells}
               filename={b.fileName}
               href={`https://scrapbox.io/api/table/${SCRAPBOX_PROJECT}/${title}/${b.fileName}.csv`}
+              pages={pages}
             />
           </IndentWrapper>
         )
