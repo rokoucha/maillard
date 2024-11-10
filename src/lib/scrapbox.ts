@@ -19,7 +19,13 @@ const headers = {
   'User-Agent': `${pkg.name}/${pkg.version}`,
 } satisfies HeadersInit
 
+let searchTitleCache: PageMinimum[] = []
+
 export async function searchTitle(): Promise<PageMinimum[]> {
+  if (searchTitleCache.length > 0) {
+    return searchTitleCache
+  }
+
   const pages: PageMinimum[] = []
   let followingId = ''
   do {
@@ -37,7 +43,7 @@ export async function searchTitle(): Promise<PageMinimum[]> {
     followingId = res.headers.get('X-Following-Id') ?? ''
   } while (followingId)
 
-  return pages
+  const p = pages
     .filter(
       (page) =>
         !SCRAPBOX_COLLECT_PAGE || page.links.includes(SCRAPBOX_COLLECT_PAGE),
@@ -54,9 +60,20 @@ export async function searchTitle(): Promise<PageMinimum[]> {
         .map((link) => link.replaceAll('_', ' '))
         .toArray(),
     }))
+
+  searchTitleCache = p
+
+  return p
 }
 
+const getPageCache = new Map<string, Page>()
+
 export async function getPage(title: string): Promise<Page> {
+  const cached = getPageCache.get(title)
+  if (cached) {
+    return cached
+  }
+
   const url = new URL(
     `https://scrapbox.io/api/pages/${SCRAPBOX_PROJECT}/${title}`,
   )
@@ -99,6 +116,8 @@ export async function getPage(title: string): Promise<Page> {
   data.image = data.image?.startsWith('https://i.gyazo.com')
     ? data.image.replace(/\/raw$/, '')
     : data.image
+
+  getPageCache.set(title, data)
 
   return data
 }

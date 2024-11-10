@@ -1,5 +1,6 @@
 import { Node } from '@progfay/scrapbox-parser'
 import { SCRAPBOX_PROJECT } from '../../lib/env'
+import { PageMinimum } from '../../schema/scrapbox'
 import { Code } from './Node/Code'
 import { CommandLine } from './Node/CommandLine'
 import { Decoration } from './Node/Decoration'
@@ -16,9 +17,15 @@ import { StrongImage } from './Node/StrongImage'
 
 type ContentNodeProps = Readonly<{
   node: Node
+  pages: PageMinimum[]
 }>
 
-export function ContentNode({ node }: ContentNodeProps): React.ReactNode {
+export function ContentNode({
+  node,
+  pages,
+}: ContentNodeProps): React.ReactNode {
+  const pagesMap = new Map(pages.map((p) => [p.title, p]))
+
   switch (node.type) {
     case 'blank': {
       return null
@@ -36,7 +43,7 @@ export function ContentNode({ node }: ContentNodeProps): React.ReactNode {
       return (
         <Decoration decorations={node.decos}>
           {node.nodes.map((n, i) => (
-            <ContentNode key={i} node={n} />
+            <ContentNode key={i} node={n} pages={pages} />
           ))}
         </Decoration>
       )
@@ -67,18 +74,23 @@ export function ContentNode({ node }: ContentNodeProps): React.ReactNode {
     }
 
     case 'icon': {
-      const absolutePath =
-        node.pathType === 'relative'
-          ? `/${SCRAPBOX_PROJECT}/${node.path}`
-          : node.path
+      const page = pagesMap.get(node.path)
 
-      return (
-        <Icon
-          href={`https://scrapbox.io${absolutePath}`}
-          path={node.path}
-          src={`https://scrapbox.io/api/pages${absolutePath}/icon`}
-        />
-      )
+      const href =
+        node.pathType === 'relative'
+          ? page
+            ? `/${page.title}`
+            : `https://scrapbox.io/${SCRAPBOX_PROJECT}/${node.path}`
+          : `https://scrapbox.io${node.path}`
+
+      const src =
+        node.pathType === 'relative'
+          ? page?.image
+            ? page.image
+            : `https://scrapbox.io/${SCRAPBOX_PROJECT}/${node.path}/icon`
+          : `https://scrapbox.io/api/pages${node.path}/icon`
+
+      return <Icon href={href} path={node.path} src={src} />
     }
 
     case 'image': {
@@ -90,7 +102,10 @@ export function ContentNode({ node }: ContentNodeProps): React.ReactNode {
       let external = false
       switch (node.pathType) {
         case 'relative': {
-          href = `/${node.href}`
+          const page = pagesMap.get(node.href)
+          href = page
+            ? `/${page.title}`
+            : `https://scrapbox.io/${SCRAPBOX_PROJECT}/${node.href}`
           break
         }
 
@@ -124,7 +139,7 @@ export function ContentNode({ node }: ContentNodeProps): React.ReactNode {
       return (
         <NumberList number={node.number}>
           {node.nodes.map((n, i) => (
-            <ContentNode key={i} node={n} />
+            <ContentNode key={i} node={n} pages={pages} />
           ))}
         </NumberList>
       )
@@ -138,7 +153,7 @@ export function ContentNode({ node }: ContentNodeProps): React.ReactNode {
       return (
         <Quote>
           {node.nodes.map((n, i) => (
-            <ContentNode key={i} node={n} />
+            <ContentNode key={i} node={n} pages={pages} />
           ))}
         </Quote>
       )
@@ -148,26 +163,30 @@ export function ContentNode({ node }: ContentNodeProps): React.ReactNode {
       return (
         <Decoration decorations={['*-1']}>
           {node.nodes.map((n, i) => (
-            <ContentNode key={i} node={n} />
+            <ContentNode key={i} node={n} pages={pages} />
           ))}
         </Decoration>
       )
     }
 
     case 'strongIcon': {
-      const absolutePath =
-        node.pathType === 'relative'
-          ? `/${SCRAPBOX_PROJECT}/${node.path}`
-          : node.path
+      const page = pagesMap.get(node.path)
 
-      return (
-        <Icon
-          href={`https://scrapbox.io${absolutePath}`}
-          path={node.path}
-          src={`https://scrapbox.io/api/pages${absolutePath}/icon`}
-          strong={true}
-        />
-      )
+      const href =
+        node.pathType === 'relative'
+          ? page
+            ? `/${page.title}`
+            : `https://scrapbox.io/${SCRAPBOX_PROJECT}/${node.path}`
+          : `https://scrapbox.io${node.path}`
+
+      const src =
+        node.pathType === 'relative'
+          ? page?.image
+            ? page.image
+            : `https://scrapbox.io/${SCRAPBOX_PROJECT}/${node.path}/icon`
+          : `https://scrapbox.io/api/pages${node.path}/icon`
+
+      return <Icon href={href} path={node.path} src={src} strong={true} />
     }
 
     case 'strongImage': {

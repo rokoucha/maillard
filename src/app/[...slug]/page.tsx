@@ -71,6 +71,8 @@ export default async function Page({
 
   const text = page.lines.map((line) => line.text).join('\n')
 
+  const pages = await searchTitle()
+
   return (
     <>
       <Header siteName={SITE_NAME} />
@@ -82,7 +84,7 @@ export default async function Page({
             updatedAt={new Date(page.updated * 1000)}
           />
           <section className={styles.main}>
-            <ScrapboxRenderer text={text} title={page.title} />
+            <ScrapboxRenderer text={text} title={page.title} pages={pages} />
           </section>
           <ArticleFooter
             persistent={page.persistent}

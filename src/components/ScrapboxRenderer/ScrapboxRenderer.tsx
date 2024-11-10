@@ -1,5 +1,6 @@
 import { parse } from '@progfay/scrapbox-parser'
 import { SCRAPBOX_PROJECT } from '../../lib/env'
+import { PageMinimum } from '../../schema/scrapbox'
 import { CodeBlock } from '../CodeBlock'
 import { ContentNode } from '../ContentNode'
 import { Table } from '../Table'
@@ -24,11 +25,16 @@ function IndentWrapper({
 }
 
 type Props = Readonly<{
+  pages: PageMinimum[]
   text: string
   title: string
 }>
 
-export function ScrapboxRenderer({ text, title }: Props): React.ReactNode {
+export function ScrapboxRenderer({
+  pages,
+  text,
+  title,
+}: Props): React.ReactNode {
   const parsed = parse(text)
 
   return parsed.map((b, i) => {
@@ -58,7 +64,7 @@ export function ScrapboxRenderer({ text, title }: Props): React.ReactNode {
         return (
           <IndentWrapper key={i} indent={b.indent}>
             {b.nodes.map((n, i) => (
-              <ContentNode key={i} node={n} />
+              <ContentNode key={i} node={n} pages={pages} />
             ))}
           </IndentWrapper>
         )
