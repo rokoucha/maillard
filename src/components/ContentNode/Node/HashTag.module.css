@@ -2,7 +2,9 @@
   border-radius: 0.2rem;
   border: 1px solid dodgerblue;
   color: dodgerblue;
-  padding: 0.25rem;
+  font-size: 0.9rem;
+  line-height: 2rem;
+  padding: 0.2rem;
   &::before {
     content: '#';
     padding-right: 0.1rem;
