@@ -20,11 +20,15 @@ export async function generateStaticParams(): Promise<
   const pages = await searchTitle()
 
   return pages.map((page) => ({
-    slug: [
+    slug:
       process.env.NEXT_PHASE === PHASE_PRODUCTION_BUILD
-        ? page.title
-        : encodeURIComponent(page.title),
-    ],
+        ? page.title.split('/')
+        : [
+            page.title
+              .split('/')
+              .map((p) => encodeURIComponent(p))
+              .join('/'),
+          ],
   }))
 }
 
@@ -33,7 +37,7 @@ type Props = Readonly<{
 }>
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const slug = await params.then((p) => p.slug.join('/'))
+  const slug = await params.then((p) => p.slug.join('%2F'))
 
   const page = await getPage(slug)
 
@@ -62,7 +66,7 @@ export default async function Page({
 }: {
   params: Promise<{ slug: string[] }>
 }): Promise<React.ReactNode> {
-  const slug = await params.then((p) => p.slug.join('/'))
+  const slug = await params.then((p) => p.slug.join('%2F'))
 
   const page = await getPage(slug).catch((e) => {
     console.error(e)
