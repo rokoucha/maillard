@@ -32,10 +32,10 @@
 }
 
 .brand_logo {
+  border-radius: 0.5rem;
   display: inline-block;
   height: 2rem;
   max-width: 100%;
-  vertical-align: bottom;
 }
 
 .brand_name {
