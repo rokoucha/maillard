@@ -11,6 +11,9 @@ export const dynamic = 'force-static'
 
 export async function GET(): Promise<Response> {
   const indexPage = await getPage(SCRAPBOX_INDEX_PAGE)
+  if (!indexPage) {
+    throw new Error('Index page not found')
+  }
 
   const pages = await searchTitle()
 

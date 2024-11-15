@@ -68,7 +68,7 @@ export async function searchTitle(): Promise<PageMinimum[]> {
 
 const getPageCache = new Map<string, Page>()
 
-export async function getPage(title: string): Promise<Page> {
+export async function getPage(title: string): Promise<Page | null> {
   const cached = getPageCache.get(title)
   if (cached) {
     return cached
@@ -78,9 +78,18 @@ export async function getPage(title: string): Promise<Page> {
     `https://scrapbox.io/api/pages/${SCRAPBOX_PROJECT}/${title}`,
   )
   const res = await fetch(url, { headers })
+
+  if (res.status === 404) {
+    return null
+  }
+
   const data = await v.parseAsync(GetPageResponse, await res.json())
   if ('message' in data) {
     throw new Error(data.message)
+  }
+
+  if (!data.persistent && data.relatedPages.links1hop.length === 0) {
+    return null
   }
 
   data.relatedPages.links1hop = data.relatedPages.links1hop

@@ -13,6 +13,9 @@ import styles from './page.module.css'
 
 export async function generateMetadata(): Promise<Metadata> {
   const page = await getPage(SCRAPBOX_INDEX_PAGE)
+  if (!page) {
+    notFound()
+  }
 
   return {
     description: page.descriptions.join('\n'),
@@ -34,10 +37,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Page(): Promise<React.ReactNode> {
-  const page = await getPage(SCRAPBOX_INDEX_PAGE).catch((e) => {
-    console.error(e)
+  const page = await getPage(SCRAPBOX_INDEX_PAGE)
+  if (!page) {
     notFound()
-  })
+  }
 
   const text = page.lines.map((line) => line.text).join('\n')
 

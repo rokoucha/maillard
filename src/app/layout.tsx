@@ -1,4 +1,5 @@
 import { type Metadata } from 'next'
+import { notFound } from 'next/navigation'
 import pkg from '../../package.json' assert { type: 'json' }
 import { BASE_URL, SCRAPBOX_INDEX_PAGE, SITE_LANG, SITE_NAME } from '../lib/env'
 import { getPage } from '../lib/scrapbox'
@@ -8,6 +9,9 @@ export const dynamic = 'error'
 
 export async function generateMetadata(): Promise<Metadata> {
   const indexPage = await getPage(SCRAPBOX_INDEX_PAGE)
+  if (!indexPage) {
+    notFound()
+  }
 
   return {
     title: {

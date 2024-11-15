@@ -40,6 +40,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const slug = await params.then((p) => p.slug.join('%2F'))
 
   const page = await getPage(slug)
+  if (!page) {
+    notFound()
+  }
 
   return {
     title: page.title,
@@ -68,10 +71,10 @@ export default async function Page({
 }): Promise<React.ReactNode> {
   const slug = await params.then((p) => p.slug.join('%2F'))
 
-  const page = await getPage(slug).catch((e) => {
-    console.error(e)
+  const page = await getPage(slug)
+  if (!page) {
     notFound()
-  })
+  }
 
   const text = page.lines.map((line) => line.text).join('\n')
 

@@ -3,9 +3,11 @@ import * as v from 'valibot'
 export const ErrorResponse = v.object({
   name: v.string(),
   message: v.string(),
-  details: v.object({
-    linkTo: v.string(),
-  }),
+  details: v.optional(
+    v.object({
+      linkTo: v.string(),
+    }),
+  ),
 })
 export type ErrorResponse = v.InferOutput<typeof ErrorResponse>
 
