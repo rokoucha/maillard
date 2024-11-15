@@ -87,7 +87,7 @@ export function ContentNode({
         node.pathType === 'relative'
           ? page?.image
             ? page.image
-            : `https://scrapbox.io/${SCRAPBOX_PROJECT}/${node.path}/icon`
+            : `https://scrapbox.io/api/pages/${SCRAPBOX_PROJECT}/${node.path}/icon`
           : `https://scrapbox.io/api/pages${node.path}/icon`
 
       return <Icon href={href} path={node.path} src={src} />
