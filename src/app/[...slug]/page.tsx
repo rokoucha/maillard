@@ -8,7 +8,7 @@ import { Footer } from '../../components/Footer'
 import { Header } from '../../components/Header'
 import { Main } from '../../components/Main'
 import { ScrapboxRenderer } from '../../components/ScrapboxRenderer'
-import { SITE_NAME } from '../../lib/env'
+import { SCRAPBOX_INDEX_PAGE, SITE_NAME } from '../../lib/env'
 import { getPage, searchTitle } from '../../lib/scrapbox'
 import styles from './page.module.css'
 
@@ -69,6 +69,11 @@ export default async function Page({
 }: {
   params: Promise<{ slug: string[] }>
 }): Promise<React.ReactNode> {
+  const indexPage = await getPage(SCRAPBOX_INDEX_PAGE)
+  if (!indexPage) {
+    throw new Error('Index page not found')
+  }
+
   const slug = await params.then((p) => p.slug.join('%2F'))
 
   const page = await getPage(slug)
@@ -82,7 +87,7 @@ export default async function Page({
 
   return (
     <>
-      <Header siteName={SITE_NAME} />
+      <Header siteName={SITE_NAME} logo={indexPage.image ?? undefined} />
       <Main>
         <div className={styles.container}>
           <ArticleHeader

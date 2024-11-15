@@ -48,7 +48,7 @@ export default async function Page(): Promise<React.ReactNode> {
 
   return (
     <>
-      <Header siteName={SITE_NAME} />
+      <Header siteName={SITE_NAME} logo={page.image ?? undefined} />
       <Main>
         <div className={styles.container}>
           <ArticleHeader
