@@ -4,3 +4,8 @@
   max-width: 100%;
   vertical-align: bottom;
 }
+
+.strong {
+  max-height: none;
+  max-width: 95%;
+}

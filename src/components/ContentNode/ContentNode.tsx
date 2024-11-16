@@ -13,7 +13,6 @@ import { Image } from './Node/Image'
 import { Link } from './Node/Link'
 import { NumberList } from './Node/NumberList'
 import { Quote } from './Node/Quote'
-import { StrongImage } from './Node/StrongImage'
 
 type ContentNodeProps = Readonly<{
   node: Node
@@ -193,7 +192,7 @@ export function ContentNode({
     }
 
     case 'strongImage': {
-      return <StrongImage src={node.src} />
+      return <Image src={node.src} strong={true} />
     }
 
     default: {

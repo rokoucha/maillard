@@ -17,9 +17,11 @@ export function Icon({
   return (
     <a href={href} target="_blank" rel="noopener noreferrer">
       <img
-        className={clsx(styles.icon, { [styles.strong]: strong })}
-        src={src}
         alt={path}
+        className={clsx(styles.icon, { [styles.strong]: strong })}
+        decoding="async"
+        loading="lazy"
+        src={src}
       />
     </a>
   )
