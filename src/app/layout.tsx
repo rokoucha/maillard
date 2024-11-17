@@ -61,21 +61,19 @@ export default function RootLayout({
     <html lang={SITE_LANG}>
       <head>
         <link
-          as="style"
-          crossOrigin="anonymous"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-          integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
-          onLoad={"this.rel='stylesheet'" as any}
-          referrerPolicy="no-referrer"
-          rel="preload"
-        />
-        <link
           as="font"
           crossOrigin="anonymous"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/webfonts/fa-brands-400.woff2"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/webfonts/fa-solid-900.woff2"
           referrerPolicy="no-referrer"
           rel="preload"
           type="font/woff2"
+        />
+        <link
+          crossOrigin="anonymous"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/solid.min.css"
+          integrity="sha512-/r+0SvLvMMSIf41xiuy19aNkXxI+3zb/BN8K9lnDDWI09VM0dwgTMzK7Qi5vv5macJ3VH4XZXr60ip7v13QnmQ=="
+          referrerPolicy="no-referrer"
+          rel="stylesheet"
         />
       </head>
       <body>{children}</body>
