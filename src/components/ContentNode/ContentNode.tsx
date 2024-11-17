@@ -93,7 +93,13 @@ export function ContentNode({
     }
 
     case 'image': {
-      return <Image link={node.link || node.src} src={node.src} />
+      return (
+        <Image
+          alt={node.link || node.src}
+          link={node.link || node.src}
+          src={node.src}
+        />
+      )
     }
 
     case 'link': {
@@ -192,7 +198,7 @@ export function ContentNode({
     }
 
     case 'strongImage': {
-      return <Image src={node.src} strong={true} />
+      return <Image alt={node.src} src={node.src} strong={true} />
     }
 
     default: {
