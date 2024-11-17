@@ -20,7 +20,13 @@ export function PageCard({ className, page }: Props): React.ReactNode {
     <article className={clsx(styles.wrapper, className)}>
       <Link href={`/${encodeURIComponent(page.title)}`}>
         {page.image ? (
-          <img alt={page.title} className={styles.thumbnail} src={page.image} />
+          <img
+            alt={page.title}
+            className={styles.thumbnail}
+            decoding="async"
+            loading="lazy"
+            src={page.image}
+          />
         ) : (
           <span className={styles.thumbnail_alt}>📄</span>
         )}
