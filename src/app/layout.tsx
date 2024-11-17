@@ -65,8 +65,17 @@ export default function RootLayout({
           crossOrigin="anonymous"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
           integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+          onLoad={"this.rel='stylesheet'" as any}
           referrerPolicy="no-referrer"
           rel="preload"
+        />
+        <link
+          as="font"
+          crossOrigin="anonymous"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/webfonts/fa-brands-400.woff2"
+          referrerPolicy="no-referrer"
+          rel="preload"
+          type="font/woff2"
         />
       </head>
       <body>{children}</body>
