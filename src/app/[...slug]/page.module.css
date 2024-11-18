@@ -5,6 +5,7 @@
 }
 
 .main {
+  line-height: 1.75rem;
   overflow-wrap: anywhere;
   width: 100%;
 }
