@@ -34,7 +34,7 @@ importers:
         version: 0.10.30
       valibot:
         specifier: 1.0.0-beta.8
-        version: 1.0.0-beta.8(typescript@5.6.3)
+        version: 1.0.0-beta.8(typescript@5.7.2)
     devDependencies:
       '@types/node':
         specifier: 22.9.3
@@ -47,7 +47,7 @@ importers:
         version: 3.3.3
       typescript:
         specifier: ^5.6.3
-        version: 5.6.3
+        version: 5.7.2
 
 packages:
 
@@ -671,8 +671,8 @@ packages:
     resolution: {integrity: sha512-RAH822pAdBgcNMAfWnCBU3CFZcfZ/i1eZjwFU/dsLKumyuuP3niueg2UAukXYF0E2AAoc82ZSSf9J0WQBinzHA==}
     engines: {node: '>=12.20'}
 
-  typescript@5.6.3:
-    resolution: {integrity: sha512-hjcS1mhfuyi4WW8IWtjP7brDrG2cuDZukyrYrSauoXGNgx0S7zceP07adYkJycEr56BOUTNPzbInooiN3fn1qw==}
+  typescript@5.7.2:
+    resolution: {integrity: sha512-i5t66RHxDvVN40HfDd1PsEThGNnlMCMT3jMUuoh9/0TaqWevNontacunWyN02LA9/fIbEWlcHZcgTKb9QoaLfg==}
     engines: {node: '>=14.17'}
     hasBin: true
 
@@ -1263,7 +1263,7 @@ snapshots:
 
   type-fest@2.19.0: {}
 
-  typescript@5.6.3: {}
+  typescript@5.7.2: {}
 
   undici-types@6.19.8: {}
 
@@ -1276,9 +1276,9 @@ snapshots:
     dependencies:
       punycode: 2.3.1
 
-  valibot@1.0.0-beta.8(typescript@5.6.3):
+  valibot@1.0.0-beta.8(typescript@5.7.2):
     optionalDependencies:
-      typescript: 5.6.3
+      typescript: 5.7.2
 
   vary@1.1.2: {}
 
