@@ -20,7 +20,7 @@ jobs:
           cache: pnpm
 
       - name: Install dependencies
-        run: pnpm ci
+        run: pnpm i
 
       - name: Check formatting
         run: pnpm prettier --check src
