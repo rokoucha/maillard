@@ -64,7 +64,12 @@ export function ScrapboxRenderer({
         return (
           <IndentWrapper key={i} indent={b.indent}>
             {b.nodes.map((n, i) => (
-              <ContentNode key={i} node={n} pages={pages} />
+              <ContentNode
+                key={i}
+                node={n}
+                pages={pages}
+                root={i === 0 && b.indent === 0}
+              />
             ))}
           </IndentWrapper>
         )
