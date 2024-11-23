@@ -1,0 +1,39 @@
+name: ci
+
+on:
+  push:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: latest
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm ci
+
+      - name: Check formatting
+        run: pnpm prettier --check src
+
+      - name: Check types
+        run: pnpm run type-check
+
+      - name: Run build
+        run: pnpm run build
+        env:
+          BASE_URL: http://localhost:3000
+          SCRAPBOX_COLLECT_PAGE: test
+          SCRAPBOX_CONNECT_SID: ${{ secrets.SCRAPBOX_CONNECT_SID }}
+          SCRAPBOX_INDEX_PAGE: test
+          SCRAPBOX_PROJECT: maillard-test
+          SITE_NAME: maillard-test
