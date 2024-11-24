@@ -1,5 +1,5 @@
 .wrapper {
-  border-bottom: 1px solid grey;
+  border-bottom: 1px solid gray;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -11,7 +11,6 @@
 }
 
 .info_container {
-  color: 'grey';
   column-gap: 0.8rem;
   display: flex;
   flex-wrap: wrap;

@@ -1,5 +1,5 @@
 .wrapper {
-  border: 1px solid grey;
+  border: 1px solid gray;
   border-radius: 0.5rem;
 }
 
@@ -21,7 +21,7 @@
 }
 
 .container {
-  border-top: 1px solid grey;
+  border-top: 1px solid gray;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -40,7 +40,6 @@
 }
 
 .date_text {
-  color: grey;
   font-family: monospace;
   font-size: 0.8rem;
 }
