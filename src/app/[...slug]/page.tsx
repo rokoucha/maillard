@@ -9,6 +9,7 @@ import { Header } from '../../components/Header'
 import { Main } from '../../components/Main'
 import { ScrapboxRenderer } from '../../components/ScrapboxRenderer'
 import { SCRAPBOX_INDEX_PAGE, SITE_NAME } from '../../lib/env'
+import { descriptionsToText } from '../../lib/renderer'
 import { getPage, searchTitle } from '../../lib/scrapbox'
 import styles from './page.module.css'
 
@@ -44,12 +45,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     notFound()
   }
 
+  const description = descriptionsToText(page.descriptions)
+
   return {
     title: page.title,
-    description: page.descriptions.join('\n'),
+    description,
     openGraph: {
       title: page.title,
-      description: page.descriptions.join('\n'),
+      description,
       images: page.image ?? undefined,
       modifiedTime: new Date(page.updated * 1000).toISOString(),
       publishedTime: new Date(page.created * 1000).toISOString(),
@@ -59,7 +62,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       title: page.title,
-      description: page.descriptions.join('\n'),
+      description,
     },
   }
 }

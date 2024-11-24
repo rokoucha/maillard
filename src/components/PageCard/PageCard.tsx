@@ -1,5 +1,6 @@
 import clsx from 'clsx'
 import Link from 'next/link'
+import { descriptionsToText } from '../../lib/renderer'
 import styles from './PageCard.module.css'
 
 export type Props = Readonly<{
@@ -14,7 +15,9 @@ export type Props = Readonly<{
 }>
 
 export function PageCard({ className, page }: Props): React.ReactNode {
-  const description = page.descriptions?.join(' ')
+  const description = page.descriptions
+    ? descriptionsToText(page.descriptions)
+    : null
 
   return (
     <article className={clsx(styles.wrapper, className)}>

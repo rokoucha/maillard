@@ -1,5 +1,6 @@
 import { Node } from '@progfay/scrapbox-parser'
 import { SCRAPBOX_PROJECT } from '../../lib/env'
+import { nodesToText } from '../../lib/renderer'
 import { PageMinimum } from '../../schema/scrapbox'
 import { Code } from './Node/Code'
 import { CommandLine } from './Node/CommandLine'
@@ -13,54 +14,6 @@ import { Image } from './Node/Image'
 import { Link } from './Node/Link'
 import { NumberList } from './Node/NumberList'
 import { Quote } from './Node/Quote'
-
-function nodesToText(nodes: Node[]): string {
-  return nodes
-    .map((node) => {
-      switch (node.type) {
-        case 'blank':
-          return ''
-        case 'code':
-          return node.text
-        case 'commandLine':
-          return node.text
-        case 'decoration':
-          return node.nodes.map((n) => nodesToText([n])).join('')
-        case 'formula':
-          return node.formula
-        case 'googleMap':
-          return node.place
-        case 'hashTag':
-          return node.href
-        case 'helpfeel':
-          return node.text
-        case 'icon':
-          return node.path
-        case 'image':
-          return node.link || node.src
-        case 'link':
-          return node.content || node.href
-        case 'numberList':
-          return node.nodes.map((n) => nodesToText([n])).join('')
-        case 'plain':
-          return node.text
-        case 'quote':
-          return node.nodes.map((n) => nodesToText([n])).join('')
-        case 'strong':
-          return node.nodes.map((n) => nodesToText([n])).join('')
-        case 'strongIcon':
-          return node.path
-        case 'strongImage':
-          return node.src
-
-        default:
-          throw new Error(
-            `Unknown block type: ${(node satisfies never as any).type}`,
-          )
-      }
-    })
-    .join('')
-}
 
 type ContentNodeProps = Readonly<{
   node: Node
