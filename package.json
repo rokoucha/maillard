@@ -13,7 +13,7 @@
     "react-dom": "^18.3.1",
     "serve": "^14.2.4",
     "temml": "^0.10.30",
-    "valibot": "1.0.0-beta.8"
+    "valibot": "1.0.0-beta.9"
   },
   "devDependencies": {
     "@types/node": "22.10.1",
