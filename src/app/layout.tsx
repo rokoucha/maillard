@@ -63,15 +63,30 @@ export default function RootLayout({
         <link
           as="font"
           crossOrigin="anonymous"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/webfonts/fa-solid-900.woff2"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/webfonts/fa-brands-400.woff2"
+          referrerPolicy="no-referrer"
+          rel="preload"
+          type="font/woff2"
+        />
+        <link
+          as="font"
+          crossOrigin="anonymous"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/webfonts/fa-solid-900.woff2"
           referrerPolicy="no-referrer"
           rel="preload"
           type="font/woff2"
         />
         <link
           crossOrigin="anonymous"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/solid.min.css"
-          integrity="sha512-/r+0SvLvMMSIf41xiuy19aNkXxI+3zb/BN8K9lnDDWI09VM0dwgTMzK7Qi5vv5macJ3VH4XZXr60ip7v13QnmQ=="
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/brands.min.css"
+          integrity="sha512-7rXIvd/xj1FnI2zKQjjXzDFxC4twqBByp8yxOgEQJs4C/aNzNyoQsOO7VxH0RgYNhbAYLJLwzqslaP50KTTHIQ=="
+          referrerPolicy="no-referrer"
+          rel="stylesheet"
+        />
+        <link
+          crossOrigin="anonymous"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/solid.min.css"
+          integrity="sha512-bdqdas3Yr82pkTg5i0X1gcAT3tBXz/8H3J1ec7RyEKAvr/YiSCJNV2dnkukmL8CicjKb9rxmd+ILK8Kg2o2wvQ=="
           referrerPolicy="no-referrer"
           rel="stylesheet"
         />

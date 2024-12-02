@@ -8,16 +8,32 @@
 
 .external {
   &::after {
+    -webkit-font-smoothing: antialiased;
     content: '\f35d';
     display: inline-block;
-    font-family: 'Font Awesome 6 Free';
-    font-size: 0.8rem;
-    font-weight: 900;
+    font-size: 0.8rem !important;
+    font: var(--fa-font-solid);
     padding-left: 0.2rem;
+    text-rendering: auto;
     vertical-align: middle;
   }
 }
 
 .internal {
   color: darkred;
+}
+
+.twitter_prefix::before {
+  -webkit-font-smoothing: antialiased;
+  content: '\f099';
+  display: inline-block;
+  font: var(--fa-font-brands);
+  padding-right: 0.2rem;
+  text-rendering: auto;
+  vertical-align: middle;
+  color: #1da1f2;
+}
+
+.tweet_embed :global(.react-tweet-theme) {
+  margin: 0.5rem 0 0;
 }
