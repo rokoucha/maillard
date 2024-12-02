@@ -50,13 +50,15 @@ export default async function Page(): Promise<React.ReactNode> {
 
   const pages = await searchTitle()
 
-  const pagelists = pages.map((p) => ({
-    date: new Date(p.updated * 1000),
-    id: p.id,
-    image: p.image ?? null,
-    links: p.links,
-    title: p.title,
-  }))
+  const pagelists = pages
+    .map((p) => ({
+      date: new Date(p.updated * 1000),
+      id: p.id,
+      image: p.image ?? null,
+      links: p.links,
+      title: p.title,
+    }))
+    .filter((p) => p.title !== SCRAPBOX_INDEX_PAGE)
 
   return (
     <>

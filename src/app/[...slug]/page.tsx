@@ -94,20 +94,23 @@ export default async function Page({
   const relatedPages = [
     ...page.relatedPages.links1hop,
     ...page.relatedPages.links2hop,
-  ].map((l) => {
-    const p = pagesMap.get(l.title)
-    if (!p) {
-      throw new Error(`Page not found: ${l.title}`)
-    }
+  ]
+    .map((l) => {
+      const p = pagesMap.get(l.title)
+      if (!p) {
+        return null
+      }
 
-    return {
-      date: new Date(p.updated * 1000),
-      id: p.id,
-      image: p.image ?? null,
-      links: p.links,
-      title: p.title,
-    }
-  })
+      return {
+        date: new Date(p.updated * 1000),
+        id: p.id,
+        image: p.image ?? null,
+        links: p.links,
+        title: p.title,
+      }
+    })
+    .filter((p): p is Exclude<typeof p, null> => p !== null)
+    .filter((p) => p.title !== SCRAPBOX_INDEX_PAGE)
 
   return (
     <>
