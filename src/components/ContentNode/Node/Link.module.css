@@ -1,6 +1,9 @@
 .link {
   color: royalblue;
   text-decoration: underline;
+  &:hover {
+    filter: brightness(75%);
+  }
 }
 
 .external {
