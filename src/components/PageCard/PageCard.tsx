@@ -1,24 +1,19 @@
 import clsx from 'clsx'
 import Link from 'next/link'
-import { descriptionsToText } from '../../lib/renderer'
 import styles from './PageCard.module.css'
 
 export type Props = Readonly<{
   className?: string | undefined
   page: {
     date: Date
-    descriptions?: string[] | undefined
-    title: string
+    id: string
     image: string | null
     links: string[]
+    title: string
   }
 }>
 
 export function PageCard({ className, page }: Props): React.ReactNode {
-  const description = page.descriptions
-    ? descriptionsToText(page.descriptions)
-    : null
-
   return (
     <article className={clsx(styles.wrapper, className)}>
       <Link href={`/${encodeURIComponent(page.title)}`}>
@@ -42,11 +37,6 @@ export function PageCard({ className, page }: Props): React.ReactNode {
               {String(page.date.getDate()).padStart(2, '0')}
             </time>
           </header>
-          {description && (
-            <section>
-              <p className={styles.description_text}>{description}</p>
-            </section>
-          )}
           <footer>
             <ul className={styles.link_list}>
               {page.links.map((title) => (

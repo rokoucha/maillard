@@ -7,6 +7,7 @@ import { ArticleHeader } from '../../components/ArticleHeader'
 import { Footer } from '../../components/Footer'
 import { Header } from '../../components/Header'
 import { Main } from '../../components/Main'
+import { PageList } from '../../components/PageList'
 import { ScrapboxRenderer } from '../../components/ScrapboxRenderer'
 import { SCRAPBOX_INDEX_PAGE, SITE_NAME } from '../../lib/env'
 import { descriptionsToText } from '../../lib/renderer'
@@ -88,6 +89,26 @@ export default async function Page({
 
   const pages = await searchTitle()
 
+  const pagesMap = new Map(pages.map((p) => [p.title, p]))
+
+  const relatedPages = [
+    ...page.relatedPages.links1hop,
+    ...page.relatedPages.links2hop,
+  ].map((l) => {
+    const p = pagesMap.get(l.title)
+    if (!p) {
+      throw new Error(`Page not found: ${l.title}`)
+    }
+
+    return {
+      date: new Date(p.updated * 1000),
+      id: p.id,
+      image: p.image ?? null,
+      links: p.links,
+      title: p.title,
+    }
+  })
+
   return (
     <>
       <Header siteName={SITE_NAME} logo={indexPage.image ?? undefined} />
@@ -101,13 +122,20 @@ export default async function Page({
           <section className={styles.main}>
             <ScrapboxRenderer text={text} title={page.title} pages={pages} />
           </section>
-          <ArticleFooter
-            persistent={page.persistent}
-            relatedPages={[
-              ...page.relatedPages.links1hop,
-              ...page.relatedPages.links2hop,
-            ]}
-          />
+          <ArticleFooter hr={page.persistent}>
+            {page.persistent && (
+              <header>
+                <h2 className={styles.title_text}>Related article</h2>
+              </header>
+            )}
+            {relatedPages.length > 0 ? (
+              <PageList pages={relatedPages} />
+            ) : (
+              <section>
+                <p>There is no related pages.</p>
+              </section>
+            )}
+          </ArticleFooter>
         </div>
       </Main>
       <Footer name={pkg.name} version={pkg.version} />

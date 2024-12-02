@@ -1,6 +1,7 @@
 import { type Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import pkg from '../../package.json' assert { type: 'json' }
+import { ArticleFooter } from '../components/ArticleFooter'
 import { ArticleHeader } from '../components/ArticleHeader'
 import { Footer } from '../components/Footer'
 import { Header } from '../components/Header'
@@ -49,6 +50,14 @@ export default async function Page(): Promise<React.ReactNode> {
 
   const pages = await searchTitle()
 
+  const pagelists = pages.map((p) => ({
+    date: new Date(p.updated * 1000),
+    id: p.id,
+    image: p.image ?? null,
+    links: p.links,
+    title: p.title,
+  }))
+
   return (
     <>
       <Header siteName={SITE_NAME} logo={page.image ?? undefined} />
@@ -62,11 +71,9 @@ export default async function Page(): Promise<React.ReactNode> {
           <section className={styles.main}>
             <ScrapboxRenderer text={text} title={page.title} pages={pages} />
           </section>
-          {pages.length > 0 && (
-            <PageList
-              pages={pages.filter((p) => p.title !== SCRAPBOX_INDEX_PAGE)}
-            />
-          )}
+          <ArticleFooter hr={false}>
+            <PageList pages={pagelists} />
+          </ArticleFooter>
         </div>
       </Main>
       <Footer name={pkg.name} version={pkg.version} />
