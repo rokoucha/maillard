@@ -16,10 +16,12 @@ export const RelatedPage = v.object({
   title: v.string(),
   image: v.nullable(v.string()),
   descriptions: v.array(v.string()),
-  linksLc: v.array(v.string()),
-  created: v.number(),
+  linksLc: v.pipe(
+    v.optional(v.array(v.string())),
+    v.transform((l): string[] => l ?? []),
+  ),
+  created: v.nullable(v.number()),
   updated: v.number(),
-  accessed: v.number(),
 })
 export type RelatedPage = v.InferOutput<typeof RelatedPage>
 
@@ -47,6 +49,8 @@ export const Page = v.object({
   files: v.array(v.string()),
   relatedPages: v.object({
     links1hop: v.array(RelatedPage),
+    links2hop: v.array(RelatedPage),
+    projectLinks1hop: v.array(RelatedPage),
   }),
 })
 export type Page = v.InferOutput<typeof Page>

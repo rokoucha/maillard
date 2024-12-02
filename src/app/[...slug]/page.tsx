@@ -103,7 +103,10 @@ export default async function Page({
           </section>
           <ArticleFooter
             persistent={page.persistent}
-            relatedPages={page.relatedPages.links1hop}
+            relatedPages={[
+              ...page.relatedPages.links1hop,
+              ...page.relatedPages.links2hop,
+            ]}
           />
         </div>
       </Main>

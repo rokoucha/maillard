@@ -108,6 +108,22 @@ export async function getPage(title: string): Promise<Page | null> {
         (linkLc) => linkLc !== SCRAPBOX_COLLECT_PAGE,
       ),
     }))
+  data.relatedPages.links2hop = data.relatedPages.links2hop
+    .filter(
+      (link) =>
+        !SCRAPBOX_COLLECT_PAGE || link.linksLc.includes(SCRAPBOX_COLLECT_PAGE),
+    )
+    .map((link) => ({
+      ...link,
+      descriptions: link.descriptions.map((description) =>
+        description
+          .replaceAll(`#${SCRAPBOX_COLLECT_PAGE}`, '')
+          .replaceAll(`[${SCRAPBOX_COLLECT_PAGE}]`, ''),
+      ),
+      linksLc: link.linksLc.filter(
+        (linkLc) => linkLc !== SCRAPBOX_COLLECT_PAGE,
+      ),
+    }))
   data.lines = data.lines.map((line) => ({
     ...line,
     text: line.text
