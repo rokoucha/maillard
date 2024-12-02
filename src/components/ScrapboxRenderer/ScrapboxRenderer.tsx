@@ -89,7 +89,7 @@ export function ScrapboxRenderer({
       }
 
       case 'title': {
-        return null
+        return false
       }
 
       default: {

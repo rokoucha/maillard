@@ -30,7 +30,7 @@ export function ContentNode({
 
   switch (node.type) {
     case 'blank': {
-      return null
+      return false
     }
 
     case 'code': {
