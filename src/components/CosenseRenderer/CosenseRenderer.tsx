@@ -1,10 +1,10 @@
-import { parse } from '@progfay/scrapbox-parser'
+import { Block } from '@progfay/scrapbox-parser'
 import { SCRAPBOX_PROJECT } from '../../lib/env'
-import { PageMinimum } from '../../schema/scrapbox'
-import { CodeBlock } from '../CodeBlock'
-import { ContentNode } from '../ContentNode'
-import { Table } from '../Table'
-import styles from './ScrapboxRenderer.module.css'
+import { PageInfo } from '../../schema/cosense'
+import { CodeBlock } from './CodeBlock'
+import styles from './CosenseRender.module.css'
+import { Line } from './Line'
+import { Table } from './Table'
 
 function IndentWrapper({
   children,
@@ -25,24 +25,22 @@ function IndentWrapper({
 }
 
 type Props = Readonly<{
-  pages: PageMinimum[]
-  text: string
+  blocks: Block[]
+  pageInfos: Map<string, PageInfo>
   title: string
 }>
 
-export function ScrapboxRenderer({
-  pages,
-  text,
+export function CosenseRenderer({
+  blocks,
+  pageInfos,
   title,
 }: Props): React.ReactNode {
-  const parsed = parse(text)
-
-  return parsed.map((b, i) => {
+  return blocks.map((b, i) => {
     switch (b.type) {
       case 'codeBlock': {
-        const [[_, filename, extension]] = b.fileName
-          .matchAll(/^(.*?)(?:\(([^)]+)\))?$/g)
-          .toArray()
+        const [[_, filename, extension]] = [
+          ...b.fileName.matchAll(/^(.*?)(?:\(([^)]+)\))?$/g),
+        ]
 
         return (
           <IndentWrapper key={i} indent={b.indent}>
@@ -64,10 +62,10 @@ export function ScrapboxRenderer({
         return (
           <IndentWrapper key={i} indent={b.indent}>
             {b.nodes.map((n, i) => (
-              <ContentNode
+              <Line
                 key={i}
                 node={n}
-                pages={pages}
+                pageInfos={pageInfos}
                 root={i === 0 && b.indent === 0}
               />
             ))}
@@ -82,7 +80,7 @@ export function ScrapboxRenderer({
               cells={b.cells}
               filename={b.fileName}
               href={`https://scrapbox.io/api/table/${SCRAPBOX_PROJECT}/${title}/${b.fileName}.csv`}
-              pages={pages}
+              pageInfos={pageInfos}
             />
           </IndentWrapper>
         )

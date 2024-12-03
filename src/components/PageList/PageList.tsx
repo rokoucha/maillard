@@ -1,9 +1,9 @@
-import { ComponentPropsWithoutRef } from 'react'
+import { RelatedPage } from '../../schema/cosense'
 import { PageCard } from '../PageCard'
 import styles from './PageList.module.css'
 
 type Props = Readonly<{
-  pages: ComponentPropsWithoutRef<typeof PageCard>['page'][]
+  pages: RelatedPage[]
 }>
 
 export function PageList({ pages }: Props): React.ReactNode {

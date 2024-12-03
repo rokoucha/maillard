@@ -1,21 +1,21 @@
 import { NextResponse } from 'next/server'
+import { fetchPage, fetchPages } from '../../../lib/cosense'
 import {
   BASE_URL,
   SCRAPBOX_INDEX_PAGE,
   SITE_LANG,
   SITE_NAME,
 } from '../../../lib/env'
-import { getPage, searchTitle } from '../../../lib/scrapbox'
 
 export const dynamic = 'force-static'
 
 export async function GET(): Promise<Response> {
-  const indexPage = await getPage(SCRAPBOX_INDEX_PAGE)
+  const indexPage = await fetchPage(SCRAPBOX_INDEX_PAGE)
   if (!indexPage) {
     throw new Error('Index page not found')
   }
 
-  const pages = await searchTitle()
+  const pages = await fetchPages()
 
   const baseUrl = new URL(BASE_URL)
 
@@ -30,9 +30,10 @@ export async function GET(): Promise<Response> {
       id: `tag:${baseUrl.hostname},2024-11-09:${page.id}`,
       url: `${process.env.BASE_URL}/${encodeURIComponent(page.title)}`,
       title: page.title,
-      content_text: page.links.join(' '),
+      content_text: page.description,
       image: page.image,
-      date_modified: new Date(page.updated * 1000).toISOString(),
+      date_published: page.created.toISOString(),
+      date_modified: page.updated.toISOString(),
       tags: page.links,
     })),
   })

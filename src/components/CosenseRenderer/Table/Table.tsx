@@ -1,20 +1,20 @@
 import { Node } from '@progfay/scrapbox-parser'
-import { PageMinimum } from '../../schema/scrapbox'
-import { ContentNode } from '../ContentNode/ContentNode'
+import { PageInfo } from '../../../schema/cosense'
+import { Line } from '../Line'
 import styles from './Table.module.css'
 
 type TableProps = Readonly<{
   cells: Node[][][]
   filename: string
   href: string
-  pages: PageMinimum[]
+  pageInfos: Map<string, PageInfo>
 }>
 
 export function Table({
   cells,
   filename,
   href,
-  pages,
+  pageInfos,
 }: TableProps): React.ReactNode {
   return (
     <div>
@@ -30,7 +30,7 @@ export function Table({
               {row.map((column, i) => (
                 <td className={styles.column} key={i}>
                   {column.map((c, i) => (
-                    <ContentNode key={i} node={c} pages={pages} />
+                    <Line key={i} node={c} pageInfos={pageInfos} />
                   ))}
                 </td>
               ))}

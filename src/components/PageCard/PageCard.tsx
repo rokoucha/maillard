@@ -1,16 +1,11 @@
 import clsx from 'clsx'
 import Link from 'next/link'
+import { RelatedPage } from '../../schema/cosense'
 import styles from './PageCard.module.css'
 
 export type Props = Readonly<{
   className?: string | undefined
-  page: {
-    date: Date
-    id: string
-    image: string | null
-    links: string[]
-    title: string
-  }
+  page: RelatedPage
 }>
 
 export function PageCard({ className, page }: Props): React.ReactNode {
@@ -32,11 +27,14 @@ export function PageCard({ className, page }: Props): React.ReactNode {
           <header>
             <h1 className={styles.title_text}>{page.title}</h1>
             <time className={styles.date_text}>
-              {page.date.getFullYear()}-
-              {String(page.date.getMonth() + 1).padStart(2, '0')}-
-              {String(page.date.getDate()).padStart(2, '0')}
+              {page.created.getFullYear()}-
+              {String(page.created.getMonth() + 1).padStart(2, '0')}-
+              {String(page.created.getDate()).padStart(2, '0')}
             </time>
           </header>
+          <section>
+            <p className={styles.description_text}>{page.description}</p>
+          </section>
           <footer>
             <ul className={styles.link_list}>
               {page.links.map((title) => (

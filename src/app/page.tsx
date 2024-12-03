@@ -3,62 +3,63 @@ import { notFound } from 'next/navigation'
 import pkg from '../../package.json' assert { type: 'json' }
 import { ArticleFooter } from '../components/ArticleFooter'
 import { ArticleHeader } from '../components/ArticleHeader'
+import { CosenseRenderer } from '../components/CosenseRenderer'
 import { Footer } from '../components/Footer'
 import { Header } from '../components/Header'
 import { Main } from '../components/Main'
 import { PageList } from '../components/PageList'
-import { ScrapboxRenderer } from '../components/ScrapboxRenderer'
+import { fetchPage, fetchPageInfos, fetchPages } from '../lib/cosense'
 import { BASE_URL, SCRAPBOX_INDEX_PAGE, SITE_NAME } from '../lib/env'
-import { descriptionsToText } from '../lib/renderer'
-import { getPage, searchTitle } from '../lib/scrapbox'
+import { RelatedPage } from '../schema/cosense'
 import styles from './page.module.css'
 
 export async function generateMetadata(): Promise<Metadata> {
-  const page = await getPage(SCRAPBOX_INDEX_PAGE)
+  const page = await fetchPage(SCRAPBOX_INDEX_PAGE)
   if (!page) {
     notFound()
   }
 
-  const description = descriptionsToText(page.descriptions)
-
   return {
-    description,
+    description: page.description,
     openGraph: {
       title: { absolute: SITE_NAME },
-      description,
+      description: page.description,
       images: page.image ?? undefined,
-      modifiedTime: new Date(page.updated * 1000).toISOString(),
-      publishedTime: new Date(page.created * 1000).toISOString(),
+      modifiedTime: page.updated.toISOString(),
+      publishedTime: page.created.toISOString(),
       tags: page.links,
       type: 'article',
       url: BASE_URL,
     },
     twitter: {
       title: { absolute: SITE_NAME },
-      description,
+      description: page.description,
     },
   }
 }
 
 export default async function Page(): Promise<React.ReactNode> {
-  const page = await getPage(SCRAPBOX_INDEX_PAGE)
+  const page = await fetchPage(SCRAPBOX_INDEX_PAGE)
   if (!page) {
     notFound()
   }
 
-  const text = page.lines.map((line) => line.text).join('\n')
+  const pageInfos = await fetchPageInfos()
+  const pageInfosMap = new Map(pageInfos.map((p) => [p.title, p]))
 
-  const pages = await searchTitle()
-
-  const pagelists = pages
-    .map((p) => ({
-      date: new Date(p.updated * 1000),
-      id: p.id,
-      image: p.image ?? null,
-      links: p.links,
-      title: p.title,
-    }))
-    .filter((p) => p.title !== SCRAPBOX_INDEX_PAGE)
+  const pagelists = await fetchPages().then((pages) =>
+    pages.map(
+      (page): RelatedPage => ({
+        id: page.id,
+        title: page.title,
+        image: page.image,
+        description: page.description,
+        created: page.created,
+        updated: page.updated,
+        links: page.links,
+      }),
+    ),
+  )
 
   return (
     <>
@@ -66,12 +67,16 @@ export default async function Page(): Promise<React.ReactNode> {
       <Main>
         <div className={styles.container}>
           <ArticleHeader
-            createdAt={new Date(page.created * 1000)}
+            createdAt={page.created}
             title={page.title}
-            updatedAt={new Date(page.updated * 1000)}
+            updatedAt={page.updated}
           />
           <section className={styles.main}>
-            <ScrapboxRenderer text={text} title={page.title} pages={pages} />
+            <CosenseRenderer
+              blocks={page.blocks}
+              title={page.title}
+              pageInfos={pageInfosMap}
+            />
           </section>
           <ArticleFooter hr={false}>
             <PageList pages={pagelists} />

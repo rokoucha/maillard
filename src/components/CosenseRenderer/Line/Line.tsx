@@ -1,7 +1,7 @@
 import { Node } from '@progfay/scrapbox-parser'
-import { SCRAPBOX_PROJECT } from '../../lib/env'
-import { nodesToText } from '../../lib/renderer'
-import { PageMinimum } from '../../schema/scrapbox'
+import { SCRAPBOX_PROJECT } from '../../../lib/env'
+import { nodesToText } from '../../../lib/parser'
+import { PageInfo } from '../../../schema/cosense'
 import { Code } from './Node/Code'
 import { CommandLine } from './Node/CommandLine'
 import { Decoration } from './Node/Decoration'
@@ -15,19 +15,13 @@ import { Link } from './Node/Link'
 import { NumberList } from './Node/NumberList'
 import { Quote } from './Node/Quote'
 
-type ContentNodeProps = Readonly<{
+type Props = Readonly<{
   node: Node
-  pages: PageMinimum[]
+  pageInfos: Map<string, PageInfo>
   root?: boolean | undefined
 }>
 
-export function ContentNode({
-  node,
-  pages,
-  root,
-}: ContentNodeProps): React.ReactNode {
-  const pagesMap = new Map(pages.map((p) => [p.title, p]))
-
+export function Line({ node, pageInfos, root }: Props): React.ReactNode {
   switch (node.type) {
     case 'blank': {
       return false
@@ -48,7 +42,7 @@ export function ContentNode({
           id={root ? nodesToText(node.nodes) : undefined}
         >
           {node.nodes.map((n, i) => (
-            <ContentNode key={i} node={n} pages={pages} />
+            <Line key={i} node={n} pageInfos={pageInfos} />
           ))}
         </Decoration>
       )
@@ -79,7 +73,7 @@ export function ContentNode({
     }
 
     case 'icon': {
-      const page = pagesMap.get(node.path)
+      const page = pageInfos.get(node.path)
 
       const href =
         node.pathType === 'relative'
@@ -90,9 +84,8 @@ export function ContentNode({
 
       const src =
         node.pathType === 'relative'
-          ? page?.image
-            ? page.image
-            : `https://scrapbox.io/api/pages/${SCRAPBOX_PROJECT}/${node.path}/icon`
+          ? (page?.image ??
+            `https://scrapbox.io/api/pages/${SCRAPBOX_PROJECT}/${node.path}/icon`)
           : `https://scrapbox.io/api/pages${node.path}/icon`
 
       return <Icon href={href} path={node.path} src={src} />
@@ -113,9 +106,9 @@ export function ContentNode({
       let type: 'internal' | 'external' | undefined = undefined
       switch (node.pathType) {
         case 'relative': {
-          const page = pagesMap.get(node.href)
+          const page = pageInfos.has(node.href)
           if (page) {
-            href = `/${page.title}`
+            href = `/${node.href}`
           } else {
             href = `https://scrapbox.io/${SCRAPBOX_PROJECT}/${node.href}`
             type = 'internal'
@@ -153,7 +146,7 @@ export function ContentNode({
       return (
         <NumberList number={node.number}>
           {node.nodes.map((n, i) => (
-            <ContentNode key={i} node={n} pages={pages} />
+            <Line key={i} node={n} pageInfos={pageInfos} />
           ))}
         </NumberList>
       )
@@ -167,7 +160,7 @@ export function ContentNode({
       return (
         <Quote>
           {node.nodes.map((n, i) => (
-            <ContentNode key={i} node={n} pages={pages} />
+            <Line key={i} node={n} pageInfos={pageInfos} />
           ))}
         </Quote>
       )
@@ -177,14 +170,14 @@ export function ContentNode({
       return (
         <Decoration decorations={['*-1']}>
           {node.nodes.map((n, i) => (
-            <ContentNode key={i} node={n} pages={pages} />
+            <Line key={i} node={n} pageInfos={pageInfos} />
           ))}
         </Decoration>
       )
     }
 
     case 'strongIcon': {
-      const page = pagesMap.get(node.path)
+      const page = pageInfos.get(node.path)
 
       const href =
         node.pathType === 'relative'
@@ -195,9 +188,8 @@ export function ContentNode({
 
       const src =
         node.pathType === 'relative'
-          ? page?.image
-            ? page.image
-            : `https://scrapbox.io/${SCRAPBOX_PROJECT}/${node.path}/icon`
+          ? (page?.image ??
+            `https://scrapbox.io/${SCRAPBOX_PROJECT}/${node.path}/icon`)
           : `https://scrapbox.io/api/pages${node.path}/icon`
 
       return <Icon href={href} path={node.path} src={src} strong={true} />
@@ -209,7 +201,7 @@ export function ContentNode({
 
     default: {
       throw new Error(
-        `Unknown block type: ${(node satisfies never as any).type}`,
+        `Unknown node type: ${(node satisfies never as any).type}`,
       )
     }
   }

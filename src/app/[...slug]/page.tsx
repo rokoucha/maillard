@@ -4,14 +4,13 @@ import { notFound } from 'next/navigation'
 import pkg from '../../../package.json' assert { type: 'json' }
 import { ArticleFooter } from '../../components/ArticleFooter'
 import { ArticleHeader } from '../../components/ArticleHeader'
+import { CosenseRenderer } from '../../components/CosenseRenderer'
 import { Footer } from '../../components/Footer'
 import { Header } from '../../components/Header'
 import { Main } from '../../components/Main'
 import { PageList } from '../../components/PageList'
-import { ScrapboxRenderer } from '../../components/ScrapboxRenderer'
+import { fetchPage, fetchPageInfos } from '../../lib/cosense'
 import { SCRAPBOX_INDEX_PAGE, SITE_NAME } from '../../lib/env'
-import { descriptionsToText } from '../../lib/renderer'
-import { getPage, searchTitle } from '../../lib/scrapbox'
 import styles from './page.module.css'
 
 export async function generateStaticParams(): Promise<
@@ -19,7 +18,7 @@ export async function generateStaticParams(): Promise<
     slug: string[]
   }[]
 > {
-  const pages = await searchTitle()
+  const pages = await fetchPageInfos()
 
   return pages.map((page) => ({
     slug:
@@ -39,31 +38,29 @@ type Props = Readonly<{
 }>
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const slug = await params.then((p) => p.slug.join('%2F'))
+  const slug = await params.then((p) => p.slug.join('/'))
 
-  const page = await getPage(slug)
+  const page = await fetchPage(slug)
   if (!page) {
     notFound()
   }
 
-  const description = descriptionsToText(page.descriptions)
-
   return {
     title: page.title,
-    description,
+    description: page.description,
     openGraph: {
       title: page.title,
-      description,
+      description: page.description,
       images: page.image ?? undefined,
-      modifiedTime: new Date(page.updated * 1000).toISOString(),
-      publishedTime: new Date(page.created * 1000).toISOString(),
+      modifiedTime: page.updated.toISOString(),
+      publishedTime: page.created.toISOString(),
       tags: page.links,
       type: 'article',
       url: `${process.env.BASE_URL}/${encodeURIComponent(page.title)}`,
     },
     twitter: {
       title: page.title,
-      description,
+      description: page.description,
     },
   }
 }
@@ -73,44 +70,20 @@ export default async function Page({
 }: {
   params: Promise<{ slug: string[] }>
 }): Promise<React.ReactNode> {
-  const indexPage = await getPage(SCRAPBOX_INDEX_PAGE)
+  const indexPage = await fetchPage(SCRAPBOX_INDEX_PAGE)
   if (!indexPage) {
     throw new Error('Index page not found')
   }
 
-  const slug = await params.then((p) => p.slug.join('%2F'))
+  const slug = await params.then((p) => p.slug.join('/'))
 
-  const page = await getPage(slug)
+  const page = await fetchPage(slug)
   if (!page) {
     notFound()
   }
 
-  const text = page.lines.map((line) => line.text).join('\n')
-
-  const pages = await searchTitle()
-
-  const pagesMap = new Map(pages.map((p) => [p.title, p]))
-
-  const relatedPages = [
-    ...page.relatedPages.links1hop,
-    ...page.relatedPages.links2hop,
-  ]
-    .map((l) => {
-      const p = pagesMap.get(l.title)
-      if (!p) {
-        return null
-      }
-
-      return {
-        date: new Date(p.updated * 1000),
-        id: p.id,
-        image: p.image ?? null,
-        links: p.links,
-        title: p.title,
-      }
-    })
-    .filter((p): p is Exclude<typeof p, null> => p !== null)
-    .filter((p) => p.title !== SCRAPBOX_INDEX_PAGE)
+  const pageInfos = await fetchPageInfos()
+  const pageInfosMap = new Map(pageInfos.map((p) => [p.title, p]))
 
   return (
     <>
@@ -118,12 +91,16 @@ export default async function Page({
       <Main>
         <div className={styles.container}>
           <ArticleHeader
-            createdAt={new Date(page.created * 1000)}
+            createdAt={page.created}
             title={page.title}
-            updatedAt={new Date(page.updated * 1000)}
+            updatedAt={page.updated}
           />
           <section className={styles.main}>
-            <ScrapboxRenderer text={text} title={page.title} pages={pages} />
+            <CosenseRenderer
+              blocks={page.blocks}
+              pageInfos={pageInfosMap}
+              title={page.title}
+            />
           </section>
           <ArticleFooter hr={page.persistent}>
             {page.persistent && (
@@ -131,8 +108,8 @@ export default async function Page({
                 <h2 className={styles.title_text}>Related article</h2>
               </header>
             )}
-            {relatedPages.length > 0 ? (
-              <PageList pages={relatedPages} />
+            {page.relatedPages.length > 0 ? (
+              <PageList pages={page.relatedPages} />
             ) : (
               <section>
                 <p>There is no related pages.</p>
