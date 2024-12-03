@@ -26,15 +26,17 @@ export async function GET(): Promise<Response> {
     feed_url: `${baseUrl.href}/api/feed`,
     icon: indexPage.image,
     language: SITE_LANG,
-    items: pages.map((page) => ({
-      id: `tag:${baseUrl.hostname},2024-11-09:${page.id}`,
-      url: `${process.env.BASE_URL}/${encodeURIComponent(page.title)}`,
-      title: page.title,
-      content_text: page.description,
-      image: page.image,
-      date_published: page.created.toISOString(),
-      date_modified: page.updated.toISOString(),
-      tags: page.links,
-    })),
+    items: pages
+      .sort((a, b) => b.updated.getTime() - a.updated.getTime())
+      .map((page) => ({
+        id: `tag:${baseUrl.hostname},2024-11-09:${page.id}`,
+        url: `${process.env.BASE_URL}/${encodeURIComponent(page.title)}`,
+        title: page.title,
+        content_text: page.description,
+        image: page.image,
+        date_published: page.created.toISOString(),
+        date_modified: page.updated.toISOString(),
+        tags: page.links,
+      })),
   })
 }

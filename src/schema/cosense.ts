@@ -60,7 +60,7 @@ const ProjectLinks1Hop = v.object({
   id: v.string(),
   title: v.string(),
   titleLc: v.string(),
-  image: v.string(),
+  image: v.nullable(v.string()),
   descriptions: v.array(v.string()),
   linked: v.number(),
   created: v.nullable(v.number()),

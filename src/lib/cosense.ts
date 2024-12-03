@@ -17,6 +17,12 @@ import {
 } from './env'
 import { descriptionsToText, parse } from './parser'
 
+function wait(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+const WAIT_CACHE_MS = 1000
+
 const headers = {
   ...(SCRAPBOX_CONNECT_SID && {
     Cookie: `connect.sid=${SCRAPBOX_CONNECT_SID}`,
@@ -24,12 +30,21 @@ const headers = {
   'User-Agent': `${pkg.name}/${pkg.version}`,
 } satisfies HeadersInit
 
+let searchTitleFetching = false
 let searchTitleCache: SearchTitlePage[] = []
 
 async function searchTitle(): Promise<SearchTitlePage[]> {
+  if (searchTitleFetching) {
+    while (searchTitleFetching) {
+      await wait(WAIT_CACHE_MS)
+    }
+  }
+
   if (searchTitleCache.length > 0) {
     return searchTitleCache
   }
+
+  searchTitleFetching = true
 
   const pages: SearchTitlePage[] = []
   let followingId = ''
@@ -54,16 +69,27 @@ async function searchTitle(): Promise<SearchTitlePage[]> {
 
   searchTitleCache = pages
 
+  searchTitleFetching = false
+
   return pages
 }
 
+let getPageFetching = false
 const getPageCache = new Map<string, GetPage>()
 
 async function getPage(title: string): Promise<GetPage | null> {
+  if (getPageFetching) {
+    while (getPageFetching) {
+      await wait(WAIT_CACHE_MS)
+    }
+  }
+
   const cached = getPageCache.get(title)
   if (cached) {
     return cached
   }
+
+  getPageFetching = true
 
   const url = new URL(
     `https://scrapbox.io/api/pages/${SCRAPBOX_PROJECT}/${title.replaceAll('/', '%2F')}`,
@@ -74,6 +100,11 @@ async function getPage(title: string): Promise<GetPage | null> {
     return null
   }
 
+  const result = v.safeParse(GetPageResponse, await res.clone().json())
+  if (result.issues) {
+    console.log(JSON.stringify(result.issues.map((i) => i.issues)))
+  }
+
   const data = await v.parseAsync(GetPageResponse, await res.json())
   if ('message' in data) {
     throw new Error(data.message)
@@ -81,15 +112,26 @@ async function getPage(title: string): Promise<GetPage | null> {
 
   getPageCache.set(title, data)
 
+  getPageFetching = false
+
   return data
 }
 
+let searchPageFetching = false
 let pageTitleCache: PageInfo[] = []
 
 export async function fetchPageInfos(): Promise<PageInfo[]> {
+  if (searchPageFetching) {
+    while (searchPageFetching) {
+      await wait(WAIT_CACHE_MS)
+    }
+  }
+
   if (pageTitleCache.length > 0) {
     return pageTitleCache
   }
+
+  searchPageFetching = true
 
   const pages = await searchTitle()
   const infos = pages
@@ -100,15 +142,16 @@ export async function fetchPageInfos(): Promise<PageInfo[]> {
       updated: new Date(p.updated * 1000),
       image: p.image ?? null,
     }))
-    .filter(
-      (t) =>
-        t.title !== SCRAPBOX_COLLECT_PAGE ||
-        (SCRAPBOX_COLLECT_PAGE && t.links.includes(SCRAPBOX_COLLECT_PAGE)),
+    .filter((t) => t.title !== SCRAPBOX_COLLECT_PAGE)
+    .filter((t) =>
+      SCRAPBOX_COLLECT_PAGE ? t.links.includes(SCRAPBOX_COLLECT_PAGE) : true,
     )
 
   pageTitleCache = infos
 
-  return infos
+  searchPageFetching = false
+
+  return infos.sort((a, b) => b.updated.getTime() - a.updated.getTime())
 }
 
 const pageCache = new Map<string, Page>()
@@ -121,6 +164,14 @@ export async function fetchPage(title: string): Promise<Page | null> {
 
   const page = await getPage(title)
   if (!page) {
+    return null
+  }
+
+  if (page.title === SCRAPBOX_COLLECT_PAGE) {
+    return null
+  }
+
+  if (SCRAPBOX_COLLECT_PAGE && !page.links.includes(SCRAPBOX_COLLECT_PAGE)) {
     return null
   }
 
@@ -181,12 +232,14 @@ export async function fetchPages(): Promise<Page[]> {
   const pages: Page[] = []
   for (const info of infos) {
     const page = await fetchPage(info.title)
-    if (page) {
-      pages.push(page)
+    if (!page) {
+      throw new Error(`Page not found: ${info.title}`)
     }
+
+    pages.push(page)
   }
 
-  return pages
+  return pages.sort((a, b) => b.created.getTime() - a.created.getTime())
 }
 
 export async function fetchCodes(): Promise<

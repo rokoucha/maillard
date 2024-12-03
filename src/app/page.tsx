@@ -48,17 +48,19 @@ export default async function Page(): Promise<React.ReactNode> {
   const pageInfosMap = new Map(pageInfos.map((p) => [p.title, p]))
 
   const pagelists = await fetchPages().then((pages) =>
-    pages.map(
-      (page): RelatedPage => ({
-        id: page.id,
-        title: page.title,
-        image: page.image,
-        description: page.description,
-        created: page.created,
-        updated: page.updated,
-        links: page.links,
-      }),
-    ),
+    pages
+      .map(
+        (page): RelatedPage => ({
+          id: page.id,
+          title: page.title,
+          image: page.image,
+          description: page.description,
+          created: page.created,
+          updated: page.updated,
+          links: page.links,
+        }),
+      )
+      .filter((p) => p.title !== SCRAPBOX_INDEX_PAGE),
   )
 
   return (
