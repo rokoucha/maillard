@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@progfay/scrapbox-parser':
         specifier: ^9.1.5
-        version: 9.1.5
+        version: 9.2.0
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -216,8 +216,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@progfay/scrapbox-parser@9.1.5':
-    resolution: {integrity: sha512-dfEnkgjsD5IITIkVM5kKIX0KWpjor3qZiJD+8+8yHoOUFVBW8ne015j8ADNR5BOjX35Gqeg2/umwDi1JW2nU/w==}
+  '@progfay/scrapbox-parser@9.2.0':
+    resolution: {integrity: sha512-qrjgnZqxAXkUkjnOJowhv3eWGflItf0q9G3uDrndk6yVMWTxrXEDRSmgoMNxyH+tRQqfvrGjadn+tvYZo1w4Ww==}
 
   '@swc/counter@0.1.3':
     resolution: {integrity: sha512-e2BR4lsJkkRlKZ/qCHPw9ZaSxc0MVUd7gtbtaB7aMvHeJVYe8sOB8DBZkP2DtISHGSku9sCK6T6cnY0CtXrOCQ==}
@@ -844,7 +844,7 @@ snapshots:
   '@next/swc-win32-x64-msvc@15.0.3':
     optional: true
 
-  '@progfay/scrapbox-parser@9.1.5': {}
+  '@progfay/scrapbox-parser@9.2.0': {}
 
   '@swc/counter@0.1.3': {}
 
