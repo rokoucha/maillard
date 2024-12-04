@@ -17,6 +17,13 @@ import {
 } from './env'
 import { descriptionsToText, parse } from './parser'
 
+export function clearCache() {
+  searchTitleCache = []
+  getPageCache.clear()
+  pageTitleCache = []
+  pageCache.clear()
+}
+
 function wait(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
