@@ -167,10 +167,6 @@ export async function fetchPage(title: string): Promise<Page | null> {
     return null
   }
 
-  if (page.title === SCRAPBOX_COLLECT_PAGE) {
-    return null
-  }
-
   if (SCRAPBOX_COLLECT_PAGE && !page.links.includes(SCRAPBOX_COLLECT_PAGE)) {
     return null
   }
