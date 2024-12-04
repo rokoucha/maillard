@@ -230,7 +230,9 @@ export async function fetchPage(title: string): Promise<Page | null> {
     relatedPages.push({
       id: related.id,
       title: related.title,
-      image: related.image,
+      image: related.image?.startsWith('https://i.gyazo.com')
+        ? related.image.replace(/\/raw$/, '')
+        : related.image,
       description: descriptionsToText(related.descriptions),
       created: new Date(related.created * 1000),
       updated: new Date(related.updated * 1000),
@@ -251,7 +253,9 @@ export async function fetchPage(title: string): Promise<Page | null> {
   return {
     id: page.id,
     title: page.title,
-    image: page.image,
+    image: page.image?.startsWith('https://i.gyazo.com')
+      ? page.image.replace(/\/raw$/, '')
+      : page.image,
     description: descriptionsToText(page.descriptions),
     pin: page.pin === 1,
     created: new Date(page.created * 1000),
