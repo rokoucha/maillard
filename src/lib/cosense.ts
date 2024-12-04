@@ -285,19 +285,56 @@ export async function fetchPages(): Promise<Page[]> {
   return pages.sort((a, b) => b.created.getTime() - a.created.getTime())
 }
 
-export async function fetchCodes(): Promise<
-  { pagetitle: string; filename: string }[]
-> {
+let codeFetching = false
+let codeCache: Map<string, string> | null = null
+
+export async function fetchCodes(): Promise<string[]> {
+  if (codeFetching) {
+    while (codeFetching) {
+      await wait(WAIT_CACHE_MS)
+    }
+  }
+
+  if (codeCache) {
+    return [...codeCache.keys()]
+  }
+
+  console.log('fetchCodes: try fetching')
+
+  codeFetching = true
+
   const pages = await fetchPages()
 
-  return pages.flatMap((p) =>
-    p.blocks
-      .filter((b): b is CodeBlock => b.type === 'codeBlock')
-      .map((b) => ({
-        pagetitle: p.title,
-        filename: b.fileName,
-      })),
+  const codes = Map.groupBy(
+    pages.flatMap((p) =>
+      p.blocks
+        .filter((b): b is CodeBlock => b.type === 'codeBlock')
+        .map((b) => ({
+          pagetitle: p.title,
+          filename: b.fileName,
+          code: b.content,
+        })),
+    ),
+    ({ pagetitle, filename }) => [pagetitle, filename].join('/'),
   )
+
+  const codesMap = new Map(
+    [...codes.entries()].map(([k, v]) => [k, v.map((c) => c.code).join('\n')]),
+  )
+
+  codeCache = codesMap
+
+  codeFetching = false
+
+  return [...codes.keys()]
+}
+
+export async function fetchCode(slug: string): Promise<string | null> {
+  if (!codeCache) {
+    await fetchCodes()
+  }
+
+  return codeCache?.get(slug) ?? null
 }
 
 export async function fetchTables(): Promise<

@@ -48,7 +48,7 @@ export function CosenseRenderer({
               content={b.content}
               extension={extension}
               filename={filename}
-              href={`https://scrapbox.io/api/code/${SCRAPBOX_PROJECT}/${title}/${filename}`}
+              href={`/api/code/${title}/${filename}`}
             />
           </IndentWrapper>
         )
