@@ -192,21 +192,39 @@ export async function fetchPage(title: string): Promise<Page | null> {
     return null
   }
 
+  const infos = await fetchPageInfos()
+  const infosMap = new Map(infos.map((i) => [i.title, i]))
+
+  const links: string[] = []
+  for (const link of page.links) {
+    if (link === SCRAPBOX_COLLECT_PAGE || link === SCRAPBOX_INDEX_PAGE) {
+      continue
+    }
+
+    links.push(link)
+  }
+
   const relatedPages: RelatedPage[] = []
   for (const link of [
     ...page.relatedPages.links1hop,
     ...page.relatedPages.links2hop,
   ]) {
+    if (link.title === title) {
+      continue
+    }
+
+    const info = infosMap.get(link.title)
+    if (
+      !info ||
+      link.title === SCRAPBOX_COLLECT_PAGE ||
+      link.title === SCRAPBOX_INDEX_PAGE
+    ) {
+      continue
+    }
+
     const related = await getPage(link.title)
     if (!related) {
       throw new Error(`Page not found: ${link.title}`)
-    }
-
-    if (
-      related.title === SCRAPBOX_COLLECT_PAGE ||
-      (SCRAPBOX_COLLECT_PAGE && !related.links.includes(SCRAPBOX_COLLECT_PAGE))
-    ) {
-      continue
     }
 
     relatedPages.push({
@@ -216,9 +234,19 @@ export async function fetchPage(title: string): Promise<Page | null> {
       description: descriptionsToText(related.descriptions),
       created: new Date(related.created * 1000),
       updated: new Date(related.updated * 1000),
-      links: related.links.filter((l) => l !== SCRAPBOX_COLLECT_PAGE),
+      links: related.links.filter(
+        (l) => l !== SCRAPBOX_COLLECT_PAGE || l !== SCRAPBOX_INDEX_PAGE,
+      ),
     })
   }
+
+  const externalLinks = page.relatedPages.projectLinks1hop.map((l) => ({
+    id: l.id,
+    title: l.title,
+    image: l.image,
+    description: descriptionsToText(l.descriptions),
+    updated: new Date(l.updated * 1000),
+  }))
 
   return {
     id: page.id,
@@ -230,17 +258,11 @@ export async function fetchPage(title: string): Promise<Page | null> {
     updated: new Date(page.updated * 1000),
     persistent: page.persistent,
     blocks: parse(page.lines.map((l) => l.text).join('\n')),
-    links: page.links.filter((l) => l !== SCRAPBOX_COLLECT_PAGE),
+    links,
     icons: page.icons,
     files: page.files,
     relatedPages,
-    externalLinks: page.relatedPages.projectLinks1hop.map((l) => ({
-      id: l.id,
-      title: l.title,
-      image: l.image,
-      description: descriptionsToText(l.descriptions),
-      updated: new Date(l.updated * 1000),
-    })),
+    externalLinks,
   }
 }
 
