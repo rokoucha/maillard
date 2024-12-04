@@ -44,6 +44,8 @@ async function searchTitle(): Promise<SearchTitlePage[]> {
     return searchTitleCache
   }
 
+  console.log('searchTitle: try fetching')
+
   searchTitleFetching = true
 
   const pages: SearchTitlePage[] = []
@@ -88,6 +90,8 @@ async function getPage(title: string): Promise<GetPage | null> {
   if (cached) {
     return cached
   }
+
+  console.log(`getPage: try fetching ${title}`)
 
   getPageFetching = true
 
