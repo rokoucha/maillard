@@ -13,6 +13,7 @@ import {
 import {
   SCRAPBOX_COLLECT_PAGE,
   SCRAPBOX_CONNECT_SID,
+  SCRAPBOX_INDEX_PAGE,
   SCRAPBOX_PROJECT,
 } from './env'
 import { descriptionsToText, parse } from './parser'
@@ -153,9 +154,14 @@ export async function fetchPageInfos(): Promise<PageInfo[]> {
       updated: new Date(p.updated * 1000),
       image: p.image ?? null,
     }))
-    .filter((t) => t.title !== SCRAPBOX_COLLECT_PAGE)
     .filter((t) =>
-      SCRAPBOX_COLLECT_PAGE ? t.links.includes(SCRAPBOX_COLLECT_PAGE) : true,
+      SCRAPBOX_COLLECT_PAGE
+        ? (SCRAPBOX_COLLECT_PAGE !== SCRAPBOX_INDEX_PAGE
+            ? SCRAPBOX_COLLECT_PAGE !== t.title
+            : true) &&
+          (SCRAPBOX_INDEX_PAGE === t.title ||
+            t.links.includes(SCRAPBOX_COLLECT_PAGE))
+        : true,
     )
 
   pageTitleCache = infos
@@ -178,7 +184,11 @@ export async function fetchPage(title: string): Promise<Page | null> {
     return null
   }
 
-  if (SCRAPBOX_COLLECT_PAGE && !page.links.includes(SCRAPBOX_COLLECT_PAGE)) {
+  if (
+    SCRAPBOX_COLLECT_PAGE &&
+    page.title !== SCRAPBOX_COLLECT_PAGE &&
+    !page.links.includes(SCRAPBOX_COLLECT_PAGE)
+  ) {
     return null
   }
 
