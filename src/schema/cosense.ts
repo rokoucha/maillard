@@ -52,7 +52,7 @@ const LinksHop = v.object({
   created: v.number(),
   updated: v.number(),
   accessed: v.number(),
-  lastAccessed: v.optional(v.number()),
+  lastAccessed: v.optional(v.nullable(v.number())),
   infoboxResult: v.optional(v.array(v.any())),
 })
 
