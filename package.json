@@ -25,7 +25,7 @@
     "typescript": "^5.6.3"
   },
   "scripts": {
-    "build:functions": "tsc -p tsconfig.functions.json",
+    "build:functions": "tsc -p ./src/functions/tsconfig.json",
     "build:next": "next build",
     "build": "npm run build:functions && npm run build:next",
     "dev": "next dev --turbopack",

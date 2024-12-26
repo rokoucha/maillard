@@ -109,5 +109,5 @@
     ]
   },
   "include": ["next-env.d.ts", ".next/types/**/*.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules", "functions"]
+  "exclude": ["node_modules", "functions", "src/functions"]
 }
