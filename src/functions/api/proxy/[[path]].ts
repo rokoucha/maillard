@@ -230,9 +230,13 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   if (!response.ok) {
     console.log('fetch failed or no body', response.status)
 
-    response.headers.set('X-Cache', 'NO')
-
-    return response
+    return new Response(response.body, {
+      status: response.status,
+      headers: {
+        ...Object.fromEntries(sanitzeResponseHeaders(response.headers)),
+        'X-Cache': 'NO',
+      },
+    })
   }
 
   console.log('fetch success', response.status)
@@ -254,10 +258,14 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       metadata,
     })
 
-    response.headers.set('X-Cache', 'MISS')
-    response.headers.set('X-Cache-Encrypted', 'NO')
-
-    return response
+    return new Response(response.body, {
+      status: response.status,
+      headers: {
+        ...Object.fromEntries(sanitzeResponseHeaders(response.headers)),
+        'X-Cache': 'MISS',
+        'X-Cache-Encrypted': 'NO',
+      },
+    })
   }
 
   console.log('encrypt cache')
@@ -277,8 +285,12 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     metadata: encryptedMetadata,
   })
 
-  response.headers.set('X-Cache', 'MISS')
-  response.headers.set('X-Cache-Encrypted', 'YES')
-
-  return response
+  return new Response(response.body, {
+    status: response.status,
+    headers: {
+      ...Object.fromEntries(sanitzeResponseHeaders(response.headers)),
+      'X-Cache': 'MISS',
+      'X-Cache-Encrypted': 'YES',
+    },
+  })
 }
