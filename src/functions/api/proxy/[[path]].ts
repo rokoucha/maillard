@@ -209,6 +209,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   if (!response.ok) {
     console.log('fetch failed or no body', response.status)
 
+    response.headers.set('X-Cache', 'NO')
+
     return response
   }
 
