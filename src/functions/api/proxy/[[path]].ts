@@ -217,7 +217,13 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   console.log('fetch success', response.status)
 
   if (!key) {
-    console.log('cache without encryption')
+    console.log('cache without encryption', {
+      metadata: JSON.stringify({
+        status: response.status,
+        headers: Object.fromEntries(response.headers),
+      }).length,
+      body: response.headers.get('content-length'),
+    })
 
     // cache without encryption
     await context.env.KV.put(cacheKey, await response.clone().arrayBuffer(), {
@@ -240,6 +246,11 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     key,
     response.clone(),
   )
+
+  console.log('cache with encryption', {
+    metadata: JSON.stringify(metadataObject).length,
+    body: body.byteLength,
+  })
 
   await context.env.KV.put(cacheKey, body, {
     expirationTtl: CACHE_TTL,
