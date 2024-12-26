@@ -198,7 +198,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
   const response = await fetch(request)
 
-  if (!response.ok || response.body === null) {
+  if (!response.ok) {
     console.log('fetch failed or no body', response.status)
 
     return response
@@ -210,7 +210,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     console.log('cache without encryption')
 
     // cache without encryption
-    context.env.KV.put(cacheKey, await response.arrayBuffer(), {
+    context.env.KV.put(cacheKey, await response.clone().arrayBuffer(), {
       expirationTtl: CACHE_TTL,
       metadata: JSON.stringify({
         status: response.status,
@@ -225,7 +225,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
   const { metadata: metadataObject, body } = await encryptResponse(
     key,
-    response,
+    response.clone(),
   )
 
   context.env.KV.put(cacheKey, body, {
