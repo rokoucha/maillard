@@ -194,6 +194,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       })
     }
 
+    console.log('metadata', metadata)
+
     const { metadata: metadataObject, body } = await decryptResponse(
       key,
       metadata,
@@ -247,6 +249,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     key,
     response.clone(),
   )
+
+  console.log('encryptedMetadata', encryptedMetadata)
 
   await context.env.KV.put(cacheKey, body, {
     expirationTtl: CACHE_TTL,
