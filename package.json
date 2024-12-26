@@ -24,7 +24,9 @@
     "typescript": "^5.6.3"
   },
   "scripts": {
-    "build": "next build",
+    "build:functions": "tsc -p tsconfig.functions.json",
+    "build:next": "next build",
+    "build": "npm run build:functions && npm run build:next",
     "dev": "next dev --turbopack",
     "lint": "next lint",
     "start": "serve out",
