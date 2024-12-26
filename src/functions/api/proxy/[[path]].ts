@@ -4,12 +4,31 @@ interface Env {
 
 const CACHE_TTL = 60 * 5 // 5分
 
+const ALLOWED_REQUEST_HEADERS = ['accept', 'cookie', 'referer', 'user-agent']
+const ALLOWED_RESPONSE_HEADERS = ['content-type', 'content-length']
+
+function sanitzeRequestHeaders(headers: Headers) {
+  return new Headers(
+    [...headers.entries()].filter(([name]) =>
+      ALLOWED_REQUEST_HEADERS.includes(name.toLowerCase()),
+    ),
+  )
+}
+
+function sanitzeResponseHeaders(headers: Headers) {
+  return new Headers(
+    [...headers.entries()].filter(([name]) =>
+      ALLOWED_RESPONSE_HEADERS.includes(name.toLowerCase()),
+    ),
+  )
+}
+
 async function digestRequest(request: Request) {
   const data = new TextEncoder().encode(
     JSON.stringify({
       method: request.method,
       url: request.url,
-      headers: Object.fromEntries(request.headers),
+      headers: Object.entries(sanitzeRequestHeaders(request.headers).entries()),
     }),
   )
 
@@ -59,7 +78,7 @@ async function encryptResponse(key: CryptoKey, response: Response) {
   const metadata = new TextEncoder().encode(
     JSON.stringify({
       status: response.status,
-      headers: Object.fromEntries(response.headers),
+      headers: Object.fromEntries(sanitzeResponseHeaders(response.headers)),
     }),
   )
 
@@ -85,10 +104,12 @@ async function encryptResponse(key: CryptoKey, response: Response) {
 
   return {
     // base64 metadata
-    metadata: btoa(
-      new Uint8Array(metadataEncrypted).reduce(
-        (s, b) => s + String.fromCharCode(b),
-        '',
+    metadata: JSON.stringify(
+      btoa(
+        new Uint8Array(metadataEncrypted).reduce(
+          (s, b) => s + String.fromCharCode(b),
+          '',
+        ),
       ),
     ),
     body: bodyEncrypted,
@@ -217,21 +238,20 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   console.log('fetch success', response.status)
 
   if (!key) {
+    const metadata = JSON.stringify({
+      status: response.status,
+      headers: Object.fromEntries(sanitzeResponseHeaders(response.headers)),
+    })
+
     console.log('cache without encryption', {
-      metadata: JSON.stringify({
-        status: response.status,
-        headers: Object.fromEntries(response.headers),
-      }).length,
-      body: response.headers.get('content-length'),
+      metadata: metadata.length,
+      body: Number(response.headers.get('content-length')),
     })
 
     // cache without encryption
     await context.env.KV.put(cacheKey, await response.clone().arrayBuffer(), {
       expirationTtl: CACHE_TTL,
-      metadata: JSON.stringify({
-        status: response.status,
-        headers: Object.fromEntries(response.headers),
-      }),
+      metadata,
     })
 
     response.headers.set('X-Cache', 'MISS')
@@ -242,19 +262,19 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
   console.log('encrypt cache')
 
-  const { metadata: metadataObject, body } = await encryptResponse(
+  const { metadata: encryptedMetadata, body } = await encryptResponse(
     key,
     response.clone(),
   )
 
   console.log('cache with encryption', {
-    metadata: JSON.stringify(metadataObject).length,
+    metadata: encryptedMetadata.length,
     body: body.byteLength,
   })
 
   await context.env.KV.put(cacheKey, body, {
     expirationTtl: CACHE_TTL,
-    metadata: JSON.stringify(metadataObject),
+    metadata: encryptedMetadata,
   })
 
   response.headers.set('X-Cache', 'MISS')
