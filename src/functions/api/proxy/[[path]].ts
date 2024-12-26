@@ -170,19 +170,13 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     ),
   })
 
-  console.log('request', request.url)
-
   let key: CryptoKey | null = null
   const cookie = context.request.headers.get('cookie')
   if (cookie) {
     key = await deriveKey(cookie)
   }
 
-  console.log('key', key)
-
   const cacheKey = await digestRequest(request)
-
-  console.log('cacheKey', cacheKey)
 
   const { value, metadata } = await context.env.KV.getWithMetadata<string>(
     cacheKey,
@@ -190,11 +184,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   )
 
   if (value && metadata) {
-    console.log('cache hit')
-
     if (!key) {
-      console.log('return cache without decryption')
-
       const metadataObject = JSON.parse(metadata)
       return new Response(value, {
         status: metadataObject.status,
@@ -205,8 +195,6 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         },
       })
     }
-
-    console.log('return cache with decryption')
 
     const { metadata: metadataObject, body } = await decryptResponse(
       key,
@@ -223,13 +211,9 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     })
   }
 
-  console.log('cache miss, try to fetch')
-
   const response = await fetch(request)
 
   if (!response.ok) {
-    console.log('fetch failed or no body', response.status)
-
     return new Response(response.body, {
       status: response.status,
       headers: {
@@ -239,17 +223,10 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     })
   }
 
-  console.log('fetch success', response.status)
-
   if (!key) {
     const metadata = JSON.stringify({
       status: response.status,
       headers: Object.fromEntries(sanitzeResponseHeaders(response.headers)),
-    })
-
-    console.log('cache without encryption', {
-      metadata: metadata.length,
-      body: Number(response.headers.get('content-length')),
     })
 
     // cache without encryption
@@ -268,17 +245,10 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     })
   }
 
-  console.log('encrypt cache')
-
   const { metadata: encryptedMetadata, body } = await encryptResponse(
     key,
     response.clone(),
   )
-
-  console.log('cache with encryption', {
-    metadata: encryptedMetadata.length,
-    body: body.byteLength,
-  })
 
   await context.env.KV.put(cacheKey, body, {
     expirationTtl: CACHE_TTL,
