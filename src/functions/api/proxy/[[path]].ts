@@ -104,12 +104,10 @@ async function encryptResponse(key: CryptoKey, response: Response) {
 
   return {
     // base64 metadata
-    metadata: JSON.stringify(
-      btoa(
-        new Uint8Array(metadataEncrypted).reduce(
-          (s, b) => s + String.fromCharCode(b),
-          '',
-        ),
+    metadata: btoa(
+      new Uint8Array(metadataEncrypted).reduce(
+        (s, b) => s + String.fromCharCode(b),
+        '',
       ),
     ),
     body: bodyEncrypted,
