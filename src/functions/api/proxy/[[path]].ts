@@ -147,12 +147,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     ),
   })
 
-  const cacheKey = await digestRequest(request)
-
-  const { value, metadata } = await context.env.KV.getWithMetadata<string>(
-    cacheKey,
-    'arrayBuffer',
-  )
+  console.log(request)
 
   let key: CryptoKey | null = null
   const cookie = context.request.headers.get('cookie')
@@ -160,14 +155,31 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     key = await deriveKey(cookie)
   }
 
+  console.log(key)
+
+  const cacheKey = await digestRequest(request)
+
+  console.log(cacheKey)
+
+  const { value, metadata } = await context.env.KV.getWithMetadata<string>(
+    cacheKey,
+    'arrayBuffer',
+  )
+
   if (value && metadata) {
+    console.log('cache hit')
+
     if (!key) {
+      console.log('return cache without decryption')
+
       const metadataObject = JSON.parse(metadata)
       return new Response(value, {
         status: metadataObject.status,
         headers: metadataObject.headers,
       })
     }
+
+    console.log('return cache with decryption')
 
     const { metadata: metadataObject, body } = await decryptResponse(
       key,
@@ -180,13 +192,19 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     })
   }
 
+  console.log('cache miss, try to fetch')
+
   const response = await fetch(request)
 
   if (!response.ok || response.body === null) {
+    console.log('fetch failed or no body')
+
     return response
   }
 
   if (!key) {
+    console.log('cache without encryption')
+
     // cache without encryption
     context.env.KV.put(cacheKey, await response.arrayBuffer(), {
       expirationTtl: CACHE_TTL,
@@ -198,6 +216,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
     return response
   }
+
+  console.log('encrypt cache')
 
   const { metadata: metadataObject, body } = await encryptResponse(
     key,
