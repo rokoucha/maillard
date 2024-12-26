@@ -177,7 +177,11 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       const metadataObject = JSON.parse(metadata)
       return new Response(value, {
         status: metadataObject.status,
-        headers: metadataObject.headers,
+        headers: {
+          ...metadataObject.headers,
+          'X-Cache': 'HIT',
+          'X-Cache-Encrypted': 'NO',
+        },
       })
     }
 
@@ -190,7 +194,11 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     )
     return new Response(body, {
       status: metadataObject.status,
-      headers: metadataObject.headers,
+      headers: {
+        ...metadataObject.headers,
+        'X-Cache': 'HIT',
+        'X-Cache-Encrypted': 'YES',
+      },
     })
   }
 
@@ -210,13 +218,16 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     console.log('cache without encryption')
 
     // cache without encryption
-    context.env.KV.put(cacheKey, await response.clone().arrayBuffer(), {
+    await context.env.KV.put(cacheKey, await response.clone().arrayBuffer(), {
       expirationTtl: CACHE_TTL,
       metadata: JSON.stringify({
         status: response.status,
         headers: Object.fromEntries(response.headers),
       }),
     })
+
+    response.headers.set('X-Cache', 'MISS')
+    response.headers.set('X-Cache-Encrypted', 'NO')
 
     return response
   }
@@ -228,10 +239,13 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     response.clone(),
   )
 
-  context.env.KV.put(cacheKey, body, {
+  await context.env.KV.put(cacheKey, body, {
     expirationTtl: CACHE_TTL,
     metadata: JSON.stringify(metadataObject),
   })
+
+  response.headers.set('X-Cache', 'MISS')
+  response.headers.set('X-Cache-Encrypted', 'YES')
 
   return response
 }
