@@ -20,7 +20,9 @@ async function digestRequest(request: Request) {
     data,
   )
 
-  return new TextDecoder().decode(digest)
+  return Array.from(new Uint8Array(digest))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('')
 }
 
 async function deriveKey(passphrase: string) {
@@ -147,7 +149,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     ),
   })
 
-  console.log(request)
+  console.log('request', request.url)
 
   let key: CryptoKey | null = null
   const cookie = context.request.headers.get('cookie')
@@ -155,11 +157,11 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     key = await deriveKey(cookie)
   }
 
-  console.log(key)
+  console.log('key', key)
 
   const cacheKey = await digestRequest(request)
 
-  console.log(cacheKey)
+  console.log('cacheKey', cacheKey)
 
   const { value, metadata } = await context.env.KV.getWithMetadata<string>(
     cacheKey,
@@ -197,10 +199,12 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   const response = await fetch(request)
 
   if (!response.ok || response.body === null) {
-    console.log('fetch failed or no body')
+    console.log('fetch failed or no body', response.status)
 
     return response
   }
+
+  console.log('fetch success', response.status)
 
   if (!key) {
     console.log('cache without encryption')
