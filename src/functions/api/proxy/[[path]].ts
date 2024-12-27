@@ -183,8 +183,6 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     key = await deriveKey(cookie)
   }
 
-  console.log(key)
-
   const cacheKey = await digestRequest(request)
 
   const { value, metadata } = await context.env.KV.getWithMetadata<string>(
