@@ -23,6 +23,18 @@ function sanitzeResponseHeaders(headers: Headers) {
   )
 }
 
+function base64Encode(bytes: Uint8Array) {
+  return btoa(bytes.reduce((s, b) => s + String.fromCharCode(b), ''))
+}
+
+function base64Decode(str: string) {
+  return new Uint8Array(
+    atob(str)
+      .split('')
+      .map((c) => c.charCodeAt(0)),
+  )
+}
+
 async function digestRequest(request: Request) {
   const data = new TextEncoder().encode(
     JSON.stringify({
@@ -82,36 +94,33 @@ async function encryptResponse(key: CryptoKey, response: Response) {
     }),
   )
 
+  const iv = crypto.getRandomValues(new Uint8Array(12))
+
   const metadataEncrypted = await crypto.subtle.encrypt(
     {
       name: 'AES-GCM',
-      iv: crypto.getRandomValues(new Uint8Array(12)).buffer,
+      iv: iv.buffer,
     },
     key,
     metadata,
   )
-
-  console.log('metadataEncrypted', [...new Uint8Array(metadataEncrypted)])
 
   const body = await response.arrayBuffer()
 
   const bodyEncrypted = await crypto.subtle.encrypt(
     {
       name: 'AES-GCM',
-      iv: crypto.getRandomValues(new Uint8Array(12)).buffer,
+      iv: iv.buffer,
     },
     key,
     body,
   )
 
   return {
-    // base64 metadata
-    metadata: btoa(
-      new Uint8Array(metadataEncrypted).reduce(
-        (s, b) => s + String.fromCharCode(b),
-        '',
-      ),
-    ),
+    metadata: [
+      base64Encode(iv),
+      base64Encode(new Uint8Array(metadataEncrypted)),
+    ].join(':'),
     body: bodyEncrypted,
   }
 }
@@ -121,24 +130,17 @@ async function decryptResponse(
   metadata: string,
   body: ArrayBuffer,
 ) {
-  console.log(
-    'metadata',
-    atob(metadata)
-      .split('')
-      .map((c) => c.charCodeAt(0)),
-  )
+  const [ivBase64, metadataBase64] = metadata.split(':')
+
+  const iv = base64Decode(ivBase64)
 
   const metadataDecrypted = await crypto.subtle.decrypt(
     {
       name: 'AES-GCM',
-      iv: new Uint8Array(12).buffer,
+      iv: iv.buffer,
     },
     key,
-    new Uint8Array(
-      atob(metadata)
-        .split('')
-        .map((c) => c.charCodeAt(0)),
-    ).buffer,
+    base64Decode(metadataBase64).buffer,
   )
 
   const metadataObject = JSON.parse(new TextDecoder().decode(metadataDecrypted))
@@ -146,7 +148,7 @@ async function decryptResponse(
   const bodyDecrypted = await crypto.subtle.decrypt(
     {
       name: 'AES-GCM',
-      iv: new Uint8Array(12).buffer,
+      iv: iv.buffer,
     },
     key,
     body,
@@ -181,6 +183,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     key = await deriveKey(cookie)
   }
 
+  console.log(key)
+
   const cacheKey = await digestRequest(request)
 
   const { value, metadata } = await context.env.KV.getWithMetadata<string>(
@@ -200,8 +204,6 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         },
       })
     }
-
-    console.log('metadata', metadata)
 
     const { metadata: metadataObject, body } = await decryptResponse(
       key,
