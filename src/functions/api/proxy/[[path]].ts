@@ -1,8 +1,8 @@
 interface Env {
   KV: KVNamespace
+  SCRAPBOX_PROXY_SALT: string
+  SCRAPBOX_PROXY_TTL: string
 }
-
-const CACHE_TTL = 60 * 5 // 5分
 
 const ALLOWED_REQUEST_HEADERS = ['accept', 'cookie', 'referer', 'user-agent']
 const ALLOWED_RESPONSE_HEADERS = ['content-type', 'content-length']
@@ -56,8 +56,7 @@ async function digestRequest(request: Request) {
     .join('')
 }
 
-async function deriveKey(passphrase: string) {
-  const salt = new TextEncoder().encode('salt')
+async function deriveKey(passphrase: string, salt: string) {
   const iterations = 100000
   const key = await crypto.subtle.importKey(
     'raw',
@@ -72,7 +71,7 @@ async function deriveKey(passphrase: string) {
   return crypto.subtle.deriveKey(
     {
       name: 'PBKDF2',
-      salt: new Uint8Array(salt).buffer,
+      salt: new Uint8Array(new TextEncoder().encode(salt)).buffer,
       iterations,
       hash: 'SHA-256',
     },
@@ -180,7 +179,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   let key: CryptoKey | null = null
   const cookie = context.request.headers.get('cookie')
   if (cookie) {
-    key = await deriveKey(cookie)
+    key = await deriveKey(cookie, context.env.SCRAPBOX_PROXY_SALT)
   }
 
   const cacheKey = await digestRequest(request)
@@ -225,10 +224,12 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       status: response.status,
       headers: {
         ...Object.fromEntries(sanitzeResponseHeaders(response.headers)),
-        'X-Cache': 'NO',
+        'X-Cache': 'SKIP',
       },
     })
   }
+
+  const expirationTtl = Number(context.env.SCRAPBOX_PROXY_TTL)
 
   if (!key) {
     const metadata = JSON.stringify({
@@ -238,7 +239,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
     // cache without encryption
     await context.env.KV.put(cacheKey, await response.clone().arrayBuffer(), {
-      expirationTtl: CACHE_TTL,
+      expirationTtl,
       metadata,
     })
 
@@ -257,10 +258,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     response.clone(),
   )
 
-  console.log('encryptedMetadata', encryptedMetadata)
-
   await context.env.KV.put(cacheKey, body, {
-    expirationTtl: CACHE_TTL,
+    expirationTtl,
     metadata: encryptedMetadata,
   })
 
