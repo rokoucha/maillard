@@ -91,6 +91,8 @@ async function encryptResponse(key: CryptoKey, response: Response) {
     metadata,
   )
 
+  console.log('metadataEncrypted', [...new Uint8Array(metadataEncrypted)])
+
   const body = await response.arrayBuffer()
 
   const bodyEncrypted = await crypto.subtle.encrypt(
@@ -119,6 +121,13 @@ async function decryptResponse(
   metadata: string,
   body: ArrayBuffer,
 ) {
+  console.log(
+    'metadata',
+    atob(metadata)
+      .split('')
+      .map((c) => c.charCodeAt(0)),
+  )
+
   const metadataDecrypted = await crypto.subtle.decrypt(
     {
       name: 'AES-GCM',
@@ -162,9 +171,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   const request = new Request(upstreamUrl.toString(), {
     method: context.request.method,
     headers: [...context.request.headers.entries()].filter(([name]) =>
-      ['accept', 'cookie', 'referer', 'user-agent'].includes(
-        name.toLowerCase(),
-      ),
+      ALLOWED_REQUEST_HEADERS.includes(name.toLowerCase()),
     ),
   })
 
