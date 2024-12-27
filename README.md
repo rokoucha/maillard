@@ -21,10 +21,13 @@ Description: [Maillard: Re Caramelize](https://rokoucha.net/Maillard:%20Re%20Car
 | name                  | required? | description                    |
 | --------------------- | --------- | ------------------------------ |
 | BASE_URL              | ○         | Base URL of Maillard to deploy |
+| SCRAPBOX_API_URL      |           | Scrapbox API URL               |
 | SCRAPBOX_COLLECT_PAGE |           | Page title of to collect       |
 | SCRAPBOX_CONNECT_SID  |           | Scrapbox session cookie        |
 | SCRAPBOX_INDEX_PAGE   | ○         | Page title of index page       |
 | SCRAPBOX_PROJECT      | ○         | Project name of Cosense        |
+| SCRAPBOX_PROXY_SALT   |           | Salt for proxying Scrapbox API |
+| SCRAPBOX_PROXY_TTL    |           | TTL of proxying Scrapbox API   |
 | SITE_LANG             |           | Language of site               |
 | SITE_NAME             | ○         | Name of site                   |
 

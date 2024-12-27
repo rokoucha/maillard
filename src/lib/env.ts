@@ -2,6 +2,7 @@ import * as v from 'valibot'
 
 export const {
   BASE_URL,
+  SCRAPBOX_API_URL,
   SCRAPBOX_COLLECT_PAGE,
   SCRAPBOX_CONNECT_SID,
   SCRAPBOX_INDEX_PAGE,
@@ -11,6 +12,7 @@ export const {
 } = v.parse(
   v.object({
     BASE_URL: v.string(),
+    SCRAPBOX_API_URL: v.optional(v.string(), 'https://scrapbox.io/api'),
     SCRAPBOX_COLLECT_PAGE: v.optional(v.string()),
     SCRAPBOX_CONNECT_SID: v.optional(v.string()),
     SCRAPBOX_INDEX_PAGE: v.string(),
