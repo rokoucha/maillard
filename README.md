@@ -30,6 +30,8 @@ Description: [Maillard: Re Caramelize](https://rokoucha.net/Maillard:%20Re%20Car
 | SCRAPBOX_PROXY_TTL    |           | TTL of proxying Scrapbox API   |
 | SITE_LANG             |           | Language of site               |
 | SITE_NAME             | ○         | Name of site                   |
+| WEBHOOK_URL           |           | Webhook URL                    |
+| WEBHOOK_TIMEOUT       |           | Timeout of webhook(ms)         |
 
 ## License
 
