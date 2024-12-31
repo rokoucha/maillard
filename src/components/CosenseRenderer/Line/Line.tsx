@@ -84,7 +84,9 @@ export function Line({ node, pageInfos, root }: Props): React.ReactNode {
 
       const src =
         node.pathType === 'relative'
-          ? (page?.image ??
+          ? ((page?.image?.startsWith('https://i.gyazo.com')
+              ? page?.image.replace(/\/raw$/, '')
+              : page?.image) ??
             `https://scrapbox.io/api/pages/${SCRAPBOX_PROJECT}/${node.path}/icon`)
           : `https://scrapbox.io/api/pages${node.path}/icon`
 
@@ -188,8 +190,10 @@ export function Line({ node, pageInfos, root }: Props): React.ReactNode {
 
       const src =
         node.pathType === 'relative'
-          ? (page?.image ??
-            `https://scrapbox.io/${SCRAPBOX_PROJECT}/${node.path}/icon`)
+          ? ((page?.image?.startsWith('https://i.gyazo.com')
+              ? page?.image.replace(/\/raw$/, '')
+              : page?.image) ??
+            `https://scrapbox.io/api/pages/${SCRAPBOX_PROJECT}/${node.path}/icon`)
           : `https://scrapbox.io/api/pages${node.path}/icon`
 
       return <Icon href={href} path={node.path} src={src} strong={true} />
