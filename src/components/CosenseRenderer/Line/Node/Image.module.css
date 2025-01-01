@@ -1,5 +1,6 @@
 .image {
   display: inline-block;
+  margin-block: 0.25rem;
   max-height: 300px;
   max-width: 100%;
   vertical-align: bottom;
