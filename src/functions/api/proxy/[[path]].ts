@@ -43,7 +43,7 @@ async function digestRequest(request: Request) {
 }
 
 type CacheEntry = {
-  body: ReadableStream | null
+  body: ArrayBuffer
   created: number
   headers: Headers
   status: number
@@ -101,7 +101,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     created: now,
     status: response.status,
     headers: response.headers,
-    body: response.clone().body,
+    body: await response.clone().arrayBuffer(),
   })
 
   return new Response(response.body, {
