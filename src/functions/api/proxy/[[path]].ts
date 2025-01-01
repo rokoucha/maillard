@@ -87,7 +87,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
   const response = await fetch(request)
 
-  if (!response.ok || !response.body) {
+  if (!response.ok || response.body === null) {
     return new Response(response.body, {
       status: response.status,
       headers: {
