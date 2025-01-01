@@ -46,7 +46,7 @@ async function digestRequest(request: Request) {
 export const onRequest: PagesFunction<Env> = async (context) => {
   const now = Date.now()
 
-  const proxyTtl = Number(context.env.SCRAPBOX_PROXY_TTL)
+  const proxyTtl = Number(context.env.SCRAPBOX_PROXY_TTL) * 1000
 
   const path = Array.isArray(context.params.path)
     ? context.params.path.join('/')
@@ -77,12 +77,6 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       key: string
       status: number
     }>()
-  console.log({
-    key,
-    proxyTtl,
-    now,
-    created: cached?.created,
-  })
   if (cached && now - cached.created <= proxyTtl) {
     return new Response(cached.body, {
       status: cached.status,
