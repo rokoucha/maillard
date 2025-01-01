@@ -78,6 +78,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       status: number
     }>()
   if (cached && now - cached.created <= proxyTtl) {
+    console.log(cached.body)
     return new Response(cached.body, {
       status: cached.status,
       headers: {
