@@ -26,7 +26,6 @@ Description: [Maillard: Re Caramelize](https://rokoucha.net/Maillard:%20Re%20Car
 | SCRAPBOX_CONNECT_SID  |           | Scrapbox session cookie        |
 | SCRAPBOX_INDEX_PAGE   | ○         | Page title of index page       |
 | SCRAPBOX_PROJECT      | ○         | Project name of Cosense        |
-| SCRAPBOX_PROXY_SALT   |           | Salt for proxying Scrapbox API |
 | SCRAPBOX_PROXY_TTL    |           | TTL of proxying Scrapbox API   |
 | SITE_LANG             |           | Language of site               |
 | SITE_NAME             | ○         | Name of site                   |
