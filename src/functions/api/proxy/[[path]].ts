@@ -1,5 +1,4 @@
 interface Env {
-  D1: D1Database
   SCRAPBOX_PROXY_TTL: string
 }
 
@@ -43,6 +42,15 @@ async function digestRequest(request: Request) {
     .join('')
 }
 
+type CacheEntry = {
+  body: ArrayBuffer
+  created: number
+  headers: Headers
+  status: number
+}
+
+const cache = new Map<string, CacheEntry>()
+
 export const onRequest: PagesFunction<Env> = async (context) => {
   const now = Date.now()
 
@@ -66,30 +74,16 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
   const key = await digestRequest(request)
 
-  const cached = await context.env.D1.prepare(
-    'SELECT * FROM cache WHERE key = ?',
-  )
-    .bind(key)
-    .first<{
-      body: ArrayBuffer
-      created: number
-      headers: string
-      key: string
-      status: number
-    }>()
-  if (cached && now - cached.created < proxyTtl) {
+  const cached = cache.get(key)
+  if (cached) {
     return new Response(cached.body, {
       status: cached.status,
       headers: {
-        ...JSON.parse(cached.headers),
+        ...cached.headers.entries(),
         'X-Cache': 'HIT',
       },
     })
   }
-
-  await context.env.D1.prepare('DELETE FROM cache WHERE key = ?')
-    .bind(key)
-    .run()
 
   const response = await fetch(request)
 
@@ -103,19 +97,12 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     })
   }
 
-  await context.env.D1.prepare(
-    'INSERT INTO cache (key, body, created, headers, status) VALUES (?, ?, ?, ?, ?)',
-  )
-    .bind(
-      key,
-      await response.clone().arrayBuffer(),
-      now,
-      JSON.stringify(
-        Object.fromEntries(sanitzeResponseHeaders(response.headers)),
-      ),
-      response.status,
-    )
-    .run()
+  cache.set(key, {
+    created: now,
+    status: response.status,
+    headers: response.headers,
+    body: await response.clone().arrayBuffer(),
+  })
 
   return new Response(response.body, {
     status: response.status,
