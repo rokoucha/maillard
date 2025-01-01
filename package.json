@@ -27,7 +27,7 @@
   "scripts": {
     "build:functions": "tsc -p ./src/functions/tsconfig.json",
     "build:next": "next build",
-    "build": "npm run build:functions && npm run build:next",
+    "build": "pnpm run build:functions && pnpm run build:next",
     "dev": "next dev --turbopack",
     "lint": "next lint",
     "start": "serve out",
