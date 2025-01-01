@@ -1,4 +1,5 @@
 interface Env {
+  D1: D1Database
   SCRAPBOX_PROXY_TTL: string
 }
 
@@ -42,15 +43,6 @@ async function digestRequest(request: Request) {
     .join('')
 }
 
-type CacheEntry = {
-  body: ArrayBuffer
-  created: number
-  headers: Headers
-  status: number
-}
-
-const cache = new Map<string, CacheEntry>()
-
 export const onRequest: PagesFunction<Env> = async (context) => {
   const now = Date.now()
 
@@ -74,12 +66,22 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
   const key = await digestRequest(request)
 
-  const cached = cache.get(key)
+  const cached = await context.env.D1.prepare(
+    'SELECT * FROM cache WHERE key = ?',
+  )
+    .bind(key)
+    .first<{
+      body: ArrayBuffer
+      created: number
+      headers: string
+      key: string
+      status: number
+    }>()
   if (cached && now - cached.created < proxyTtl) {
     return new Response(cached.body, {
       status: cached.status,
       headers: {
-        ...cached.headers.entries(),
+        ...JSON.parse(cached.headers),
         'X-Cache': 'HIT',
       },
     })
@@ -88,6 +90,10 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   const response = await fetch(request)
 
   if (!response.ok) {
+    await context.env.D1.prepare('DELETE FROM cache WHERE key = ?')
+      .bind(key)
+      .run()
+
     return new Response(response.body, {
       status: response.status,
       headers: {
@@ -97,12 +103,19 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     })
   }
 
-  cache.set(key, {
-    created: now,
-    status: response.status,
-    headers: response.headers,
-    body: await response.clone().arrayBuffer(),
-  })
+  await context.env.D1.prepare(
+    'INSERT INTO cache (key, body, created, headers, status) VALUES (?, ?, ?, ?, ?)',
+  )
+    .bind(
+      key,
+      await response.clone().arrayBuffer(),
+      now,
+      JSON.stringify(
+        Object.fromEntries(sanitzeResponseHeaders(response.headers)),
+      ),
+      response.status,
+    )
+    .run()
 
   return new Response(response.body, {
     status: response.status,
