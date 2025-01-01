@@ -11,7 +11,7 @@ interface Env {
 export const onRequest: PagesFunction<Env> = async (context) => {
   const now = String(Date.now())
   const exclusiveId = context.request.headers.get('cf-ray') ?? now
-  const timeoutMs = Number(context.env.WEBHOOK_TIMEOUT)
+  const timeoutMs = Number(context.env.WEBHOOK_TIMEOUT) * 1000
 
   let value = await context.env.KV.get(TIMER_KEY)
   if (value === null) {
