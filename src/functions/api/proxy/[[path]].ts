@@ -87,13 +87,13 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     })
   }
 
+  await context.env.D1.prepare('DELETE FROM cache WHERE key = ?')
+    .bind(key)
+    .run()
+
   const response = await fetch(request)
 
   if (!response.ok) {
-    await context.env.D1.prepare('DELETE FROM cache WHERE key = ?')
-      .bind(key)
-      .run()
-
     return new Response(response.body, {
       status: response.status,
       headers: {
