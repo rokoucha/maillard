@@ -90,6 +90,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   await context.env.D1.prepare('DELETE FROM cache WHERE key = ?')
     .bind(key)
     .run()
+    .catch(() => {})
 
   const response = await fetch(request)
 
@@ -103,7 +104,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     })
   }
 
-  await context.env.D1.prepare(
+  const result = await context.env.D1.prepare(
     'INSERT INTO cache (key, body, created, headers, status) VALUES (?, ?, ?, ?, ?)',
   )
     .bind(
@@ -116,12 +117,17 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       response.status,
     )
     .run()
+    .catch((err) => {
+      console.warn('Failed to cache response', err)
+      return null
+    })
 
   return new Response(response.body, {
     status: response.status,
     headers: {
       ...Object.fromEntries(sanitzeResponseHeaders(response.headers)),
       'X-Cache': 'MISS',
+      'X-Cache-Result': result ? 'STORED' : 'FAILED',
     },
   })
 }
