@@ -45,15 +45,7 @@ async function searchTitle(): Promise<SearchTitlePage[]> {
 
     const res = await fetch(url, { headers })
 
-    const text = await res.clone().text()
-
-    const data = await v.parseAsync(
-      SearchTitleResponse,
-      await res.json().catch((e) => {
-        console.error('searchTitle', url, text)
-        throw e
-      }),
-    )
+    const data = await v.parseAsync(SearchTitleResponse, await res.json())
     if ('message' in data) {
       throw new Error(data.message)
     }
@@ -75,18 +67,7 @@ async function getPage(title: string): Promise<GetPage | null> {
     return null
   }
 
-  const text = await res.clone().text()
-
-  const result = v.safeParse(
-    GetPageResponse,
-    await res
-      .clone()
-      .json()
-      .catch((e) => {
-        console.error('getPage', url, text)
-        throw e
-      }),
-  )
+  const result = v.safeParse(GetPageResponse, await res.clone().json())
   if (result.issues) {
     console.log(JSON.stringify(result.issues.map((i) => i.issues)))
   }
