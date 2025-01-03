@@ -103,14 +103,7 @@ export async function fetchPageInfos(): Promise<PageInfo[]> {
   return infos.sort((a, b) => b.updated.getTime() - a.updated.getTime())
 }
 
-const pageCache = new Map<string, Page>()
-
 export async function fetchPage(title: string): Promise<Page | null> {
-  const cache = pageCache.get(title)
-  if (cache) {
-    return cache
-  }
-
   const page = await getPage(title)
   if (!page) {
     return null
