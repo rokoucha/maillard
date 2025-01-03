@@ -67,11 +67,6 @@ async function getPage(title: string): Promise<GetPage | null> {
     return null
   }
 
-  const result = v.safeParse(GetPageResponse, await res.clone().json())
-  if (result.issues) {
-    console.log(JSON.stringify(result.issues.map((i) => i.issues)))
-  }
-
   const data = await v.parseAsync(GetPageResponse, await res.json())
   if ('message' in data) {
     throw new Error(data.message)
