@@ -39,8 +39,8 @@ importers:
         specifier: ^0.11.0
         version: 0.11.1
       valibot:
-        specifier: 1.0.0-rc.1
-        version: 1.0.0-rc.1(typescript@5.7.3)
+        specifier: 1.0.0-rc.2
+        version: 1.0.0-rc.2(typescript@5.7.3)
     devDependencies:
       '@cloudflare/workers-types':
         specifier: ^4.20241224.0
@@ -730,8 +730,8 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
-  valibot@1.0.0-rc.1:
-    resolution: {integrity: sha512-bTHNpeeQ403xS7qGHF/tw3EC/zkZOU5VdkfIsmRDu1Sp+BJNTNCm6m5HlwOgyW/03lofP+uQiq3R+Poo9wiCEg==}
+  valibot@1.0.0-rc.2:
+    resolution: {integrity: sha512-Tnnp7dydpihvoUbJiaxuYfsCAgAFKuFMex7PTaI25XSjRWkU70DmJPlAO1W6sF1/WUx4RNWyM2hdmBSMIUSZFA==}
     peerDependencies:
       typescript: '>=5'
     peerDependenciesMeta:
@@ -1354,7 +1354,7 @@ snapshots:
     dependencies:
       react: 19.0.0
 
-  valibot@1.0.0-rc.1(typescript@5.7.3):
+  valibot@1.0.0-rc.2(typescript@5.7.3):
     optionalDependencies:
       typescript: 5.7.3
 
