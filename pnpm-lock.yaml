@@ -40,7 +40,7 @@ importers:
         version: 0.11.1
       valibot:
         specifier: 1.0.0-rc.2
-        version: 1.0.0-rc.2(typescript@5.7.3)
+        version: 1.0.0-rc.2(typescript@5.8.2)
     devDependencies:
       '@cloudflare/workers-types':
         specifier: ^4.20241224.0
@@ -56,7 +56,7 @@ importers:
         version: 3.5.2
       typescript:
         specifier: ^5.6.3
-        version: 5.7.3
+        version: 5.8.2
 
 packages:
 
@@ -711,8 +711,8 @@ packages:
     resolution: {integrity: sha512-RAH822pAdBgcNMAfWnCBU3CFZcfZ/i1eZjwFU/dsLKumyuuP3niueg2UAukXYF0E2AAoc82ZSSf9J0WQBinzHA==}
     engines: {node: '>=12.20'}
 
-  typescript@5.7.3:
-    resolution: {integrity: sha512-84MVSjMEHP+FQRPy3pX9sTVV/INIex71s9TL2Gm5FG/WG1SqXeKyZ0k7/blY/4FdOzI12CBy1vGc4og/eus0fw==}
+  typescript@5.8.2:
+    resolution: {integrity: sha512-aJn6wq13/afZp/jT9QZmwEjDqqvSGp1VT5GVg+f/t6/oVyrgXM6BY1h9BRh/O5p3PlUPAe+WuiEZOmb/49RqoQ==}
     engines: {node: '>=14.17'}
     hasBin: true
 
@@ -1337,7 +1337,7 @@ snapshots:
 
   type-fest@2.19.0: {}
 
-  typescript@5.7.3: {}
+  typescript@5.8.2: {}
 
   undici-types@6.20.0: {}
 
@@ -1354,9 +1354,9 @@ snapshots:
     dependencies:
       react: 19.0.0
 
-  valibot@1.0.0-rc.2(typescript@5.7.3):
+  valibot@1.0.0-rc.2(typescript@5.8.2):
     optionalDependencies:
-      typescript: 5.7.3
+      typescript: 5.8.2
 
   vary@1.1.2: {}
 
