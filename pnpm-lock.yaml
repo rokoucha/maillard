@@ -46,8 +46,8 @@ importers:
         specifier: ^4.20241224.0
         version: 4.20250424.0
       '@types/node':
-        specifier: 22.14.1
-        version: 22.14.1
+        specifier: 22.15.0
+        version: 22.15.0
       '@types/react':
         specifier: 19.1.2
         version: 19.1.2
@@ -239,8 +239,8 @@ packages:
   '@swc/helpers@0.5.17':
     resolution: {integrity: sha512-5IKx/Y13RsYd+sauPb2x+U/xZikHjolzfuDgTAl/Tdf3Q8rslRvC19NKDLgAJQ6wsqADk10ntlv08nPFw/gO/A==}
 
-  '@types/node@22.14.1':
-    resolution: {integrity: sha512-u0HuPQwe/dHrItgHHpmw3N2fYCR6x4ivMNbPHRkBVP4CvN+kiRrKHWk3i8tXiO/joPwXLMYvF9TTF0eqgHIuOw==}
+  '@types/node@22.15.0':
+    resolution: {integrity: sha512-99S8dWD2DkeE6PBaEDw+In3aar7hdoBvjyJMR6vaKBTzpvR0P00ClzJMOoVrj9D2+Sy/YCwACYHnBTpMhg1UCA==}
 
   '@types/react@19.1.2':
     resolution: {integrity: sha512-oxLPMytKchWGbnQM9O7D67uPa9paTNxO7jVoNMXgkkErULBPhPARCfkKL9ytcIJJRGjbsVwW4ugJzyFFvm/Tiw==}
@@ -888,7 +888,7 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  '@types/node@22.14.1':
+  '@types/node@22.15.0':
     dependencies:
       undici-types: 6.21.0
 
