@@ -37,14 +37,14 @@ importers:
         version: 14.2.4
       temml:
         specifier: ^0.11.0
-        version: 0.11.5
+        version: 0.11.6
       valibot:
         specifier: 1.0.0
         version: 1.0.0(typescript@5.8.3)
     devDependencies:
       '@cloudflare/workers-types':
         specifier: ^4.20241224.0
-        version: 4.20250424.0
+        version: 4.20250425.0
       '@types/node':
         specifier: 22.15.0
         version: 22.15.0
@@ -60,8 +60,8 @@ importers:
 
 packages:
 
-  '@cloudflare/workers-types@4.20250424.0':
-    resolution: {integrity: sha512-tolHPBVlYSIZq5GWlGbbSqXg1P79u059YJ19cFULwRCF/KpElb9YDq/D9oPxqpw/niS9AvzVBCR5RCxsWv4LDQ==}
+  '@cloudflare/workers-types@4.20250425.0':
+    resolution: {integrity: sha512-BOU4hbK7Bhcxhmjuk/FcDopWvdvuCLMIanHjNxI0UflPhsFJj5se224iNluw8T5pROA0NFAYhBd3Up784p2/Jw==}
 
   '@emnapi/runtime@1.4.3':
     resolution: {integrity: sha512-pBPWdu6MLKROBX05wSNKcNb++m5Er+KQ9QkB+WVM+pW2Kx9hoSrVTnu3BdkI5eBLZoKu/J6mW/B6i6bJB2ytXQ==}
@@ -708,8 +708,8 @@ packages:
     peerDependencies:
       react: ^16.11.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
-  temml@0.11.5:
-    resolution: {integrity: sha512-CmK6klxj8ZdqnMXsEsdo0j8TfmHuZsbACrVesy7Uh/XlOQJqceiiEZbNDY/GI1GRiUwkxsrgSifCqtz54TRKNg==}
+  temml@0.11.6:
+    resolution: {integrity: sha512-XGgTdyP2tLse1IuCaGcHvbNja/yA7M6cNzOXB+slW1tnTuKReNx3egFUi25z9Rdg2wmhjZXDRLv1UV5BsaKjcw==}
     engines: {node: '>=18.13.0'}
 
   tslib@2.8.1:
@@ -765,7 +765,7 @@ packages:
 
 snapshots:
 
-  '@cloudflare/workers-types@4.20250424.0': {}
+  '@cloudflare/workers-types@4.20250425.0': {}
 
   '@emnapi/runtime@1.4.3':
     dependencies:
@@ -1347,7 +1347,7 @@ snapshots:
       react: 19.1.0
       use-sync-external-store: 1.5.0(react@19.1.0)
 
-  temml@0.11.5: {}
+  temml@0.11.6: {}
 
   tslib@2.8.1: {}
 
