@@ -5,7 +5,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@progfay/scrapbox-parser": "^9.1.5",
+    "@progfay/scrapbox-parser": "^10.0.0",
     "clsx": "^2.1.1",
     "highlight.js": "^11.10.0",
     "next": "^15.0.3",
