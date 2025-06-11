@@ -49,8 +49,8 @@ importers:
         specifier: 22.15.31
         version: 22.15.31
       '@types/react':
-        specifier: 19.1.7
-        version: 19.1.7
+        specifier: 19.1.8
+        version: 19.1.8
       prettier:
         specifier: ^3.3.3
         version: 3.5.3
@@ -248,8 +248,8 @@ packages:
   '@types/node@22.15.31':
     resolution: {integrity: sha512-jnVe5ULKl6tijxUhvQeNbQG/84fHfg+yMak02cT8QVhBx/F05rAVxCGBYYTh2EKz22D6JF5ktXuNwdx7b9iEGw==}
 
-  '@types/react@19.1.7':
-    resolution: {integrity: sha512-BnsPLV43ddr05N71gaGzyZ5hzkCmGwhMvYc8zmvI8Ci1bRkkDSzDDVfAXfN2tk748OwI7ediiPX6PfT9p0QGVg==}
+  '@types/react@19.1.8':
+    resolution: {integrity: sha512-AwAfQ2Wa5bCx9WP8nZL2uMZWod7J7/JSplxbTmBQ5ms6QpqNYm672H0Vu9ZVKVngQ+ii4R/byguVEUZQyeg44g==}
 
   '@zeit/schemas@2.36.0':
     resolution: {integrity: sha512-7kjMwcChYEzMKjeex9ZFXkt1AyNov9R5HZtjBKVsmVpw7pa7ZtlCGvCBC2vnnXctaYN+aRI61HjIqeetZW5ROg==}
@@ -901,7 +901,7 @@ snapshots:
     dependencies:
       undici-types: 6.21.0
 
-  '@types/react@19.1.7':
+  '@types/react@19.1.8':
     dependencies:
       csstype: 3.1.3
 
