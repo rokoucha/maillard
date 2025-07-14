@@ -37,7 +37,7 @@ importers:
         version: 14.2.4
       temml:
         specifier: ^0.11.0
-        version: 0.11.8
+        version: 0.11.9
       valibot:
         specifier: 1.1.0
         version: 1.1.0(typescript@5.8.3)
@@ -714,8 +714,8 @@ packages:
     peerDependencies:
       react: ^16.11.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
-  temml@0.11.8:
-    resolution: {integrity: sha512-S6xz3rYPfRJmyxmDBYtLelwrsNeHjLeo8px7vbdOiPp6X5D1R3ZsiY/UYsxjrbNsZ2YoQxvDhoFw0nBiy5SpuQ==}
+  temml@0.11.9:
+    resolution: {integrity: sha512-+k+J6u+OGRroUAE07ynDc6jtmRocEYrRIIJvA182OBoY60nrosSA6hBvLPWdKwgXZNJQeUEdX5maJYICkCLjjw==}
     engines: {node: '>=18.13.0'}
 
   tslib@2.8.1:
@@ -1357,7 +1357,7 @@ snapshots:
       react: 19.1.0
       use-sync-external-store: 1.5.0(react@19.1.0)
 
-  temml@0.11.8: {}
+  temml@0.11.9: {}
 
   tslib@2.8.1: {}
 
