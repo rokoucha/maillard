@@ -9,7 +9,7 @@ import { Footer } from '../../components/Footer'
 import { Header } from '../../components/Header'
 import { Main } from '../../components/Main'
 import { PageList } from '../../components/PageList'
-import { fetchPage, fetchPageInfos } from '../../lib/cosense'
+import { getPage, getPages } from '../../lib/actions/cosense'
 import { SCRAPBOX_INDEX_PAGE, SITE_NAME } from '../../lib/env'
 import styles from './page.module.css'
 
@@ -18,7 +18,7 @@ export async function generateStaticParams(): Promise<
     slug: string[]
   }[]
 > {
-  const pages = await fetchPageInfos()
+  const pages = await getPages()
 
   return pages.map((page) => ({
     slug:
@@ -40,7 +40,7 @@ type Props = Readonly<{
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const slug = await params.then((p) => p.slug.join('/'))
 
-  const page = await fetchPage(slug)
+  const page = await getPage(slug)
   if (!page) {
     notFound()
   }
@@ -70,19 +70,19 @@ export default async function Page({
 }: {
   params: Promise<{ slug: string[] }>
 }): Promise<React.ReactNode> {
-  const indexPage = await fetchPage(SCRAPBOX_INDEX_PAGE)
+  const indexPage = await getPage(SCRAPBOX_INDEX_PAGE)
   if (!indexPage) {
     throw new Error('Index page not found')
   }
 
   const slug = await params.then((p) => p.slug.join('/'))
 
-  const page = await fetchPage(slug)
+  const page = await getPage(slug)
   if (!page) {
     notFound()
   }
 
-  const pageInfos = await fetchPageInfos()
+  const pageInfos = await getPages()
   const pageInfosMap = new Map(pageInfos.map((p) => [p.title, p]))
 
   return (

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { fetchPage, fetchPages } from '../../../lib/cosense'
+import { getPage, getPages } from '../../../lib/actions/cosense'
 import {
   BASE_URL,
   SCRAPBOX_INDEX_PAGE,
@@ -10,12 +10,12 @@ import {
 export const dynamic = 'force-static'
 
 export async function GET(): Promise<Response> {
-  const indexPage = await fetchPage(SCRAPBOX_INDEX_PAGE)
+  const indexPage = await getPage(SCRAPBOX_INDEX_PAGE)
   if (!indexPage) {
     throw new Error('Index page not found')
   }
 
-  const pages = await fetchPages()
+  const pages = await getPages()
 
   const baseUrl = new URL(BASE_URL)
 
