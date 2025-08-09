@@ -1,6 +1,6 @@
 import { cache } from 'react'
 import { Page, PageInfo, RelatedPage } from '../../schema/cosense'
-import * as cosense from '../cosense2'
+import * as cosense from '../cosense'
 import { SCRAPBOX_COLLECT_PAGE, SCRAPBOX_INDEX_PAGE } from '../env'
 import { descriptionsToText, parse } from '../parser'
 
