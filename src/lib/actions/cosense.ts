@@ -2,7 +2,7 @@ import { cache } from 'react'
 import { Page, PageInfo, RelatedPage } from '../../schema/cosense'
 import * as cosense from '../cosense'
 import { SCRAPBOX_COLLECT_PAGE, SCRAPBOX_INDEX_PAGE } from '../env'
-import { descriptionsToText, parse } from '../parser'
+import { descriptionsToText, nodesToImages, parse } from '../parser'
 
 const getPageList = cache(async function getPageList(): Promise<PageInfo[]> {
   const pages = await cosense.searchTitles()
@@ -185,3 +185,27 @@ export const getPages = cache(async function getPages(): Promise<Page[]> {
 
   return pages.sort((a, b) => b.created.getTime() - a.created.getTime())
 })
+
+export const listInternalImages = cache(
+  async function listInternalImages(): Promise<string[]> {
+    const pages = await getPages()
+    const images = pages.flatMap((p) =>
+      p.blocks.flatMap((b) => {
+        switch (b.type) {
+          case 'line':
+            return nodesToImages(b.nodes, [])
+
+          case 'table':
+            return b.cells.flatMap((row) =>
+              row.flatMap((cell) => nodesToImages(cell, [])),
+            )
+
+          default:
+            return []
+        }
+      }),
+    )
+
+    return images.filter((i) => cosense.isInternalUrl(i))
+  },
+)
