@@ -9,4 +9,10 @@ export default {
 
   // Optional: Prevent automatic `/me` -> `/me/`, instead preserve `href`
   // skipTrailingSlashRedirect: true,
+
+  logging: {
+    fetches: {
+      fullUrl: true,
+    },
+  },
 }
