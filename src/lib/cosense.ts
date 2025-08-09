@@ -15,6 +15,22 @@ const headers = {
   'User-Agent': `${pkg.name}/${pkg.version}`,
 } satisfies HeadersInit
 
+export function resolveIconUrl(node: {
+  pathType: 'root' | 'relative'
+  path: string
+}): string {
+  return node.pathType === 'relative'
+    ? `https://scrapbox.io/api/pages/${SCRAPBOX_PROJECT}/${node.path}/icon`
+    : `https://scrapbox.io/api/pages${node.path}/icon`
+}
+
+export function isInternalUrl(url: string): boolean {
+  return (
+    url.startsWith('https://scrapbox.io') ||
+    url.startsWith('https://i.gyazo.com')
+  )
+}
+
 export async function searchTitles(): Promise<SearchTitlePage[]> {
   const pages: SearchTitlePage[] = []
   let followingId = ''
@@ -56,4 +72,19 @@ export async function page(title: string): Promise<GetPage | null> {
   }
 
   return data
+}
+
+export async function fetchInternalImage(
+  url: string,
+): Promise<ArrayBuffer | null> {
+  if (!isInternalUrl(url)) {
+    return null
+  }
+
+  const res = await fetch(url, { cache: 'force-cache', headers })
+  if (!res.ok) {
+    return null
+  }
+
+  return await res.arrayBuffer()
 }
