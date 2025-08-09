@@ -20,5 +20,14 @@ export const {
     SITE_LANG: v.optional(v.string()),
     SITE_NAME: v.string(),
   }),
-  process.env,
+  {
+    BASE_URL: process.env.BASE_URL,
+    SCRAPBOX_API_URL: process.env.SCRAPBOX_API_URL,
+    SCRAPBOX_COLLECT_PAGE: process.env.SCRAPBOX_COLLECT_PAGE,
+    SCRAPBOX_CONNECT_SID: process.env.SCRAPBOX_CONNECT_SID,
+    SCRAPBOX_INDEX_PAGE: process.env.SCRAPBOX_INDEX_PAGE,
+    SCRAPBOX_PROJECT: process.env.SCRAPBOX_PROJECT,
+    SITE_LANG: process.env.SITE_LANG,
+    SITE_NAME: process.env.SITE_NAME,
+  },
 )
