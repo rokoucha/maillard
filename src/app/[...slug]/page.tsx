@@ -9,7 +9,7 @@ import { Footer } from '../../components/Footer'
 import { Header } from '../../components/Header'
 import { Main } from '../../components/Main'
 import { PageList } from '../../components/PageList'
-import { getPage, getPages } from '../../lib/actions/cosense'
+import { getInternalImages, getPage, getPages } from '../../lib/actions/cosense'
 import { SCRAPBOX_INDEX_PAGE, SITE_NAME } from '../../lib/env'
 import styles from './page.module.css'
 
@@ -84,6 +84,11 @@ export default async function Page({
 
   const pageInfos = await getPages()
   const pageInfosMap = new Map(pageInfos.map((p) => [p.title, p]))
+
+  const internalImages = await getInternalImages()
+  const internalImagesMap = new Map(
+    internalImages.map((image) => [image.name, image]),
+  )
 
   return (
     <>

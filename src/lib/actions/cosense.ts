@@ -1,8 +1,14 @@
 import { cache } from 'react'
-import { Page, PageInfo, RelatedPage } from '../../schema/cosense'
+import {
+  type Page,
+  type PageInfo,
+  type RelatedPage,
+} from '../../schema/cosense'
 import * as cosense from '../cosense'
+import { digestSHA1 } from '../digest'
 import { SCRAPBOX_COLLECT_PAGE, SCRAPBOX_INDEX_PAGE } from '../env'
-import { descriptionsToText, parse } from '../parser'
+import { type InternalImage } from '../model/internalimage'
+import { descriptionsToText, nodesToImages, parse } from '../parser'
 
 const getPageList = cache(async function getPageList(): Promise<PageInfo[]> {
   const pages = await cosense.searchTitles()
@@ -185,3 +191,75 @@ export const getPages = cache(async function getPages(): Promise<Page[]> {
 
   return pages.sort((a, b) => b.created.getTime() - a.created.getTime())
 })
+
+export const getInternalImage = cache(async function getInternalImage(
+  url: string,
+): Promise<InternalImage | null> {
+  const image = await cosense.fetchInternalImage(url)
+  if (!image) {
+    return null
+  }
+
+  const hash = await digestSHA1(url)
+
+  let extension = ''
+  switch (image.contentType) {
+    case 'image/apng':
+      extension = '.apng'
+      break
+    case 'image/avif':
+      extension = '.avif'
+      break
+    case 'image/gif':
+      extension = '.gif'
+      break
+    case 'image/jpeg':
+      extension = '.jpg'
+      break
+    case 'image/png':
+      extension = '.png'
+      break
+    case 'image/svg+xml':
+      extension = '.svg'
+      break
+    case 'image/webp':
+      extension = '.webp'
+      break
+    default:
+      extension = '.bin'
+  }
+
+  return {
+    name: `${hash}.${extension}`,
+    url,
+    image: image.body,
+  }
+})
+
+export const getInternalImages = cache(
+  async function getInternalImages(): Promise<InternalImage[]> {
+    const pages = await getPages()
+    const images = pages.flatMap((p) =>
+      p.blocks.flatMap((b) => {
+        switch (b.type) {
+          case 'line':
+            return nodesToImages(b.nodes, [])
+
+          case 'table':
+            return b.cells.flatMap((row) =>
+              row.flatMap((cell) => nodesToImages(cell, [])),
+            )
+
+          default:
+            return []
+        }
+      }),
+    )
+
+    return await Promise.all(
+      images
+        .filter((i) => cosense.isInternalUrl(i))
+        .map((i) => getInternalImage(i)),
+    ).then((i) => i.filter((i): i is InternalImage => i !== null))
+  },
+)
