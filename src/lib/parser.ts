@@ -4,6 +4,7 @@ import {
   ParserOption,
   parse as parseScrapbox,
 } from '@progfay/scrapbox-parser'
+import { resolveIconUrl } from './cosense'
 import { SCRAPBOX_COLLECT_PAGE } from './env'
 
 export function parse(input: string, opts?: ParserOption): Page {
@@ -192,6 +193,37 @@ export function nodesToText(nodes: Node[]): string {
     })
     .join('')
     .trim()
+}
+
+export function nodesToImages(nodes: Node[], images: string[]): string[] {
+  return [
+    ...images,
+    ...nodes
+      .flatMap((node) => {
+        switch (node.type) {
+          case 'decoration':
+            return node.nodes.flatMap((n) => nodesToImages([n], images))
+          case 'icon':
+            return resolveIconUrl(node)
+          case 'image':
+            return node.src
+          case 'numberList':
+            return node.nodes.flatMap((n) => nodesToImages([n], images))
+          case 'quote':
+            return node.nodes.flatMap((n) => nodesToImages([n], images))
+          case 'strong':
+            return node.nodes.flatMap((n) => nodesToImages([n], images))
+          case 'strongIcon':
+            return resolveIconUrl(node)
+          case 'strongImage':
+            return node.src
+
+          default:
+            return null
+        }
+      })
+      .filter((n): n is string => n !== null),
+  ]
 }
 
 export function descriptionsToText(descriptions: string[]): string {
