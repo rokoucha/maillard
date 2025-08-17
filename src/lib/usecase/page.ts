@@ -11,6 +11,7 @@ async function filterCollectPageLink(node: Node): Promise<Node | null> {
   }
 
   switch (node.type) {
+    // 一部ページ公開なら収集ページへのリンクをフィルタする
     case 'hashTag':
     case 'link': {
       if (node.href === SCRAPBOX_COLLECT_PAGE) {
