@@ -58,6 +58,7 @@ export async function findByTitle(title: string): Promise<PageResponse | null> {
 
   const blocks = await processBlocks(page.blocks, filterCollectPageLink)
 
+  // TODO: 使ってないので消す
   const links = page.links.filter((l) => {
     // 全ページ公開なら何もフィルタしない
     if (!SCRAPBOX_COLLECT_PAGE) {
@@ -138,8 +139,12 @@ export async function findByTitle(title: string): Promise<PageResponse | null> {
           return false
         }
 
-        // 一次リンクに含まれていないなら非公開
-        if (!p.links.some((l) => direct.some((d) => d.title === l))) {
+        // 収集ページ以外でリンクされていないならリンクされてない扱いにする
+        if (
+          !p.links.some((l) =>
+            page.links.filter((l) => l !== SCRAPBOX_COLLECT_PAGE).includes(l),
+          )
+        ) {
           return false
         }
 
