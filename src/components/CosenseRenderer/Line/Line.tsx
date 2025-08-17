@@ -1,4 +1,3 @@
-import { nodesToText } from '../../../lib/parser'
 import { type Node } from '../../../lib/presentation/page'
 import { Code } from './Node/Code'
 import { CommandLine } from './Node/CommandLine'
@@ -34,10 +33,7 @@ export function Line({ node, root }: Props): React.ReactNode {
 
     case 'decoration': {
       return (
-        <Decoration
-          decorations={node.decos}
-          id={root ? nodesToText(node.nodes as any) : undefined}
-        >
+        <Decoration decorations={node.decos} id={root ? node.hash : undefined}>
           {node.nodes.map((n, i) => (
             <Line key={i} node={n} />
           ))}

@@ -1,4 +1,5 @@
 import * as cosense from '@progfay/scrapbox-parser'
+import { digestSHA1 } from '../digest'
 import { type Page } from '../domain/page'
 import { type PageInfo } from '../domain/pageinfo'
 import { SCRAPBOX_PROJECT } from '../env'
@@ -130,6 +131,13 @@ function convertScrapboxParserNodeToMaillardNode(
           content: n.href,
         } satisfies HashTagNode
 
+      case 'decoration':
+        return {
+          ...n,
+          nodes: n.nodes as Node[],
+          hash: await digestSHA1(n.raw),
+        } satisfies DecorationNode
+
       default:
         return n as Node
     }
@@ -161,6 +169,7 @@ export type DecorationNode = BaseNode & {
   type: 'decoration'
   rawDecos: string
   decos: cosense.Decoration[]
+  hash: string
   nodes: Node[]
 }
 
