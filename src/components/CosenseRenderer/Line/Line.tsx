@@ -1,6 +1,6 @@
-import { Node } from '../../../lib/domain/block'
 import { SCRAPBOX_PROJECT } from '../../../lib/env'
 import { nodesToText } from '../../../lib/parser'
+import { type Node } from '../../../lib/presentation/page'
 import { PageInfo } from '../../../schema/cosense'
 import { Code } from './Node/Code'
 import { CommandLine } from './Node/CommandLine'
@@ -39,7 +39,7 @@ export function Line({ node, pageInfos, root }: Props): React.ReactNode {
       return (
         <Decoration
           decorations={node.decos}
-          id={root ? nodesToText(node.nodes) : undefined}
+          id={root ? nodesToText(node.nodes as any) : undefined}
         >
           {node.nodes.map((n, i) => (
             <Line key={i} node={n} pageInfos={pageInfos} />
@@ -104,41 +104,8 @@ export function Line({ node, pageInfos, root }: Props): React.ReactNode {
     }
 
     case 'link': {
-      let href = ''
-      let type: 'internal' | 'external' | undefined = undefined
-      switch (node.pathType) {
-        case 'relative': {
-          const page = pageInfos.has(node.href)
-          if (page) {
-            href = `/${node.href}`
-          } else {
-            href = `https://scrapbox.io/${SCRAPBOX_PROJECT}/${node.href}`
-            type = 'internal'
-          }
-          break
-        }
-
-        case 'absolute': {
-          href = node.href
-          type = 'external'
-          break
-        }
-
-        case 'root': {
-          href = `https://scrapbox.io${node.href}`
-          type = 'external'
-          break
-        }
-
-        default: {
-          throw new Error(
-            `Unknown path type: ${(node satisfies never as any).pathType}`,
-          )
-        }
-      }
-
       return (
-        <Link href={href} type={type}>
+        <Link href={node.href} type={node.pathType}>
           {node.content || node.href}
         </Link>
       )

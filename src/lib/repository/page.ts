@@ -1,37 +1,16 @@
 import * as cosense from '../cosense'
-import { type Node, parse } from '../domain/block'
-import { type Page, type RelatedPage } from '../domain/page'
-
-async function parseDescription(descriptions: string[]): Promise<Node[]> {
-  return await parse(descriptions, { hasTitle: false }).then(
-    (b) => b.find((b) => b.type === 'line')?.nodes ?? [],
-  )
-}
-
-async function replaceInternalImage(node: Node): Promise<Node | null> {
-  switch (node.type) {
-    default:
-      return node
-  }
-}
+import {
+  parseDescription,
+  parseLines,
+  type Page,
+  type RelatedPage,
+} from '../domain/page'
 
 export async function findByTitle(title: string): Promise<Page | null> {
   const page = await cosense.page(title)
   if (!page) {
     return null
   }
-
-  const blocks = await parse(
-    page.lines.map((l) => l.text),
-    {
-      processors: [
-        {
-          types: ['icon', 'image', 'strongIcon', 'strongImage'],
-          processor: replaceInternalImage,
-        },
-      ],
-    },
-  )
 
   const direct: RelatedPage[] = []
   for (const link of page.relatedPages.links1hop) {
@@ -44,7 +23,7 @@ export async function findByTitle(title: string): Promise<Page | null> {
       id: related.id,
       title: related.title,
       image: related.image,
-      description: await parseDescription(related.descriptions),
+      description: parseDescription(related.descriptions),
       created: new Date(related.created * 1000),
       updated: new Date(related.updated * 1000),
       links: related.links,
@@ -62,7 +41,7 @@ export async function findByTitle(title: string): Promise<Page | null> {
       id: related.id,
       title: related.title,
       image: related.image,
-      description: await parseDescription(related.descriptions),
+      description: parseDescription(related.descriptions),
       created: new Date(related.created * 1000),
       updated: new Date(related.updated * 1000),
       links: related.links,
@@ -73,11 +52,11 @@ export async function findByTitle(title: string): Promise<Page | null> {
     id: page.id,
     title: page.title,
     image: page.image,
-    description: await parseDescription(page.descriptions),
+    description: parseDescription(page.descriptions),
     created: new Date(page.created * 1000),
     updated: new Date(page.updated * 1000),
     persistent: page.persistent,
-    blocks,
+    blocks: parseLines(page.lines.map((l) => l.text)),
     links: page.links,
     relatedPages: {
       direct,

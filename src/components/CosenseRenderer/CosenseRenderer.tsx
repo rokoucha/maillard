@@ -1,5 +1,5 @@
-import { Block } from '../../lib/domain/block'
 import { SCRAPBOX_PROJECT } from '../../lib/env'
+import { type Block } from '../../lib/presentation/page'
 import { PageInfo } from '../../schema/cosense'
 import { CodeBlock } from './CodeBlock'
 import styles from './CosenseRender.module.css'

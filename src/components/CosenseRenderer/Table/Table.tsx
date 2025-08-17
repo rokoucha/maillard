@@ -1,4 +1,4 @@
-import { Node } from '../../../lib/domain/block'
+import { type Node } from '../../../lib/presentation/page'
 import { PageInfo } from '../../../schema/cosense'
 import { Line } from '../Line'
 import styles from './Table.module.css'

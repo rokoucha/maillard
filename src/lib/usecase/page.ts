@@ -1,8 +1,28 @@
-import { Node, processBlocks } from '../domain/block'
+import { processBlocks, type Node } from '../domain/page'
 import { SCRAPBOX_COLLECT_PAGE, SCRAPBOX_INDEX_PAGE } from '../env'
-import { PageResponse, present } from '../presentation/page'
+import { present, type PageResponse } from '../presentation/page'
 import * as PageRepository from '../repository/page'
 import * as PageInfoRepository from '../repository/pageinfo'
+
+async function filterCollectPageLink(node: Node): Promise<Node | null> {
+  // 全ページ公開なら何もフィルタしない
+  if (!SCRAPBOX_COLLECT_PAGE) {
+    return node
+  }
+
+  switch (node.type) {
+    case 'hashTag':
+    case 'link': {
+      if (node.href === SCRAPBOX_COLLECT_PAGE) {
+        return null
+      }
+    }
+
+    default: {
+      return node
+    }
+  }
+}
 
 export async function findByTitle(title: string): Promise<PageResponse | null> {
   const page = await PageRepository.findByTitle(title)
@@ -35,32 +55,7 @@ export async function findByTitle(title: string): Promise<PageResponse | null> {
   )
   const pages = new Map(pageInfos.map((p) => [p.title, p]))
 
-  const filterCollectPageLink = async (node: Node): Promise<Node | null> => {
-    // 全ページ公開なら何もフィルタしない
-    if (!SCRAPBOX_COLLECT_PAGE) {
-      return node
-    }
-
-    switch (node.type) {
-      case 'hashTag':
-      case 'link': {
-        if (node.href === SCRAPBOX_COLLECT_PAGE) {
-          return null
-        }
-      }
-
-      default: {
-        return node
-      }
-    }
-  }
-
-  const blocks = await processBlocks(page.blocks, [
-    {
-      types: ['hashTag', 'link'],
-      processor: filterCollectPageLink,
-    },
-  ])
+  const blocks = await processBlocks(page.blocks, filterCollectPageLink)
 
   const links = page.links.filter((l) => {
     // 全ページ公開なら何もフィルタしない
