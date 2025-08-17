@@ -76,7 +76,7 @@ export async function processBlocks(
   )
 }
 
-async function processNodes(
+export async function processNodes(
   nodes: Node[],
   processor: (node: Node) => Promise<Node | null>,
 ): Promise<Node[]> {
