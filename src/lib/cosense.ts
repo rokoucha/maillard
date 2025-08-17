@@ -57,3 +57,23 @@ export async function page(title: string): Promise<GetPage | null> {
 
   return data
 }
+
+export async function headInternalImage(url: string): Promise<Response> {
+  const u = new URL(url)
+  if (u.hostname !== 'scrapbox.io') {
+    throw new Error(`Invalid internal image URL: ${url}`)
+  }
+
+  const res = await fetch(u, { cache: 'force-cache', headers, method: 'HEAD' })
+  return res
+}
+
+export async function getInternalImage(url: string): Promise<Response> {
+  const u = new URL(url)
+  if (u.hostname !== 'scrapbox.io') {
+    throw new Error(`Invalid internal image URL: ${url}`)
+  }
+
+  const res = await fetch(u, { cache: 'force-cache', headers })
+  return res
+}

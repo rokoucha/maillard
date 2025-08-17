@@ -1,6 +1,10 @@
 import * as cosense from '@progfay/scrapbox-parser'
 import { digestSHA1 } from '../digest'
-import { type Page } from '../domain/page'
+import {
+  type Block as DomainBlock,
+  type Node as DomainNode,
+  type Page,
+} from '../domain/page'
 import { type PageInfo } from '../domain/pageinfo'
 import { SCRAPBOX_PROJECT } from '../env'
 
@@ -39,9 +43,9 @@ export async function present(
     created: page.created,
     updated: page.updated,
     persistent: page.persistent,
-    blocks: await processBlocks(
-      page.blocks as Block[],
-      convertScrapboxParserNodeToMaillardNode(pageInfo),
+    blocks: await convertBlocks(
+      page.blocks,
+      convertDomainNodeToPresentationNode(pageInfo),
     ),
     links: page.links,
     relatedPages: [
@@ -59,95 +63,91 @@ export async function present(
   }
 }
 
-function convertScrapboxParserNodeToMaillardNode(
-  pageInfo: Map<string, PageInfo>,
-) {
-  return async (node: Node): Promise<Node> => {
-    const n = node as cosense.Node
-
-    switch (n.type) {
+function convertDomainNodeToPresentationNode(pageInfo: Map<string, PageInfo>) {
+  return async (node: DomainNode): Promise<Node> => {
+    switch (node.type) {
       case 'icon':
       case 'strongIcon':
-        switch (n.pathType) {
+        switch (node.pathType) {
           case 'relative':
-            const page = pageInfo.get(n.path)
+            const page = pageInfo.get(node.path)
 
             return {
-              type: n.type,
-              raw: n.raw,
+              type: node.type,
+              raw: node.raw,
               pathType: page ? 'internal' : 'external',
               href: page
-                ? `/${n.path}`
-                : `https://scrapbox.io/${SCRAPBOX_PROJECT}/${n.path}`,
-              src: `https://scrapbox.io/api/pages/${SCRAPBOX_PROJECT}/${n.path}/icon`,
+                ? `/${node.path}`
+                : `https://scrapbox.io/${SCRAPBOX_PROJECT}/${node.path}`,
+              src: node.src,
             } satisfies IconNode | StrongIconNode
 
           case 'root':
             return {
-              type: n.type,
-              raw: n.raw,
+              type: node.type,
+              raw: node.raw,
               pathType: 'external',
-              href: `https://scrapbox.io${n.path}`,
-              src: `https://scrapbox.io/api/pages${n.path}/icon`,
+              href: `https://scrapbox.io${node.path}`,
+              src: node.src,
             } satisfies IconNode | StrongIconNode
         }
 
       case 'link':
-        switch (n.pathType) {
+        switch (node.pathType) {
           case 'relative':
-            const page = pageInfo.get(n.href)
+            const page = pageInfo.get(node.href)
 
             return {
               type: 'link',
-              raw: n.raw,
+              raw: node.raw,
               pathType: page ? 'internal' : 'external',
               href: page
-                ? `/${n.href}`
-                : `https://scrapbox.io/${SCRAPBOX_PROJECT}/${n.href}`,
-              content: n.content,
+                ? `/${node.href}`
+                : `https://scrapbox.io/${SCRAPBOX_PROJECT}/${node.href}`,
+              content: node.content,
             } satisfies LinkNode
 
           case 'absolute':
             return {
               type: 'link',
-              raw: n.raw,
+              raw: node.raw,
               pathType: 'external',
-              href: n.href,
-              content: n.content,
+              href: node.href,
+              content: node.content,
             } satisfies LinkNode
 
           case 'root':
             return {
               type: 'link',
-              raw: n.raw,
+              raw: node.raw,
               pathType: 'external',
-              href: `https://scrapbox.io${n.href}`,
-              content: n.content,
+              href: `https://scrapbox.io${node.href}`,
+              content: node.content,
             } satisfies LinkNode
         }
 
       case 'hashTag':
-        const page = pageInfo.get(n.href)
+        const page = pageInfo.get(node.href)
 
         return {
           type: 'hashTag',
-          raw: n.raw,
+          raw: node.raw,
           pathType: page ? 'internal' : 'external',
           href: page
-            ? `/${n.href}`
-            : `https://scrapbox.io/${SCRAPBOX_PROJECT}/${n.href}`,
-          content: n.href,
+            ? `/${node.href}`
+            : `https://scrapbox.io/${SCRAPBOX_PROJECT}/${node.href}`,
+          content: node.href,
         } satisfies HashTagNode
 
       case 'decoration':
         return {
-          ...n,
-          nodes: n.nodes as Node[],
-          hash: await digestSHA1(n.raw),
+          ...node,
+          nodes: node.nodes as Node[],
+          hash: await digestSHA1(node.raw),
         } satisfies DecorationNode
 
       default:
-        return n as Node
+        return node as Node
     }
   }
 }
@@ -228,25 +228,13 @@ export type Node =
   | NumberListNode
   | cosense.PlainNode
 
-export {
-  type BlankNode,
-  type CodeNode,
-  type CommandLineNode,
-  type FormulaNode,
-  type GoogleMapNode,
-  type HelpfeelNode,
-  type ImageNode,
-  type PlainNode,
-  type StrongImageNode,
-} from '@progfay/scrapbox-parser'
-
-export type Line = {
+type Line = {
   indent: number
   type: 'line'
   nodes: Node[]
 }
 
-export type Table = {
+type Table = {
   indent: number
   type: 'table'
   fileName: string
@@ -255,9 +243,9 @@ export type Table = {
 
 export type Block = cosense.CodeBlock | Table | Line
 
-async function processBlocks(
-  blocks: Block[],
-  processor: (node: Node) => Promise<Node>,
+async function convertBlocks(
+  blocks: DomainBlock[],
+  processor: (node: DomainNode) => Promise<Node>,
 ): Promise<Block[]> {
   return await Promise.all(
     blocks.map(async (b) => {
@@ -265,7 +253,7 @@ async function processBlocks(
         case 'line':
           return {
             ...b,
-            nodes: await processNodes(b.nodes, processor),
+            nodes: await convertNodes(b.nodes, processor),
           }
 
         case 'table':
@@ -276,7 +264,7 @@ async function processBlocks(
                 async (row) =>
                   await Promise.all(
                     row.map(
-                      async (cell) => await processNodes(cell, processor),
+                      async (cell) => await convertNodes(cell, processor),
                     ),
                   ),
               ),
@@ -293,9 +281,9 @@ async function processBlocks(
   ).then((b) => b.filter((b): b is Block => b !== null))
 }
 
-async function processNodes(
-  nodes: Node[],
-  processor: (node: Node) => Promise<Node>,
+async function convertNodes(
+  nodes: DomainNode[],
+  processor: (node: DomainNode) => Promise<Node>,
 ): Promise<Node[]> {
   return await Promise.all(
     nodes.map(async (node) => {
@@ -308,7 +296,10 @@ async function processNodes(
         case 'strong':
           return {
             ...processedNode,
-            nodes: await processNodes(processedNode.nodes, processor),
+            nodes: await convertNodes(
+              processedNode.nodes as DomainNode[],
+              processor,
+            ),
           }
 
         default:

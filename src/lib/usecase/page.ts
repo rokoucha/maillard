@@ -1,14 +1,17 @@
 import { processBlocks, processNodes, type Node } from '../domain/page'
 import { SCRAPBOX_COLLECT_PAGE, SCRAPBOX_INDEX_PAGE } from '../env'
 import { present, type PageResponse } from '../presentation/page'
+import * as ImageRepository from '../repository/image'
 import * as PageRepository from '../repository/page'
 import * as PageInfoRepository from '../repository/pageinfo'
 
 async function filterCollectPageLink(node: Node): Promise<Node | null> {
   // 全ページ公開なら何もフィルタしない
   if (!SCRAPBOX_COLLECT_PAGE) {
-    return node
+    return node as Node
   }
+
+  ImageRepository
 
   switch (node.type) {
     // 一部ページ公開なら収集ページへのリンクをフィルタする
@@ -16,6 +19,36 @@ async function filterCollectPageLink(node: Node): Promise<Node | null> {
     case 'link': {
       if (node.href === SCRAPBOX_COLLECT_PAGE) {
         return null
+      }
+    }
+
+    default: {
+      return node
+    }
+  }
+}
+
+async function resolveInternalImage(node: Node): Promise<Node | null> {
+  switch (node.type) {
+    case 'icon':
+    case 'image':
+    case 'strongIcon':
+    case 'strongImage': {
+      const url = new URL(node.src)
+      if (url.hostname !== 'scrapbox.io') {
+        return node
+      }
+
+      const resolved = await ImageRepository.resolveInternalImageByUrl(
+        url.toString(),
+      )
+      if (!resolved) {
+        return node
+      }
+
+      return {
+        ...node,
+        src: `/api/assets/${resolved}`,
       }
     }
 
@@ -56,8 +89,6 @@ export async function findByTitle(title: string): Promise<PageResponse | null> {
   )
   const pages = new Map(pageInfos.map((p) => [p.title, p]))
 
-  const blocks = await processBlocks(page.blocks, filterCollectPageLink)
-
   const links = page.links.filter((l) => {
     // 全ページ公開なら何もフィルタしない
     if (!SCRAPBOX_COLLECT_PAGE) {
@@ -95,7 +126,7 @@ export async function findByTitle(title: string): Promise<PageResponse | null> {
         id: p.id,
         title: p.title,
         image: p.image,
-        description: await processNodes(p.description, filterCollectPageLink),
+        description: await processNodes(p.description, [filterCollectPageLink]),
         created: p.created,
         updated: p.updated,
         links: p.links.filter((l) => {
@@ -154,7 +185,7 @@ export async function findByTitle(title: string): Promise<PageResponse | null> {
         id: p.id,
         title: p.title,
         image: p.image,
-        description: await processNodes(p.description, filterCollectPageLink),
+        description: await processNodes(p.description, [filterCollectPageLink]),
         created: p.created,
         updated: p.updated,
         links: p.links.filter((l) => {
@@ -179,11 +210,16 @@ export async function findByTitle(title: string): Promise<PageResponse | null> {
       id: page.id,
       title: page.title,
       image: page.image,
-      description: await processNodes(page.description, filterCollectPageLink),
+      description: await processNodes(page.description, [
+        filterCollectPageLink,
+      ]),
       created: page.created,
       updated: page.updated,
       persistent: page.persistent,
-      blocks,
+      blocks: await processBlocks(page.blocks, [
+        filterCollectPageLink,
+        resolveInternalImage,
+      ]),
       links,
       relatedPages: {
         direct,
