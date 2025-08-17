@@ -89,6 +89,21 @@ export async function findByTitle(title: string): Promise<PageResponse | null> {
   )
   const pages = new Map(pageInfos.map((p) => [p.title, p]))
 
+  let image: string | null = null
+  if (page.image) {
+    const url = new URL(page.image)
+    if (url.hostname === 'scrapbox.io') {
+      const resolved = await ImageRepository.resolveInternalImageByUrl(
+        url.toString(),
+      )
+      if (resolved) {
+        image = `/api/assets/${resolved}`
+      }
+    } else {
+      image = page.image
+    }
+  }
+
   const links = page.links.filter((l) => {
     // 全ページ公開なら何もフィルタしない
     if (!SCRAPBOX_COLLECT_PAGE) {
@@ -122,30 +137,49 @@ export async function findByTitle(title: string): Promise<PageResponse | null> {
         // 一般ページは公開対象なら公開
         return pages.has(p.title)
       })
-      .map(async (p) => ({
-        id: p.id,
-        title: p.title,
-        image: p.image,
-        description: await processNodes(p.description, [filterCollectPageLink]),
-        created: p.created,
-        updated: p.updated,
-        links: p.links.filter((l) => {
-          // 全ページ公開なら何もフィルタしない
-          if (!SCRAPBOX_COLLECT_PAGE) {
-            return true
+      .map(async (p) => {
+        let image: string | null = null
+        if (p.image) {
+          const url = new URL(p.image)
+          if (url.hostname === 'scrapbox.io') {
+            const resolved = await ImageRepository.resolveInternalImageByUrl(
+              url.toString(),
+            )
+            if (resolved) {
+              image = `/api/assets/${resolved}`
+            }
+          } else {
+            image = p.image
           }
+        }
 
-          // 一部公開のフィルタリング
+        return {
+          id: p.id,
+          title: p.title,
+          image,
+          description: await processNodes(p.description, [
+            filterCollectPageLink,
+          ]),
+          created: p.created,
+          updated: p.updated,
+          links: p.links.filter((l) => {
+            // 全ページ公開なら何もフィルタしない
+            if (!SCRAPBOX_COLLECT_PAGE) {
+              return true
+            }
 
-          // 収集ページは非公開
-          if (l === SCRAPBOX_COLLECT_PAGE) {
-            return false
-          }
+            // 一部公開のフィルタリング
 
-          // 一般ページは公開対象なら公開
-          return pages.has(l)
-        }),
-      })),
+            // 収集ページは非公開
+            if (l === SCRAPBOX_COLLECT_PAGE) {
+              return false
+            }
+
+            // 一般ページは公開対象なら公開
+            return pages.has(l)
+          }),
+        }
+      }),
   )
 
   const indirect = await Promise.all(
@@ -181,35 +215,54 @@ export async function findByTitle(title: string): Promise<PageResponse | null> {
         // それ以外は公開
         return true
       })
-      .map(async (p) => ({
-        id: p.id,
-        title: p.title,
-        image: p.image,
-        description: await processNodes(p.description, [filterCollectPageLink]),
-        created: p.created,
-        updated: p.updated,
-        links: p.links.filter((l) => {
-          // 全ページ公開なら何もフィルタしない
-          if (!SCRAPBOX_COLLECT_PAGE) {
-            return true
+      .map(async (p) => {
+        let image: string | null = null
+        if (p.image) {
+          const url = new URL(p.image)
+          if (url.hostname === 'scrapbox.io') {
+            const resolved = await ImageRepository.resolveInternalImageByUrl(
+              url.toString(),
+            )
+            if (resolved) {
+              image = `/api/assets/${resolved}`
+            }
+          } else {
+            image = p.image
           }
+        }
 
-          // 収集ページは非公開
-          if (l === SCRAPBOX_COLLECT_PAGE) {
-            return false
-          }
+        return {
+          id: p.id,
+          title: p.title,
+          image: image,
+          description: await processNodes(p.description, [
+            filterCollectPageLink,
+          ]),
+          created: p.created,
+          updated: p.updated,
+          links: p.links.filter((l) => {
+            // 全ページ公開なら何もフィルタしない
+            if (!SCRAPBOX_COLLECT_PAGE) {
+              return true
+            }
 
-          // 一般ページは公開対象なら公開
-          return pages.has(l)
-        }),
-      })),
+            // 収集ページは非公開
+            if (l === SCRAPBOX_COLLECT_PAGE) {
+              return false
+            }
+
+            // 一般ページは公開対象なら公開
+            return pages.has(l)
+          }),
+        }
+      }),
   )
 
   return present(
     {
       id: page.id,
       title: page.title,
-      image: page.image,
+      image: image,
       description: await processNodes(page.description, [
         filterCollectPageLink,
       ]),
