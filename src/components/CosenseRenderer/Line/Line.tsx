@@ -58,7 +58,11 @@ export function Line({ node, root }: Props): React.ReactNode {
     }
 
     case 'hashTag': {
-      return <HashTag>{node.href}</HashTag>
+      return (
+        <HashTag href={node.href} type={node.pathType}>
+          {node.content}
+        </HashTag>
+      )
     }
 
     case 'helpfeel': {

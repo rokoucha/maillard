@@ -7,7 +7,7 @@ import styles from './Link.module.css'
 type Props = Readonly<{
   children: string
   href: string
-  type?: 'external' | 'internal' | undefined
+  type: 'external' | 'internal'
 }>
 
 export function Link({ children, href, type }: Props): React.ReactNode {

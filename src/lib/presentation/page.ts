@@ -68,10 +68,10 @@ function convertScrapboxParserNodeToMaillardNode(
     switch (n.type) {
       case 'icon':
       case 'strongIcon':
-        const page = pageInfo.get(n.path)
-
         switch (n.pathType) {
           case 'relative':
+            const page = pageInfo.get(n.path)
+
             return {
               type: n.type,
               raw: n.raw,
@@ -95,11 +95,15 @@ function convertScrapboxParserNodeToMaillardNode(
       case 'link':
         switch (n.pathType) {
           case 'relative':
+            const page = pageInfo.get(n.href)
+
             return {
               type: 'link',
               raw: n.raw,
-              pathType: 'internal',
-              href: `/${n.href}`,
+              pathType: page ? 'internal' : 'external',
+              href: page
+                ? `/${n.href}`
+                : `https://scrapbox.io/${SCRAPBOX_PROJECT}/${n.href}`,
               content: n.content,
             } satisfies LinkNode
 
@@ -123,11 +127,15 @@ function convertScrapboxParserNodeToMaillardNode(
         }
 
       case 'hashTag':
+        const page = pageInfo.get(n.href)
+
         return {
           type: 'hashTag',
           raw: n.raw,
-          pathType: 'internal',
-          href: n.href,
+          pathType: page ? 'internal' : 'external',
+          href: page
+            ? `/${n.href}`
+            : `https://scrapbox.io/${SCRAPBOX_PROJECT}/${n.href}`,
           content: n.href,
         } satisfies HashTagNode
 
