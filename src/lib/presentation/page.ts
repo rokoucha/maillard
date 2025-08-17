@@ -1,5 +1,6 @@
 import * as cosense from '@progfay/scrapbox-parser'
 import { type Page } from '../domain/page'
+import { type PageInfo } from '../domain/pageinfo'
 import { SCRAPBOX_PROJECT } from '../env'
 
 export type PageResponse = {
@@ -25,7 +26,10 @@ export type RelatedPage = {
   links: string[]
 }
 
-export async function present(page: Page): Promise<PageResponse> {
+export async function present(
+  page: Page,
+  pageInfo: Map<string, PageInfo>,
+): Promise<PageResponse> {
   return {
     id: page.id,
     title: page.title,
@@ -36,7 +40,7 @@ export async function present(page: Page): Promise<PageResponse> {
     persistent: page.persistent,
     blocks: await processBlocks(
       page.blocks as Block[],
-      convertScrapboxParserNodeToMaillardNode,
+      convertScrapboxParserNodeToMaillardNode(pageInfo),
     ),
     links: page.links,
     relatedPages: [
@@ -54,63 +58,81 @@ export async function present(page: Page): Promise<PageResponse> {
   }
 }
 
-async function convertScrapboxParserNodeToMaillardNode(
-  node: Node,
-): Promise<Node> {
-  const n = node as cosense.Node
+function convertScrapboxParserNodeToMaillardNode(
+  pageInfo: Map<string, PageInfo>,
+) {
+  return async (node: Node): Promise<Node> => {
+    const n = node as cosense.Node
 
-  switch (n.type) {
-    case 'icon':
-    case 'strongIcon':
-      return {
-        ...n,
-        src:
-          n.pathType === 'relative'
-            ? `https://scrapbox.io/api/pages/${SCRAPBOX_PROJECT}/${n.path}/icon`
-            : `https://scrapbox.io/api/pages${n.path}/icon`,
-      } satisfies IconNode | StrongIconNode
+    switch (n.type) {
+      case 'icon':
+      case 'strongIcon':
+        const page = pageInfo.get(n.path)
 
-    case 'link':
-      switch (n.pathType) {
-        case 'relative':
-          return {
-            type: 'link',
-            raw: n.raw,
-            pathType: 'internal',
-            href: `/${n.href}`,
-            content: n.content,
-          } satisfies LinkNode
+        switch (n.pathType) {
+          case 'relative':
+            return {
+              type: n.type,
+              raw: n.raw,
+              pathType: page ? 'internal' : 'external',
+              href: page
+                ? `/${n.path}`
+                : `https://scrapbox.io/${SCRAPBOX_PROJECT}/${n.path}`,
+              src: `https://scrapbox.io/api/pages/${SCRAPBOX_PROJECT}/${n.path}/icon`,
+            } satisfies IconNode | StrongIconNode
 
-        case 'absolute':
-          return {
-            type: 'link',
-            raw: n.raw,
-            pathType: 'external',
-            href: n.href,
-            content: n.content,
-          } satisfies LinkNode
+          case 'root':
+            return {
+              type: n.type,
+              raw: n.raw,
+              pathType: 'external',
+              href: `https://scrapbox.io${n.path}`,
+              src: `https://scrapbox.io/api/pages${n.path}/icon`,
+            } satisfies IconNode | StrongIconNode
+        }
 
-        case 'root':
-          return {
-            type: 'link',
-            raw: n.raw,
-            pathType: 'external',
-            href: `https://scrapbox.io${n.href}`,
-            content: n.content,
-          } satisfies LinkNode
-      }
+      case 'link':
+        switch (n.pathType) {
+          case 'relative':
+            return {
+              type: 'link',
+              raw: n.raw,
+              pathType: 'internal',
+              href: `/${n.href}`,
+              content: n.content,
+            } satisfies LinkNode
 
-    case 'hashTag':
-      return {
-        type: 'hashTag',
-        raw: n.raw,
-        pathType: 'internal',
-        href: n.href,
-        content: n.href,
-      } satisfies HashTagNode
+          case 'absolute':
+            return {
+              type: 'link',
+              raw: n.raw,
+              pathType: 'external',
+              href: n.href,
+              content: n.content,
+            } satisfies LinkNode
 
-    default:
-      return n as Node
+          case 'root':
+            return {
+              type: 'link',
+              raw: n.raw,
+              pathType: 'external',
+              href: `https://scrapbox.io${n.href}`,
+              content: n.content,
+            } satisfies LinkNode
+        }
+
+      case 'hashTag':
+        return {
+          type: 'hashTag',
+          raw: n.raw,
+          pathType: 'internal',
+          href: n.href,
+          content: n.href,
+        } satisfies HashTagNode
+
+      default:
+        return n as Node
+    }
   }
 }
 
@@ -123,7 +145,10 @@ export type QuoteNode = BaseNode & {
   nodes: Node[]
 }
 
-export type StrongIconNode = cosense.StrongIconNode & {
+export type StrongIconNode = BaseNode & {
+  type: 'strongIcon'
+  pathType: 'internal' | 'external'
+  href: string
   src: string
 }
 
@@ -146,7 +171,10 @@ export type LinkNode = BaseNode & {
   content: string
 }
 
-export type IconNode = cosense.IconNode & {
+export type IconNode = BaseNode & {
+  type: 'icon'
+  pathType: 'internal' | 'external'
+  href: string
   src: string
 }
 

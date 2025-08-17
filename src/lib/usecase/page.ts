@@ -174,21 +174,24 @@ export async function findByTitle(title: string): Promise<PageResponse | null> {
       })),
   )
 
-  return present({
-    id: page.id,
-    title: page.title,
-    image: page.image,
-    description: await processNodes(page.description, filterCollectPageLink),
-    created: page.created,
-    updated: page.updated,
-    persistent: page.persistent,
-    blocks,
-    links,
-    relatedPages: {
-      direct,
-      indirect,
+  return present(
+    {
+      id: page.id,
+      title: page.title,
+      image: page.image,
+      description: await processNodes(page.description, filterCollectPageLink),
+      created: page.created,
+      updated: page.updated,
+      persistent: page.persistent,
+      blocks,
+      links,
+      relatedPages: {
+        direct,
+        indirect,
+      },
     },
-  })
+    pages,
+  )
 }
 
 export async function findMany(): Promise<PageResponse[]> {

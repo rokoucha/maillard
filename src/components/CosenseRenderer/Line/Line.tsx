@@ -1,4 +1,3 @@
-import { SCRAPBOX_PROJECT } from '../../../lib/env'
 import { nodesToText } from '../../../lib/parser'
 import { type Node } from '../../../lib/presentation/page'
 import { PageInfo } from '../../../schema/cosense'
@@ -73,24 +72,7 @@ export function Line({ node, pageInfos, root }: Props): React.ReactNode {
     }
 
     case 'icon': {
-      const page = pageInfos.get(node.path)
-
-      const href =
-        node.pathType === 'relative'
-          ? page
-            ? `/${page.title}`
-            : `https://scrapbox.io/${SCRAPBOX_PROJECT}/${node.path}`
-          : `https://scrapbox.io${node.path}`
-
-      const src =
-        node.pathType === 'relative'
-          ? ((page?.image?.startsWith('https://i.gyazo.com')
-              ? page?.image.replace(/\/raw$/, '')
-              : page?.image) ??
-            `https://scrapbox.io/api/pages/${SCRAPBOX_PROJECT}/${node.path}/icon`)
-          : `https://scrapbox.io/api/pages${node.path}/icon`
-
-      return <Icon href={href} path={node.path} src={src} />
+      return <Icon href={node.href} pathType={node.pathType} src={node.src} />
     }
 
     case 'image': {
@@ -146,24 +128,14 @@ export function Line({ node, pageInfos, root }: Props): React.ReactNode {
     }
 
     case 'strongIcon': {
-      const page = pageInfos.get(node.path)
-
-      const href =
-        node.pathType === 'relative'
-          ? page
-            ? `/${page.title}`
-            : `https://scrapbox.io/${SCRAPBOX_PROJECT}/${node.path}`
-          : `https://scrapbox.io${node.path}`
-
-      const src =
-        node.pathType === 'relative'
-          ? ((page?.image?.startsWith('https://i.gyazo.com')
-              ? page?.image.replace(/\/raw$/, '')
-              : page?.image) ??
-            `https://scrapbox.io/api/pages/${SCRAPBOX_PROJECT}/${node.path}/icon`)
-          : `https://scrapbox.io/api/pages${node.path}/icon`
-
-      return <Icon href={href} path={node.path} src={src} strong={true} />
+      return (
+        <Icon
+          href={node.href}
+          pathType={node.pathType}
+          src={node.src}
+          strong={true}
+        />
+      )
     }
 
     case 'strongImage': {
