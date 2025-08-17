@@ -1,4 +1,4 @@
-import { RelatedPage } from '../../schema/cosense'
+import { type RelatedPage } from '../../lib/presentation/page'
 import { PageCard } from '../PageCard'
 import styles from './PageList.module.css'
 

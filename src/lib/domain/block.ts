@@ -5,17 +5,13 @@ type BaseNode = {
   raw: string
 }
 
-export type IconNode = cosense.IconNode & {
-  src: string
+export type QuoteNode = BaseNode & {
+  type: 'quote'
+  nodes: Node[]
 }
 
 export type StrongIconNode = cosense.StrongIconNode & {
   src: string
-}
-
-export type QuoteNode = BaseNode & {
-  type: 'quote'
-  nodes: Node[]
 }
 
 export type StrongNode = BaseNode & {
@@ -28,6 +24,10 @@ export type DecorationNode = BaseNode & {
   rawDecos: string
   decos: cosense.Decoration[]
   nodes: Node[]
+}
+
+export type IconNode = cosense.IconNode & {
+  src: string
 }
 
 export type NumberListNode = BaseNode & {
@@ -65,7 +65,6 @@ export {
   type HashTagNode,
   type HelpfeelNode,
   type ImageNode,
-  type LinkNode,
   type PlainNode,
   type StrongImageNode,
 } from '@progfay/scrapbox-parser'
@@ -202,7 +201,7 @@ async function convertScrapboxParserNodeToMaillardNode(
           n.pathType === 'relative'
             ? `https://scrapbox.io/api/pages/${SCRAPBOX_PROJECT}/${n.path}/icon`
             : `https://scrapbox.io/api/pages${n.path}/icon`,
-      }
+      } satisfies IconNode | StrongIconNode
 
     default:
       return n as Node

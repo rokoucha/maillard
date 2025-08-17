@@ -1,6 +1,6 @@
 import clsx from 'clsx'
 import Link from 'next/link'
-import { RelatedPage } from '../../schema/cosense'
+import { type RelatedPage } from '../../lib/presentation/page'
 import styles from './PageCard.module.css'
 
 export type Props = Readonly<{

@@ -1,4 +1,4 @@
-import { Node } from '@progfay/scrapbox-parser'
+import { Node } from '../../../lib/domain/block'
 import { PageInfo } from '../../../schema/cosense'
 import { Line } from '../Line'
 import styles from './Table.module.css'

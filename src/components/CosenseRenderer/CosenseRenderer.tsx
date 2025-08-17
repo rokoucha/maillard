@@ -1,4 +1,4 @@
-import { Block } from '@progfay/scrapbox-parser'
+import { Block } from '../../lib/domain/block'
 import { SCRAPBOX_PROJECT } from '../../lib/env'
 import { PageInfo } from '../../schema/cosense'
 import { CodeBlock } from './CodeBlock'
@@ -84,10 +84,6 @@ export function CosenseRenderer({
             />
           </IndentWrapper>
         )
-      }
-
-      case 'title': {
-        return false
       }
 
       default: {

@@ -10,7 +10,7 @@ import { Main } from '../components/Main'
 import { PageList } from '../components/PageList'
 import { getPage, getPages } from '../lib/actions/cosense'
 import { BASE_URL, SCRAPBOX_INDEX_PAGE, SITE_NAME } from '../lib/env'
-import { RelatedPage } from '../schema/cosense'
+import { RelatedPage } from '../lib/presentation/page'
 import styles from './page.module.css'
 
 export async function generateMetadata(): Promise<Metadata> {

@@ -1,4 +1,4 @@
-import { Node } from '@progfay/scrapbox-parser'
+import { Node } from '../../../lib/domain/block'
 import { SCRAPBOX_PROJECT } from '../../../lib/env'
 import { nodesToText } from '../../../lib/parser'
 import { PageInfo } from '../../../schema/cosense'

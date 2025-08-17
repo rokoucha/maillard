@@ -1,4 +1,3 @@
-import { Block } from '@progfay/scrapbox-parser'
 import * as v from 'valibot'
 
 export const ErrorResponse = v.object({
@@ -119,41 +118,6 @@ export const GetPage = v.object({
 export type GetPage = v.InferOutput<typeof GetPage>
 
 export const GetPageResponse = v.union([ErrorResponse, GetPage])
-
-export type RelatedPage = {
-  id: string
-  title: string
-  image: string | null
-  description: string
-  created: Date
-  updated: Date
-  links: string[]
-}
-
-export type ExternalLink = {
-  id: string
-  title: string
-  image: string | null
-  description: string
-  updated: Date
-}
-
-export type Page = {
-  id: string
-  title: string
-  image: string | null
-  description: string
-  pin: boolean
-  created: Date
-  updated: Date
-  persistent: boolean
-  blocks: Block[]
-  links: string[]
-  icons: string[]
-  files: string[]
-  relatedPages: RelatedPage[]
-  externalLinks: ExternalLink[]
-}
 
 export type PageInfo = {
   id: string
