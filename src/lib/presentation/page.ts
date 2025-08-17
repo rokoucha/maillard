@@ -54,6 +54,66 @@ export async function present(page: Page): Promise<PageResponse> {
   }
 }
 
+async function convertScrapboxParserNodeToMaillardNode(
+  node: Node,
+): Promise<Node> {
+  const n = node as cosense.Node
+
+  switch (n.type) {
+    case 'icon':
+    case 'strongIcon':
+      return {
+        ...n,
+        src:
+          n.pathType === 'relative'
+            ? `https://scrapbox.io/api/pages/${SCRAPBOX_PROJECT}/${n.path}/icon`
+            : `https://scrapbox.io/api/pages${n.path}/icon`,
+      } satisfies IconNode | StrongIconNode
+
+    case 'link':
+      switch (n.pathType) {
+        case 'relative':
+          return {
+            type: 'link',
+            raw: n.raw,
+            pathType: 'internal',
+            href: `/${n.href}`,
+            content: n.content,
+          } satisfies LinkNode
+
+        case 'absolute':
+          return {
+            type: 'link',
+            raw: n.raw,
+            pathType: 'external',
+            href: n.href,
+            content: n.content,
+          } satisfies LinkNode
+
+        case 'root':
+          return {
+            type: 'link',
+            raw: n.raw,
+            pathType: 'external',
+            href: `https://scrapbox.io${n.href}`,
+            content: n.content,
+          } satisfies LinkNode
+      }
+
+    case 'hashTag':
+      return {
+        type: 'hashTag',
+        raw: n.raw,
+        pathType: 'internal',
+        href: n.href,
+        content: n.href,
+      } satisfies HashTagNode
+
+    default:
+      return n as Node
+  }
+}
+
 type BaseNode = {
   raw: string
 }
@@ -211,66 +271,6 @@ async function processNodes(
       }
     }),
   )
-}
-
-async function convertScrapboxParserNodeToMaillardNode(
-  node: Node,
-): Promise<Node> {
-  const n = node as cosense.Node
-
-  switch (n.type) {
-    case 'icon':
-    case 'strongIcon':
-      return {
-        ...n,
-        src:
-          n.pathType === 'relative'
-            ? `https://scrapbox.io/api/pages/${SCRAPBOX_PROJECT}/${n.path}/icon`
-            : `https://scrapbox.io/api/pages${n.path}/icon`,
-      } satisfies IconNode | StrongIconNode
-
-    case 'link':
-      switch (n.pathType) {
-        case 'relative':
-          return {
-            type: 'link',
-            raw: n.raw,
-            pathType: 'internal',
-            href: `/${n.href}`,
-            content: n.content,
-          } satisfies LinkNode
-
-        case 'absolute':
-          return {
-            type: 'link',
-            raw: n.raw,
-            pathType: 'external',
-            href: n.href,
-            content: n.content,
-          } satisfies LinkNode
-
-        case 'root':
-          return {
-            type: 'link',
-            raw: n.raw,
-            pathType: 'external',
-            href: `https://scrapbox.io${n.href}`,
-            content: n.content,
-          } satisfies LinkNode
-      }
-
-    case 'hashTag':
-      return {
-        type: 'hashTag',
-        raw: n.raw,
-        pathType: 'internal',
-        href: n.href,
-        content: n.href,
-      } satisfies HashTagNode
-
-    default:
-      return n as Node
-  }
 }
 
 function nodesToText(nodes: cosense.Node[]): string {
