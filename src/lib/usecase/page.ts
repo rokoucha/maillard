@@ -58,7 +58,6 @@ export async function findByTitle(title: string): Promise<PageResponse | null> {
 
   const blocks = await processBlocks(page.blocks, filterCollectPageLink)
 
-  // TODO: 使ってないので消す
   const links = page.links.filter((l) => {
     // 全ページ公開なら何もフィルタしない
     if (!SCRAPBOX_COLLECT_PAGE) {

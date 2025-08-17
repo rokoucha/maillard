@@ -9,7 +9,6 @@ export type Page = {
   updated: Date
   persistent: boolean
   blocks: Block[]
-  // 使ってないので消す
   links: string[]
   relatedPages: {
     direct: RelatedPage[]
