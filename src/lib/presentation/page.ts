@@ -104,7 +104,7 @@ function convertDomainNodeToPresentationNode(pageInfo: Map<string, PageInfo>) {
               href: page
                 ? `/${node.href}`
                 : `https://scrapbox.io/${SCRAPBOX_PROJECT}/${node.href}`,
-              content: node.content,
+              content: node.content || node.href,
             } satisfies LinkNode
 
           case 'absolute':
@@ -113,7 +113,7 @@ function convertDomainNodeToPresentationNode(pageInfo: Map<string, PageInfo>) {
               raw: node.raw,
               pathType: 'external',
               href: node.href,
-              content: node.content,
+              content: node.content || node.href,
             } satisfies LinkNode
 
           case 'root':
@@ -122,7 +122,7 @@ function convertDomainNodeToPresentationNode(pageInfo: Map<string, PageInfo>) {
               raw: node.raw,
               pathType: 'external',
               href: `https://scrapbox.io${node.href}`,
-              content: node.content,
+              content: node.content || node.href,
             } satisfies LinkNode
         }
 

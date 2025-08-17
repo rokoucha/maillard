@@ -86,7 +86,7 @@ export function Line({ node, root }: Props): React.ReactNode {
     case 'link': {
       return (
         <Link href={node.href} type={node.pathType}>
-          {node.content || node.href}
+          {node.content}
         </Link>
       )
     }
