@@ -118,11 +118,3 @@ export const GetPage = v.object({
 export type GetPage = v.InferOutput<typeof GetPage>
 
 export const GetPageResponse = v.union([ErrorResponse, GetPage])
-
-export type PageInfo = {
-  id: string
-  title: string
-  links: string[]
-  updated: Date
-  image: string | null
-}

@@ -1,6 +1,5 @@
 import { nodesToText } from '../../../lib/parser'
 import { type Node } from '../../../lib/presentation/page'
-import { PageInfo } from '../../../schema/cosense'
 import { Code } from './Node/Code'
 import { CommandLine } from './Node/CommandLine'
 import { Decoration } from './Node/Decoration'
@@ -16,11 +15,10 @@ import { Quote } from './Node/Quote'
 
 type Props = Readonly<{
   node: Node
-  pageInfos: Map<string, PageInfo>
   root?: boolean | undefined
 }>
 
-export function Line({ node, pageInfos, root }: Props): React.ReactNode {
+export function Line({ node, root }: Props): React.ReactNode {
   switch (node.type) {
     case 'blank': {
       return false
@@ -41,7 +39,7 @@ export function Line({ node, pageInfos, root }: Props): React.ReactNode {
           id={root ? nodesToText(node.nodes as any) : undefined}
         >
           {node.nodes.map((n, i) => (
-            <Line key={i} node={n} pageInfos={pageInfos} />
+            <Line key={i} node={n} />
           ))}
         </Decoration>
       )
@@ -97,7 +95,7 @@ export function Line({ node, pageInfos, root }: Props): React.ReactNode {
       return (
         <NumberList number={node.number}>
           {node.nodes.map((n, i) => (
-            <Line key={i} node={n} pageInfos={pageInfos} />
+            <Line key={i} node={n} />
           ))}
         </NumberList>
       )
@@ -111,7 +109,7 @@ export function Line({ node, pageInfos, root }: Props): React.ReactNode {
       return (
         <Quote>
           {node.nodes.map((n, i) => (
-            <Line key={i} node={n} pageInfos={pageInfos} />
+            <Line key={i} node={n} />
           ))}
         </Quote>
       )
@@ -121,7 +119,7 @@ export function Line({ node, pageInfos, root }: Props): React.ReactNode {
       return (
         <Decoration decorations={['*-1']}>
           {node.nodes.map((n, i) => (
-            <Line key={i} node={n} pageInfos={pageInfos} />
+            <Line key={i} node={n} />
           ))}
         </Decoration>
       )

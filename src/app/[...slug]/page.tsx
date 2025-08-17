@@ -82,9 +82,6 @@ export default async function Page({
     notFound()
   }
 
-  const pageInfos = await getPages()
-  const pageInfosMap = new Map(pageInfos.map((p) => [p.title, p]))
-
   return (
     <>
       <Header siteName={SITE_NAME} logo={indexPage.image ?? undefined} />
@@ -96,11 +93,7 @@ export default async function Page({
             updatedAt={page.updated}
           />
           <section className={styles.main}>
-            <CosenseRenderer
-              blocks={page.blocks}
-              pageInfos={pageInfosMap}
-              title={page.title}
-            />
+            <CosenseRenderer blocks={page.blocks} title={page.title} />
           </section>
           <ArticleFooter hr={page.persistent}>
             {page.persistent && (

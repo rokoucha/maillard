@@ -45,8 +45,6 @@ export default async function Page(): Promise<React.ReactNode> {
   }
 
   const pageInfos = await getPages()
-  const pageInfosMap = new Map(pageInfos.map((p) => [p.title, p]))
-
   const pagelists = pageInfos
     .map(
       (page): RelatedPage => ({
@@ -72,11 +70,7 @@ export default async function Page(): Promise<React.ReactNode> {
             updatedAt={page.updated}
           />
           <section className={styles.main}>
-            <CosenseRenderer
-              blocks={page.blocks}
-              title={page.title}
-              pageInfos={pageInfosMap}
-            />
+            <CosenseRenderer blocks={page.blocks} title={page.title} />
           </section>
           <ArticleFooter hr={false}>
             <PageList pages={pagelists} />

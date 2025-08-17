@@ -1,6 +1,5 @@
 import { SCRAPBOX_PROJECT } from '../../lib/env'
 import { type Block } from '../../lib/presentation/page'
-import { PageInfo } from '../../schema/cosense'
 import { CodeBlock } from './CodeBlock'
 import styles from './CosenseRender.module.css'
 import { Line } from './Line'
@@ -26,15 +25,10 @@ function IndentWrapper({
 
 type Props = Readonly<{
   blocks: Block[]
-  pageInfos: Map<string, PageInfo>
   title: string
 }>
 
-export function CosenseRenderer({
-  blocks,
-  pageInfos,
-  title,
-}: Props): React.ReactNode {
+export function CosenseRenderer({ blocks, title }: Props): React.ReactNode {
   return blocks.map((b, i) => {
     switch (b.type) {
       case 'codeBlock': {
@@ -62,12 +56,7 @@ export function CosenseRenderer({
         return (
           <IndentWrapper key={i} indent={b.indent}>
             {b.nodes.map((n, i) => (
-              <Line
-                key={i}
-                node={n}
-                pageInfos={pageInfos}
-                root={i === 0 && b.indent === 0}
-              />
+              <Line key={i} node={n} root={i === 0 && b.indent === 0} />
             ))}
           </IndentWrapper>
         )
@@ -80,7 +69,6 @@ export function CosenseRenderer({
               cells={b.cells}
               filename={b.fileName}
               href={`https://scrapbox.io/api/table/${SCRAPBOX_PROJECT}/${title}/${b.fileName}.csv`}
-              pageInfos={pageInfos}
             />
           </IndentWrapper>
         )
