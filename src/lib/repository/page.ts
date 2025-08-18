@@ -51,7 +51,9 @@ export async function findByTitle(title: string): Promise<Page | null> {
   return {
     id: page.id,
     title: page.title,
-    image: page.image,
+    image: page.image?.startsWith('https://i.gyazo.com')
+      ? page.image.replace(/\/raw$/, '')
+      : (page.image ?? null),
     description: await parseDescription(page.descriptions),
     created: new Date(page.created * 1000),
     updated: new Date(page.updated * 1000),

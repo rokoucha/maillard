@@ -60,6 +60,15 @@ async function convertCosenseNodeToDomainNode(node: Node): Promise<Node> {
             : `https://scrapbox.io/api/pages${n.path}/icon`,
       } satisfies StrongIconNode | IconNode
 
+    case 'image':
+    case 'strongImage':
+      return {
+        ...n,
+        src: n.src.startsWith('https://i.gyazo.com')
+          ? n.src.replace(/\/raw$/, '')
+          : n.src,
+      }
+
     default:
       return n as Node
   }

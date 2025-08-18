@@ -8,7 +8,9 @@ export async function findMany(): Promise<PageInfo[]> {
     title: p.title,
     links: p.links,
     updated: new Date(p.updated * 1000),
-    image: p.image ?? null,
+    image: p.image?.startsWith('https://i.gyazo.com')
+      ? p.image.replace(/\/raw$/, '')
+      : (p.image ?? null),
   }))
 
   return infos.sort((a, b) => b.updated.getTime() - a.updated.getTime())
