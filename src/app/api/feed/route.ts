@@ -30,7 +30,7 @@ export async function GET(): Promise<Response> {
       .sort((a, b) => b.updated.getTime() - a.updated.getTime())
       .map((page) => ({
         id: `tag:${baseUrl.hostname},2024-11-09:${page.id}`,
-        url: `${process.env.BASE_URL}/${encodeURIComponent(page.title)}`,
+        url: `${baseUrl.href}/${encodeURIComponent(page.title)}`,
         title: page.title,
         content_text: page.description,
         image: page.image,

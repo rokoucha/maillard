@@ -10,7 +10,12 @@ import { Header } from '../../components/Header'
 import { Main } from '../../components/Main'
 import { PageList } from '../../components/PageList'
 import { getPage, getPages } from '../../lib/actions/cosense'
-import { SCRAPBOX_INDEX_PAGE, SITE_NAME } from '../../lib/env'
+import {
+  BASE_URL,
+  NEXT_PHASE,
+  SCRAPBOX_INDEX_PAGE,
+  SITE_NAME,
+} from '../../lib/env'
 import styles from './page.module.css'
 
 export async function generateStaticParams(): Promise<
@@ -22,7 +27,7 @@ export async function generateStaticParams(): Promise<
 
   return pages.map((page) => ({
     slug:
-      process.env.NEXT_PHASE === PHASE_PRODUCTION_BUILD
+      NEXT_PHASE === PHASE_PRODUCTION_BUILD
         ? page.title.split('/')
         : [
             page.title
@@ -56,7 +61,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       publishedTime: page.created.toISOString(),
       tags: page.links,
       type: 'article',
-      url: `${process.env.BASE_URL}/${encodeURIComponent(page.title)}`,
+      url: `${BASE_URL}/${encodeURIComponent(page.title)}`,
     },
     twitter: {
       title: page.title,
