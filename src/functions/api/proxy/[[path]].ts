@@ -1,7 +1,10 @@
 interface Env {
   D1: D1Database
+  SCRAPBOX_BASE_URL?: string | undefined
   SCRAPBOX_PROXY_TTL: string
 }
+
+const SCRAPBOX_DEFAULT_BASE_URL = 'https://scrapbox.io/'
 
 const ALLOWED_REQUEST_HEADERS = ['accept', 'cookie', 'referer', 'user-agent']
 const ALLOWED_RESPONSE_HEADERS = ['content-type', 'content-length']
@@ -46,6 +49,10 @@ async function digestRequest(request: Request) {
 export const onRequest: PagesFunction<Env> = async (context) => {
   const now = Date.now()
 
+  const baseUrl = new URL(
+    context.env.SCRAPBOX_BASE_URL ?? SCRAPBOX_DEFAULT_BASE_URL,
+  )
+
   const proxyTtl = Number(context.env.SCRAPBOX_PROXY_TTL) * 1000
 
   const path = Array.isArray(context.params.path)
@@ -54,7 +61,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
   const currentUrl = new URL(context.request.url)
 
-  const upstreamUrl = new URL(`/api/${path}`, 'https://scrapbox.io')
+  const upstreamUrl = new URL(path, baseUrl)
   upstreamUrl.search = currentUrl.search
 
   const request = new Request(upstreamUrl.toString(), {
