@@ -92,7 +92,7 @@ export async function findByTitle(title: string): Promise<PageResponse | null> {
 
   let image: string | null = null
   if (page.image) {
-    if (!page.image.startsWith(SCRAPBOX_BASE_URL)) {
+    if (page.image.startsWith(SCRAPBOX_BASE_URL)) {
       const resolved = await ImageRepository.resolveInternalImageByUrl(
         page.image,
       )
