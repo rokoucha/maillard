@@ -1,5 +1,5 @@
 import { cache } from 'react'
-import { PageResponse } from '../presentation/page'
+import { PageResponse, RelatedPageResponse } from '../presentation/page'
 import * as PageUsecase from '../usecase/page'
 
 export const getPage = cache(async function getPage(
@@ -9,7 +9,7 @@ export const getPage = cache(async function getPage(
 })
 
 export const getPages = cache(async function getPages(): Promise<
-  PageResponse[]
+  RelatedPageResponse[]
 > {
-  return await PageUsecase.findMany()
+  return await PageUsecase.findAllTitles()
 })

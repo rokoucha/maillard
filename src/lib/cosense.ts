@@ -12,6 +12,7 @@ import {
   SCRAPBOX_PROJECT,
   SCRAPBOX_PROXY_URL,
 } from './env'
+import { cosensePageTitleEscape } from './escape'
 
 const BASE_URL = SCRAPBOX_PROXY_URL ?? SCRAPBOX_BASE_URL
 
@@ -47,7 +48,7 @@ export async function searchTitles(): Promise<SearchTitlePage[]> {
 
 export async function page(title: string): Promise<GetPage | null> {
   const url = new URL(
-    `api/pages/${SCRAPBOX_PROJECT}/${title.replaceAll('/', '%2F')}`,
+    `api/pages/${SCRAPBOX_PROJECT}/${cosensePageTitleEscape(title)}`,
     BASE_URL,
   )
   const res = await fetch(url, { cache: 'force-cache', headers })

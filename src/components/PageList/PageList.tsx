@@ -1,9 +1,9 @@
-import { type RelatedPage } from '../../lib/presentation/page'
+import { type RelatedPageResponse } from '../../lib/presentation/page'
 import { PageCard } from '../PageCard'
 import styles from './PageList.module.css'
 
 type Props = Readonly<{
-  pages: RelatedPage[]
+  pages: RelatedPageResponse[]
 }>
 
 export function PageList({ pages }: Props): React.ReactNode {

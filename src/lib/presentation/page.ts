@@ -1,16 +1,19 @@
 import * as cosense from '@progfay/scrapbox-parser'
 import { digestSHA1 } from '../digest'
 import {
+  RelatedPage,
   type Block as DomainBlock,
   type Node as DomainNode,
   type Page,
 } from '../domain/page'
 import { type PageInfo } from '../domain/pageinfo'
 import { SCRAPBOX_BASE_URL, SCRAPBOX_PROJECT } from '../env'
+import { cosensePageTitleEscape } from '../escape'
 
 export type PageResponse = {
   id: string
   title: string
+  escapedTitle: string
   image: string | null
   description: string
   created: Date
@@ -18,12 +21,13 @@ export type PageResponse = {
   persistent: boolean
   blocks: Block[]
   links: string[]
-  relatedPages: RelatedPage[]
+  relatedPages: RelatedPageResponse[]
 }
 
-export type RelatedPage = {
+export type RelatedPageResponse = {
   id: string
   title: string
+  escapedTitle: string
   image: string | null
   description: string
   created: Date
@@ -38,6 +42,7 @@ export async function present(
   return {
     id: page.id,
     title: page.title,
+    escapedTitle: cosensePageTitleEscape(page.title),
     image: page.image,
     description: nodesToText(page.description),
     created: page.created,
@@ -48,18 +53,26 @@ export async function present(
       convertDomainNodeToPresentationNode(pageInfo),
     ),
     links: page.links,
-    relatedPages: [
-      ...page.relatedPages.direct,
-      ...page.relatedPages.indirect,
-    ].map((p) => ({
-      id: p.id,
-      title: p.title,
-      image: p.image,
-      description: nodesToText(p.description),
-      created: p.created,
-      updated: p.updated,
-      links: p.links,
-    })),
+    relatedPages: await Promise.all(
+      [...page.relatedPages.direct, ...page.relatedPages.indirect].map((p) =>
+        presentRelatedPage(p),
+      ),
+    ),
+  }
+}
+
+export async function presentRelatedPage(
+  relatedPage: RelatedPage,
+): Promise<RelatedPageResponse> {
+  return {
+    id: relatedPage.id,
+    title: relatedPage.title,
+    escapedTitle: cosensePageTitleEscape(relatedPage.title),
+    image: relatedPage.image,
+    description: nodesToText(relatedPage.description),
+    created: relatedPage.created,
+    updated: relatedPage.updated,
+    links: relatedPage.links,
   }
 }
 
@@ -77,7 +90,7 @@ function convertDomainNodeToPresentationNode(pageInfo: Map<string, PageInfo>) {
               raw: node.raw,
               pathType: page ? 'internal' : 'external',
               href: page
-                ? `/${node.path}`
+                ? `/${cosensePageTitleEscape(node.path)}`
                 : `${SCRAPBOX_BASE_URL}${SCRAPBOX_PROJECT}/${node.path}`,
               src: node.src,
             } satisfies IconNode | StrongIconNode
@@ -102,7 +115,7 @@ function convertDomainNodeToPresentationNode(pageInfo: Map<string, PageInfo>) {
               raw: node.raw,
               pathType: page ? 'internal' : 'external',
               href: page
-                ? `/${node.href}`
+                ? `/${cosensePageTitleEscape(node.href)}`
                 : `${SCRAPBOX_BASE_URL}${SCRAPBOX_PROJECT}/${node.href}`,
               content: node.content || node.href,
             } satisfies LinkNode
@@ -134,7 +147,7 @@ function convertDomainNodeToPresentationNode(pageInfo: Map<string, PageInfo>) {
           raw: node.raw,
           pathType: page ? 'internal' : 'external',
           href: page
-            ? `/${node.href}`
+            ? `/${cosensePageTitleEscape(node.href)}`
             : `${SCRAPBOX_BASE_URL}${SCRAPBOX_PROJECT}/${node.href}`,
           content: node.href,
         } satisfies HashTagNode

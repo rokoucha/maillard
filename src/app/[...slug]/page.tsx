@@ -25,17 +25,22 @@ export async function generateStaticParams(): Promise<
 > {
   const pages = await getPages()
 
-  return pages.map((page) => ({
-    slug:
-      NEXT_PHASE === PHASE_PRODUCTION_BUILD
-        ? page.title.split('/')
-        : [
-            page.title
-              .split('/')
-              .map((p) => encodeURIComponent(p))
-              .join('/'),
-          ],
-  }))
+  return (
+    pages
+      // XXX: Next.jsのバグで//がタイトルに含まれるページはビルドできない
+      .filter((p) => !p.title.includes('//'))
+      .map((p) => ({
+        slug:
+          NEXT_PHASE === PHASE_PRODUCTION_BUILD
+            ? p.title.split('/')
+            : [
+                p.title
+                  .split('/')
+                  .map((p) => encodeURIComponent(p))
+                  .join('/'),
+              ],
+      }))
+  )
 }
 
 type Props = Readonly<{
@@ -61,7 +66,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       publishedTime: page.created.toISOString(),
       tags: page.links,
       type: 'article',
-      url: `${BASE_URL}/${encodeURIComponent(page.title)}`,
+      url: `${BASE_URL}/${page.escapedTitle}`,
     },
     twitter: {
       title: page.title,

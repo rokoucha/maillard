@@ -1,10 +1,15 @@
-import { processBlocks, processNodes, type Node } from '../domain/page'
+import { Page, processBlocks, processNodes, type Node } from '../domain/page'
 import {
   SCRAPBOX_BASE_URL,
   SCRAPBOX_COLLECT_PAGE,
   SCRAPBOX_INDEX_PAGE,
 } from '../env'
-import { present, type PageResponse } from '../presentation/page'
+import {
+  present,
+  presentRelatedPage,
+  RelatedPageResponse,
+  type PageResponse,
+} from '../presentation/page'
 import * as ImageRepository from '../repository/image'
 import * as PageRepository from '../repository/page'
 import * as PageInfoRepository from '../repository/pageinfo'
@@ -281,7 +286,7 @@ export async function findByTitle(title: string): Promise<PageResponse | null> {
   )
 }
 
-export async function findMany(): Promise<PageResponse[]> {
+export async function findAllTitles(): Promise<RelatedPageResponse[]> {
   const pageInfos = await PageInfoRepository.findMany().then((i) =>
     i.filter((p) => {
       // 全ページ公開なら何もフィルタしない
@@ -305,12 +310,52 @@ export async function findMany(): Promise<PageResponse[]> {
       return p.links.includes(SCRAPBOX_COLLECT_PAGE)
     }),
   )
+  const pageInfosMap = new Map(pageInfos.map((p) => [p.title, p]))
 
   const pages = await Promise.all(
-    pageInfos.map(async (p) => await findByTitle(p.title)),
+    pageInfos.map(async (p) => await PageRepository.findByTitle(p.title)),
   )
 
-  return pages
-    .filter((p): p is PageResponse => p !== null)
-    .sort((a, b) => b.created.getTime() - a.created.getTime())
+  const filteredPages = await Promise.all(
+    pages
+      .filter((p): p is Page => p !== null)
+      .map(async (p) => {
+        let image: string | null = null
+        if (p.image) {
+          if (p.image.startsWith(SCRAPBOX_BASE_URL)) {
+            const resolved = await ImageRepository.resolveInternalImageByUrl(
+              p.image,
+            )
+            if (resolved) {
+              image = `/api/assets/${resolved}`
+            }
+          } else {
+            image = p.image
+          }
+        }
+
+        const links = p.links.filter((l) => {
+          // 全ページ公開なら何もフィルタしない
+          if (!SCRAPBOX_COLLECT_PAGE) {
+            return true
+          }
+
+          // 収集ページは非公開
+          if (l === SCRAPBOX_COLLECT_PAGE) {
+            return false
+          }
+
+          // 一般ページは公開対象なら公開
+          return pageInfosMap.has(l)
+        })
+
+        return p
+      }),
+  )
+
+  return await Promise.all(
+    filteredPages
+      .sort((a, b) => b.created.getTime() - a.created.getTime())
+      .map(async (p) => await presentRelatedPage(p)),
+  )
 }

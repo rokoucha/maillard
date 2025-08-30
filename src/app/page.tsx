@@ -10,7 +10,6 @@ import { Main } from '../components/Main'
 import { PageList } from '../components/PageList'
 import { getPage, getPages } from '../lib/actions/cosense'
 import { BASE_URL, SCRAPBOX_INDEX_PAGE, SITE_NAME } from '../lib/env'
-import { RelatedPage } from '../lib/presentation/page'
 import styles from './page.module.css'
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -45,19 +44,7 @@ export default async function Page(): Promise<React.ReactNode> {
   }
 
   const pageInfos = await getPages()
-  const pagelists = pageInfos
-    .map(
-      (page): RelatedPage => ({
-        id: page.id,
-        title: page.title,
-        image: page.image,
-        description: page.description,
-        created: page.created,
-        updated: page.updated,
-        links: page.links,
-      }),
-    )
-    .filter((p) => p.title !== SCRAPBOX_INDEX_PAGE)
+  const pagelists = pageInfos.filter((p) => p.title !== SCRAPBOX_INDEX_PAGE)
 
   return (
     <>
