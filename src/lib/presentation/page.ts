@@ -6,7 +6,7 @@ import {
   type Page,
 } from '../domain/page'
 import { type PageInfo } from '../domain/pageinfo'
-import { SCRAPBOX_PROJECT } from '../env'
+import { SCRAPBOX_BASE_URL, SCRAPBOX_PROJECT } from '../env'
 
 export type PageResponse = {
   id: string
@@ -78,7 +78,7 @@ function convertDomainNodeToPresentationNode(pageInfo: Map<string, PageInfo>) {
               pathType: page ? 'internal' : 'external',
               href: page
                 ? `/${node.path}`
-                : `https://scrapbox.io/${SCRAPBOX_PROJECT}/${node.path}`,
+                : `${SCRAPBOX_BASE_URL}${SCRAPBOX_PROJECT}/${node.path}`,
               src: node.src,
             } satisfies IconNode | StrongIconNode
 
@@ -87,7 +87,7 @@ function convertDomainNodeToPresentationNode(pageInfo: Map<string, PageInfo>) {
               type: node.type,
               raw: node.raw,
               pathType: 'external',
-              href: `https://scrapbox.io${node.path}`,
+              href: `${SCRAPBOX_BASE_URL}${node.path.slice(1)}`,
               src: node.src,
             } satisfies IconNode | StrongIconNode
         }
@@ -103,7 +103,7 @@ function convertDomainNodeToPresentationNode(pageInfo: Map<string, PageInfo>) {
               pathType: page ? 'internal' : 'external',
               href: page
                 ? `/${node.href}`
-                : `https://scrapbox.io/${SCRAPBOX_PROJECT}/${node.href}`,
+                : `${SCRAPBOX_BASE_URL}${SCRAPBOX_PROJECT}/${node.href}`,
               content: node.content || node.href,
             } satisfies LinkNode
 
@@ -121,7 +121,7 @@ function convertDomainNodeToPresentationNode(pageInfo: Map<string, PageInfo>) {
               type: 'link',
               raw: node.raw,
               pathType: 'external',
-              href: `https://scrapbox.io${node.href}`,
+              href: `${SCRAPBOX_BASE_URL}${node.href.slice(1)}`,
               content: node.content || node.href,
             } satisfies LinkNode
         }
@@ -135,7 +135,7 @@ function convertDomainNodeToPresentationNode(pageInfo: Map<string, PageInfo>) {
           pathType: page ? 'internal' : 'external',
           href: page
             ? `/${node.href}`
-            : `https://scrapbox.io/${SCRAPBOX_PROJECT}/${node.href}`,
+            : `${SCRAPBOX_BASE_URL}${SCRAPBOX_PROJECT}/${node.href}`,
           content: node.href,
         } satisfies HashTagNode
 

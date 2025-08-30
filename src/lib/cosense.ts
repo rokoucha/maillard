@@ -6,7 +6,14 @@ import {
   SearchTitlePage,
   SearchTitleResponse,
 } from '../schema/cosense'
-import { SCRAPBOX_API_URL, SCRAPBOX_CONNECT_SID, SCRAPBOX_PROJECT } from './env'
+import {
+  SCRAPBOX_BASE_URL,
+  SCRAPBOX_CONNECT_SID,
+  SCRAPBOX_PROJECT,
+  SCRAPBOX_PROXY_URL,
+} from './env'
+
+const BASE_URL = SCRAPBOX_PROXY_URL ?? SCRAPBOX_BASE_URL
 
 const headers = {
   ...(SCRAPBOX_CONNECT_SID && {
@@ -19,9 +26,7 @@ export async function searchTitles(): Promise<SearchTitlePage[]> {
   const pages: SearchTitlePage[] = []
   let followingId = ''
   do {
-    const url = new URL(
-      `${SCRAPBOX_API_URL}/pages/${SCRAPBOX_PROJECT}/search/titles`,
-    )
+    const url = new URL(`api/pages/${SCRAPBOX_PROJECT}/search/titles`, BASE_URL)
     if (followingId) {
       url.searchParams.append('followingId', followingId)
     }
@@ -42,7 +47,8 @@ export async function searchTitles(): Promise<SearchTitlePage[]> {
 
 export async function page(title: string): Promise<GetPage | null> {
   const url = new URL(
-    `${SCRAPBOX_API_URL}/pages/${SCRAPBOX_PROJECT}/${title.replaceAll('/', '%2F')}`,
+    `api/pages/${SCRAPBOX_PROJECT}/${title.replaceAll('/', '%2F')}`,
+    BASE_URL,
   )
   const res = await fetch(url, { cache: 'force-cache', headers })
 
@@ -59,20 +65,22 @@ export async function page(title: string): Promise<GetPage | null> {
 }
 
 export async function headInternalImage(url: string): Promise<Response> {
-  const u = new URL(url)
-  if (u.hostname !== 'scrapbox.io') {
+  if (!url.startsWith(SCRAPBOX_BASE_URL)) {
     throw new Error(`Invalid internal image URL: ${url}`)
   }
+
+  const u = new URL(url.replace(SCRAPBOX_BASE_URL, ''), BASE_URL)
 
   const res = await fetch(u, { cache: 'force-cache', headers, method: 'HEAD' })
   return res
 }
 
 export async function getInternalImage(url: string): Promise<Response> {
-  const u = new URL(url)
-  if (u.hostname !== 'scrapbox.io') {
+  if (!url.startsWith(SCRAPBOX_BASE_URL)) {
     throw new Error(`Invalid internal image URL: ${url}`)
   }
+
+  const u = new URL(url.replace(SCRAPBOX_BASE_URL, ''), BASE_URL)
 
   const res = await fetch(u, { cache: 'force-cache', headers })
   return res

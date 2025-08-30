@@ -1,7 +1,7 @@
 import { Node, parse } from '@progfay/scrapbox-parser'
 import * as cosense from '../cosense'
 import { digestSHA1 } from '../digest'
-import { SCRAPBOX_PROJECT } from '../env'
+import { SCRAPBOX_BASE_URL, SCRAPBOX_PROJECT } from '../env'
 
 export async function fetchInternalImageByUrl(
   url: string,
@@ -74,14 +74,13 @@ function collectImagesInAST(node: Node): string[] {
     case 'strongIcon':
       return [
         node.pathType === 'relative'
-          ? `https://scrapbox.io/api/pages/${SCRAPBOX_PROJECT}/${node.path}/icon`
-          : `https://scrapbox.io/api/pages${node.path}/icon`,
+          ? `${SCRAPBOX_BASE_URL}api/pages/${SCRAPBOX_PROJECT}/${node.path}/icon`
+          : `${SCRAPBOX_BASE_URL}api/pages${node.path}/icon`,
       ]
 
     case 'image':
     case 'strongImage':
-      const url = new URL(node.src)
-      if (url.hostname !== 'scrapbox.io') {
+      if (!node.src.startsWith(SCRAPBOX_BASE_URL)) {
         return []
       }
       return [node.src]

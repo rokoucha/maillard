@@ -1,5 +1,9 @@
 import { processBlocks, processNodes, type Node } from '../domain/page'
-import { SCRAPBOX_COLLECT_PAGE, SCRAPBOX_INDEX_PAGE } from '../env'
+import {
+  SCRAPBOX_BASE_URL,
+  SCRAPBOX_COLLECT_PAGE,
+  SCRAPBOX_INDEX_PAGE,
+} from '../env'
 import { present, type PageResponse } from '../presentation/page'
 import * as ImageRepository from '../repository/image'
 import * as PageRepository from '../repository/page'
@@ -34,14 +38,11 @@ async function resolveInternalImage(node: Node): Promise<Node | null> {
     case 'image':
     case 'strongIcon':
     case 'strongImage': {
-      const url = new URL(node.src)
-      if (url.hostname !== 'scrapbox.io') {
+      if (!node.src.startsWith(SCRAPBOX_BASE_URL)) {
         return node
       }
 
-      const resolved = await ImageRepository.resolveInternalImageByUrl(
-        url.toString(),
-      )
+      const resolved = await ImageRepository.resolveInternalImageByUrl(node.src)
       if (!resolved) {
         return node
       }
@@ -91,10 +92,9 @@ export async function findByTitle(title: string): Promise<PageResponse | null> {
 
   let image: string | null = null
   if (page.image) {
-    const url = new URL(page.image)
-    if (url.hostname === 'scrapbox.io') {
+    if (!page.image.startsWith(SCRAPBOX_BASE_URL)) {
       const resolved = await ImageRepository.resolveInternalImageByUrl(
-        url.toString(),
+        page.image,
       )
       if (resolved) {
         image = `/api/assets/${resolved}`
@@ -140,10 +140,9 @@ export async function findByTitle(title: string): Promise<PageResponse | null> {
       .map(async (p) => {
         let image: string | null = null
         if (p.image) {
-          const url = new URL(p.image)
-          if (url.hostname === 'scrapbox.io') {
+          if (p.image.startsWith(SCRAPBOX_BASE_URL)) {
             const resolved = await ImageRepository.resolveInternalImageByUrl(
-              url.toString(),
+              p.image,
             )
             if (resolved) {
               image = `/api/assets/${resolved}`
@@ -218,10 +217,9 @@ export async function findByTitle(title: string): Promise<PageResponse | null> {
       .map(async (p) => {
         let image: string | null = null
         if (p.image) {
-          const url = new URL(p.image)
-          if (url.hostname === 'scrapbox.io') {
+          if (p.image.startsWith(SCRAPBOX_BASE_URL)) {
             const resolved = await ImageRepository.resolveInternalImageByUrl(
-              url.toString(),
+              p.image,
             )
             if (resolved) {
               image = `/api/assets/${resolved}`

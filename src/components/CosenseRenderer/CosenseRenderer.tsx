@@ -1,4 +1,4 @@
-import { SCRAPBOX_PROJECT } from '../../lib/env'
+import { SCRAPBOX_BASE_URL, SCRAPBOX_PROJECT } from '../../lib/env'
 import { type Block } from '../../lib/presentation/page'
 import { CodeBlock } from './CodeBlock'
 import styles from './CosenseRender.module.css'
@@ -68,7 +68,7 @@ export function CosenseRenderer({ blocks, title }: Props): React.ReactNode {
             <Table
               cells={b.cells}
               filename={b.fileName}
-              href={`https://scrapbox.io/api/table/${SCRAPBOX_PROJECT}/${title}/${b.fileName}.csv`}
+              href={`${SCRAPBOX_BASE_URL}api/table/${SCRAPBOX_PROJECT}/${title}/${b.fileName}.csv`}
             />
           </IndentWrapper>
         )

@@ -1,5 +1,5 @@
 import * as cosense from '@progfay/scrapbox-parser'
-import { SCRAPBOX_PROJECT } from '../env'
+import { SCRAPBOX_BASE_URL, SCRAPBOX_PROJECT } from '../env'
 
 export type Page = {
   id: string
@@ -56,8 +56,8 @@ async function convertCosenseNodeToDomainNode(node: Node): Promise<Node> {
         ...n,
         src:
           n.pathType === 'relative'
-            ? `https://scrapbox.io/api/pages/${SCRAPBOX_PROJECT}/${n.path}/icon`
-            : `https://scrapbox.io/api/pages${n.path}/icon`,
+            ? `${SCRAPBOX_BASE_URL}api/pages/${SCRAPBOX_PROJECT}/${n.path}/icon`
+            : `${SCRAPBOX_BASE_URL}api/pages${n.path}/icon`,
       } satisfies StrongIconNode | IconNode
 
     case 'image':
