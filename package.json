@@ -21,6 +21,7 @@
     "@types/node": "22.17.2",
     "@types/react": "19.1.10",
     "prettier": "^3.3.3",
+    "serve": "14.2.4",
     "typescript": "^5.6.3"
   },
   "scripts": {
