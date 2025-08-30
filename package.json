@@ -5,24 +5,24 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@progfay/scrapbox-parser": "^10.0.0",
-    "clsx": "^2.1.1",
-    "highlight.js": "^11.10.0",
-    "next": "^15.0.3",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-spotify-embed": "^2.0.4",
-    "react-tweet": "^3.2.1",
-    "temml": "^0.11.0",
+    "@progfay/scrapbox-parser": "10.0.1",
+    "clsx": "2.1.1",
+    "highlight.js": "11.11.1",
+    "next": "15.5.2",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
+    "react-spotify-embed": "2.0.4",
+    "react-tweet": "3.2.2",
+    "temml": "0.11.10",
     "valibot": "1.1.0"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20241224.0",
-    "@types/node": "22.17.2",
-    "@types/react": "19.1.10",
-    "prettier": "^3.3.3",
+    "@cloudflare/workers-types": "4.20250830.0",
+    "@types/node": "24.3.0",
+    "@types/react": "19.1.12",
+    "prettier": "3.6.2",
     "serve": "14.2.4",
-    "typescript": "^5.6.3"
+    "typescript": "5.9.2"
   },
   "scripts": {
     "build:functions": "tsc -p ./src/functions/tsconfig.json",
