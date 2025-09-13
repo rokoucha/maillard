@@ -18,7 +18,7 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "4.20250911.0",
-    "@types/node": "24.3.1",
+    "@types/node": "24.3.3",
     "@types/react": "19.1.12",
     "prettier": "3.6.2",
     "serve": "14.2.5",
