@@ -13,7 +13,7 @@
     "react-dom": "19.1.1",
     "react-spotify-embed": "2.0.4",
     "react-tweet": "3.2.2",
-    "temml": "0.11.10",
+    "temml": "0.11.11",
     "valibot": "1.1.0"
   },
   "devDependencies": {
