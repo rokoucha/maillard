@@ -9,8 +9,8 @@
     "clsx": "2.1.1",
     "highlight.js": "11.11.1",
     "next": "15.5.4",
-    "react": "19.1.1",
-    "react-dom": "19.1.1",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
     "react-spotify-embed": "2.0.4",
     "react-tweet": "3.2.2",
     "temml": "0.11.11",
@@ -19,7 +19,7 @@
   "devDependencies": {
     "@cloudflare/workers-types": "4.20251001.0",
     "@types/node": "24.6.1",
-    "@types/react": "19.1.16",
+    "@types/react": "19.2.0",
     "prettier": "3.6.2",
     "serve": "14.2.5",
     "typescript": "5.9.3"
