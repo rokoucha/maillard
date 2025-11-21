@@ -40,8 +40,8 @@ importers:
         version: 1.1.0(typescript@5.9.3)
     devDependencies:
       '@cloudflare/workers-types':
-        specifier: 4.20251120.0
-        version: 4.20251120.0
+        specifier: 4.20251121.0
+        version: 4.20251121.0
       '@types/node':
         specifier: 24.10.1
         version: 24.10.1
@@ -60,8 +60,8 @@ importers:
 
 packages:
 
-  '@cloudflare/workers-types@4.20251120.0':
-    resolution: {integrity: sha512-/uy0Oleot60ZS037I2mxR9NEft6eQYdknKBnM76W91I+7BKznzXKj2MtXMfSXTLsxyP+6MluYRNPrRCQDlk8kw==}
+  '@cloudflare/workers-types@4.20251121.0':
+    resolution: {integrity: sha512-jzFg7hEGKzpEalxTCanN6lM8IdkvO/brsERp/+OyMms4Zi0nhDPUAg9dUcKU8wDuDUnzbjkplY6YRwle7Cq6gA==}
 
   '@emnapi/runtime@1.7.1':
     resolution: {integrity: sha512-PVtJr5CmLwYAU9PZDMITZoR5iAOShYREoR45EyyLrbntV50mdePTgUn4AmOw90Ifcj+x2kRjdzr1HP3RrNiHGA==}
@@ -757,7 +757,7 @@ packages:
 
 snapshots:
 
-  '@cloudflare/workers-types@4.20251120.0': {}
+  '@cloudflare/workers-types@4.20251121.0': {}
 
   '@emnapi/runtime@1.7.1':
     dependencies:
