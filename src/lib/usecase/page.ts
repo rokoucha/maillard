@@ -334,22 +334,30 @@ export async function findAllTitles(): Promise<RelatedPageResponse[]> {
           }
         }
 
-        const links = p.links.filter((l) => {
-          // 全ページ公開なら何もフィルタしない
-          if (!SCRAPBOX_COLLECT_PAGE) {
-            return true
-          }
+        return {
+          id: p.id,
+          title: p.title,
+          image: image,
+          description: await processNodes(p.description, [
+            filterCollectPageLink,
+          ]),
+          created: p.created,
+          updated: p.updated,
+          links: p.links.filter((l) => {
+            // 全ページ公開なら何もフィルタしない
+            if (!SCRAPBOX_COLLECT_PAGE) {
+              return true
+            }
 
-          // 収集ページは非公開
-          if (l === SCRAPBOX_COLLECT_PAGE) {
-            return false
-          }
+            // 収集ページは非公開
+            if (l === SCRAPBOX_COLLECT_PAGE) {
+              return false
+            }
 
-          // 一般ページは公開対象なら公開
-          return pageInfosMap.has(l)
-        })
-
-        return p
+            // 一般ページは公開対象なら公開
+            return pageInfosMap.has(l)
+          }),
+        }
       }),
   )
 
