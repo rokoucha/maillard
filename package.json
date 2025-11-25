@@ -14,7 +14,7 @@
     "react-spotify-embed": "2.0.4",
     "react-tweet": "3.2.2",
     "temml": "0.12.1",
-    "valibot": "1.1.0"
+    "valibot": "1.2.0"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "4.20251125.0",
