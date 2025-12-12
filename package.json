@@ -12,7 +12,7 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-spotify-embed": "2.0.4",
-    "react-tweet": "3.2.2",
+    "react-tweet": "3.3.0",
     "temml": "0.12.1",
     "valibot": "1.2.0"
   },
