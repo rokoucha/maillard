@@ -33,8 +33,8 @@ importers:
         specifier: 3.3.0
         version: 3.3.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       temml:
-        specifier: 0.12.1
-        version: 0.12.1
+        specifier: 0.12.2
+        version: 0.12.2
       valibot:
         specifier: 1.2.0
         version: 1.2.0(typescript@5.9.3)
@@ -700,8 +700,8 @@ packages:
     peerDependencies:
       react: ^16.11.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
-  temml@0.12.1:
-    resolution: {integrity: sha512-7rKps3v+yZ/1aWp2VQkuOgJKiwLgaL5hLR3q8gAglMCqUbofR98frEjHfutW+xncIRzGskucsdTD6aucJ557jg==}
+  temml@0.12.2:
+    resolution: {integrity: sha512-NTEeHEiV3WLuWm0/MqzJLM+Y83IWgGag5vxudkzMSSJaxkdMKsFbIC/elT4mGazYKMaQA8qm/EjpIDPLfqjlRw==}
     engines: {node: '>=18.13.0'}
 
   tslib@2.8.1:
@@ -1321,7 +1321,7 @@ snapshots:
       react: 19.2.3
       use-sync-external-store: 1.6.0(react@19.2.3)
 
-  temml@0.12.1: {}
+  temml@0.12.2: {}
 
   tslib@2.8.1: {}
 
