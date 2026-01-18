@@ -33,9 +33,6 @@ export const SearchTitleResponse = v.union([
 
 const User = v.object({
   id: v.string(),
-  name: v.string(),
-  displayName: v.string(),
-  photo: v.string(),
 })
 
 const LinksHop = v.object({
@@ -73,7 +70,7 @@ export const GetPage = v.object({
   title: v.string(),
   image: v.nullable(v.string()),
   descriptions: v.array(v.string()),
-  user: User,
+  users: v.array(User),
   lastUpdateUser: User,
   pin: v.number(),
   views: v.number(),
@@ -113,7 +110,7 @@ export const GetPage = v.object({
     search: v.string(),
     searchBackend: v.string(),
   }),
-  collaborators: v.array(User),
+  collaborators: v.optional(v.array(User)),
 })
 export type GetPage = v.InferOutput<typeof GetPage>
 
