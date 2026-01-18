@@ -2,9 +2,21 @@ import * as v from 'valibot'
 
 const SCRAPBOX_DEFAULT_BASE_URL = 'https://scrapbox.io/'
 
+const emptyString = v.pipe(
+  v.optional(v.string()),
+  v.transform((s) => (s === '' || s === undefined ? undefined : s)),
+)
+
 const baseUrlString = v.pipe(
   v.string(),
   v.transform((u) => (u.endsWith('/') ? u : u + '/')),
+)
+
+const emptyBaseUrlString = v.pipe(
+  emptyString,
+  v.transform((u) =>
+    u === undefined ? undefined : u.endsWith('/') ? u : u + '/',
+  ),
 )
 
 export const {
@@ -21,14 +33,14 @@ export const {
 } = v.parse(
   v.object({
     BASE_URL: baseUrlString,
-    NEXT_PHASE: v.optional(v.string()),
+    NEXT_PHASE: emptyString,
     SCRAPBOX_BASE_URL: v.optional(baseUrlString, SCRAPBOX_DEFAULT_BASE_URL),
-    SCRAPBOX_COLLECT_PAGE: v.optional(v.string()),
-    SCRAPBOX_CONNECT_SID: v.optional(v.string()),
+    SCRAPBOX_COLLECT_PAGE: emptyString,
+    SCRAPBOX_CONNECT_SID: emptyString,
     SCRAPBOX_INDEX_PAGE: v.string(),
     SCRAPBOX_PROJECT: v.string(),
-    SCRAPBOX_PROXY_URL: v.optional(baseUrlString),
-    SITE_LANG: v.optional(v.string()),
+    SCRAPBOX_PROXY_URL: emptyBaseUrlString,
+    SITE_LANG: emptyString,
     SITE_NAME: v.string(),
   }),
   {
