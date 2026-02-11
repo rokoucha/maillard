@@ -2,7 +2,7 @@
 
 Browning reaction / inspired by ci7lus/caramelize.
 
-![Maillard](https://scrapbox.io/files/672f98e8d5e96e3e960cc1a4.png)
+![Maillard](https://scrapbox.io/files/698c995b453671c3062044a1.png)
 
 Cosense [なのに] knowledge base
 
