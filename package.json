@@ -30,7 +30,8 @@
     "build:next": "next build",
     "build": "pnpm run build:functions && pnpm run build:next",
     "dev": "next dev --turbopack",
-    "lint": "next lint",
+    "lint:prettier": "prettier --check src",
+    "lint": "pnpm run lint:prettier",
     "start": "serve out",
     "test": "vitest",
     "type-check": "tsc --noEmit"
