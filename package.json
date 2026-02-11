@@ -22,7 +22,8 @@
     "@types/react": "19.2.13",
     "prettier": "3.8.1",
     "serve": "14.2.5",
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "vitest": "^4.0.18"
   },
   "scripts": {
     "build:functions": "tsc -p ./src/functions/tsconfig.json",
@@ -31,6 +32,7 @@
     "dev": "next dev --turbopack",
     "lint": "next lint",
     "start": "serve out",
+    "test": "vitest",
     "type-check": "tsc --noEmit"
   }
 }
