@@ -22,122 +22,125 @@ describe('present', () => {
       ],
     ])
 
-    const response = await present({
-      id: 'page-1',
-      title: 'Top/Title',
-      image: 'https://example.com/thumbnail.png',
-      description: [
-        { type: 'plain', raw: 'desc', text: 'Hello ' },
-        {
-          type: 'link',
-          raw: '[Internal Page]',
-          pathType: 'relative',
-          href: 'Internal Page',
-          content: '',
-        },
-      ],
-      created: new Date('2024-01-01T00:00:00Z'),
-      updated: new Date('2024-01-02T00:00:00Z'),
-      persistent: true,
-      blocks: [
-        {
-          type: 'line',
-          indent: 0,
-          nodes: [
-            {
-              type: 'icon',
-              raw: '[* Internal Page.icon]',
-              pathType: 'relative',
-              path: 'Internal Page',
-              src: 'https://scrapbox.io/api/pages/project/Internal Page/icon',
-            },
-            {
-              type: 'link',
-              raw: '[Another Page]',
-              pathType: 'relative',
-              href: 'Another Page',
-              content: '',
-            },
-            {
-              type: 'hashTag',
-              raw: '#Internal Page',
-              href: 'Internal Page',
-            },
-            {
-              type: 'decoration',
-              raw: '/Internal Page/',
-              rawDecos: '/',
-              decos: [],
-              nodes: [
-                {
-                  type: 'link',
-                  raw: '[Internal Page]',
-                  pathType: 'relative',
-                  href: 'Internal Page',
-                  content: '',
-                },
-              ],
-            },
-          ],
-        },
-        {
-          type: 'table',
-          indent: 0,
-          fileName: 't.table',
-          cells: [
-            [
+    const response = await present(
+      {
+        id: 'page-1',
+        title: 'Top/Title',
+        image: 'https://example.com/thumbnail.png',
+        description: [
+          { type: 'plain', raw: 'desc', text: 'Hello ' },
+          {
+            type: 'link',
+            raw: '[Internal Page]',
+            pathType: 'relative',
+            href: 'Internal Page',
+            content: '',
+          },
+        ],
+        created: new Date('2024-01-01T00:00:00Z'),
+        updated: new Date('2024-01-02T00:00:00Z'),
+        persistent: true,
+        blocks: [
+          {
+            type: 'line',
+            indent: 0,
+            nodes: [
+              {
+                type: 'icon',
+                raw: '[* Internal Page.icon]',
+                pathType: 'relative',
+                path: 'Internal Page',
+                src: 'https://scrapbox.io/api/pages/project/Internal Page/icon',
+              },
+              {
+                type: 'link',
+                raw: '[Another Page]',
+                pathType: 'relative',
+                href: 'Another Page',
+                content: '',
+              },
+              {
+                type: 'hashTag',
+                raw: '#Internal Page',
+                href: 'Internal Page',
+              },
+              {
+                type: 'decoration',
+                raw: '/Internal Page/',
+                rawDecos: '/',
+                decos: [],
+                nodes: [
+                  {
+                    type: 'link',
+                    raw: '[Internal Page]',
+                    pathType: 'relative',
+                    href: 'Internal Page',
+                    content: '',
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            type: 'table',
+            indent: 0,
+            fileName: 't.table',
+            cells: [
               [
-                {
-                  type: 'strong',
-                  raw: '**x**',
-                  nodes: [
-                    {
-                      type: 'link',
-                      raw: '[https://example.com]',
-                      pathType: 'absolute',
-                      href: 'https://example.com',
-                      content: '',
-                    },
-                  ],
-                },
+                [
+                  {
+                    type: 'strong',
+                    raw: '**x**',
+                    nodes: [
+                      {
+                        type: 'link',
+                        raw: '[https://example.com]',
+                        pathType: 'absolute',
+                        href: 'https://example.com',
+                        content: '',
+                      },
+                    ],
+                  },
+                ],
               ],
             ],
+          },
+          {
+            type: 'codeBlock',
+            indent: 0,
+            fileName: 'example.ts',
+            content: 'const n = 1',
+          },
+          { type: 'title', text: 'drop me' },
+        ],
+        links: ['Internal Page', 'Another Page'],
+        relatedPages: {
+          direct: [
+            {
+              id: 'rp-1',
+              title: 'Direct/Page',
+              image: null,
+              description: [{ type: 'plain', raw: 'd', text: 'direct' }],
+              created: new Date('2024-01-03T00:00:00Z'),
+              updated: new Date('2024-01-04T00:00:00Z'),
+              links: ['Internal Page'],
+            },
+          ],
+          indirect: [
+            {
+              id: 'rp-2',
+              title: 'Indirect Page',
+              image: null,
+              description: [{ type: 'plain', raw: 'i', text: 'indirect' }],
+              created: new Date('2024-01-05T00:00:00Z'),
+              updated: new Date('2024-01-06T00:00:00Z'),
+              links: ['Another Page'],
+            },
           ],
         },
-        {
-          type: 'codeBlock',
-          indent: 0,
-          fileName: 'example.ts',
-          content: 'const n = 1',
-        },
-        { type: 'title', text: 'drop me' },
-      ],
-      links: ['Internal Page', 'Another Page'],
-      relatedPages: {
-        direct: [
-          {
-            id: 'rp-1',
-            title: 'Direct/Page',
-            image: null,
-            description: [{ type: 'plain', raw: 'd', text: 'direct' }],
-            created: new Date('2024-01-03T00:00:00Z'),
-            updated: new Date('2024-01-04T00:00:00Z'),
-            links: ['Internal Page'],
-          },
-        ],
-        indirect: [
-          {
-            id: 'rp-2',
-            title: 'Indirect Page',
-            image: null,
-            description: [{ type: 'plain', raw: 'i', text: 'indirect' }],
-            created: new Date('2024-01-05T00:00:00Z'),
-            updated: new Date('2024-01-06T00:00:00Z'),
-            links: ['Another Page'],
-          },
-        ],
       },
-    }, pageInfos)
+      pageInfos,
+    )
 
     expect(response.id).toBe('page-1')
     expect(response.title).toBe('Top/Title')
