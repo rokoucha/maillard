@@ -34,6 +34,7 @@ export async function searchTitles(): Promise<SearchTitlePage[]> {
 
     const res = await fetch(url, { cache: 'force-cache', headers })
 
+    console.log(res.status, res.clone().text())
     const data = await v.parseAsync(SearchTitleResponse, await res.json())
     if ('message' in data) {
       throw new Error(data.message)
