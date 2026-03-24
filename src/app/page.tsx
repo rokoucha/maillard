@@ -1,6 +1,6 @@
 import { type Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import pkg from '../../package.json' assert { type: 'json' }
+import pkg from '../../package.json' with { type: 'json' }
 import { ArticleFooter } from '../components/ArticleFooter'
 import { ArticleHeader } from '../components/ArticleHeader'
 import { CosenseRenderer } from '../components/CosenseRenderer'

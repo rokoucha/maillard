@@ -1,7 +1,7 @@
 import { type Metadata } from 'next'
 import { PHASE_PRODUCTION_BUILD } from 'next/dist/shared/lib/constants'
 import { notFound } from 'next/navigation'
-import pkg from '../../../package.json' assert { type: 'json' }
+import pkg from '../../../package.json' with { type: 'json' }
 import { ArticleFooter } from '../../components/ArticleFooter'
 import { ArticleHeader } from '../../components/ArticleHeader'
 import { CosenseRenderer } from '../../components/CosenseRenderer'
