@@ -23,22 +23,6 @@ const headers = {
   'User-Agent': `${pkg.name}/${pkg.version}`,
 } satisfies HeadersInit
 
-async function parseJsonResponse(response: Response) {
-  const text = await response.text()
-
-  try {
-    return JSON.parse(text) as unknown
-  } catch (error) {
-    console.error('Failed to parse Cosense response as JSON', {
-      body: text,
-      status: response.status,
-      statusText: response.statusText,
-      url: response.url,
-    })
-    throw error
-  }
-}
-
 export async function searchTitles(): Promise<SearchTitlePage[]> {
   const pages: SearchTitlePage[] = []
   let followingId = ''
@@ -50,10 +34,7 @@ export async function searchTitles(): Promise<SearchTitlePage[]> {
 
     const res = await fetch(url, { cache: 'force-cache', headers })
 
-    const data = await v.parseAsync(
-      SearchTitleResponse,
-      await parseJsonResponse(res),
-    )
+    const data = await v.parseAsync(SearchTitleResponse, await res.json())
     if ('message' in data) {
       throw new Error(data.message)
     }
@@ -76,7 +57,7 @@ export async function page(title: string): Promise<GetPage | null> {
     return null
   }
 
-  const data = await v.parseAsync(GetPageResponse, await parseJsonResponse(res))
+  const data = await v.parseAsync(GetPageResponse, await res.json())
   if ('message' in data) {
     throw new Error(data.message)
   }
