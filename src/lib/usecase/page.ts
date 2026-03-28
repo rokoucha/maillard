@@ -323,7 +323,9 @@ export async function findAllTitles(): Promise<RelatedPageResponse[]> {
   const pageInfosMap = new Map(pageInfos.map((p) => [p.title, p]))
 
   const pages = await Promise.all(
-    pageInfos.map(async (p) => await PageRepository.findPageSummary(p.title)),
+    pageInfos.map(
+      async (p) => await PageRepository.findPageSummaryByTitle(p.title),
+    ),
   )
 
   const filteredPages = await Promise.all(
