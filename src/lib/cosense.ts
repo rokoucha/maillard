@@ -30,7 +30,7 @@ async function parseJsonResponse(response: Response) {
     return JSON.parse(text) as unknown
   } catch (error) {
     console.error('Failed to parse Cosense response as JSON', {
-      body: text.slice(0, 2000),
+      body: text,
       status: response.status,
       statusText: response.statusText,
       url: response.url,
