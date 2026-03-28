@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { PageInfo } from '../domain/pageinfo'
 import * as ImageRepository from '../repository/image'
 import * as PageRepository from '../repository/page'
@@ -137,16 +137,21 @@ describe('findByTitle', () => {
       makePageInfo({ title: 'Page One' }),
       makePageInfo({ title: 'Page Two' }),
     ])
-    vi.mocked(PageRepository.findByTitle).mockResolvedValue(null)
+    // 1回目(存在確認)はページを返し、2回目(map付き)はnullを返す
+    vi.mocked(PageRepository.findByTitle)
+      .mockResolvedValueOnce(makePage())
+      .mockResolvedValueOnce(null)
 
     await findByTitle('Page One')
 
-    expect(PageRepository.findByTitle).toHaveBeenCalledWith(
+    expect(PageRepository.findByTitle).toHaveBeenCalledTimes(2)
+    expect(PageRepository.findByTitle).toHaveBeenNthCalledWith(
+      2,
       'Page One',
       expect.any(Map),
     )
 
-    const passedMap = vi.mocked(PageRepository.findByTitle).mock.calls[0][1]
+    const passedMap = vi.mocked(PageRepository.findByTitle).mock.calls[1][1]
     expect(passedMap.get('page one')).toBe('Page One')
     expect(passedMap.get('page two')).toBe('Page Two')
   })

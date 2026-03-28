@@ -35,7 +35,7 @@ export async function findSummaryByTitle(
 
 export async function findByTitle(
   title: string,
-  titleLcMap: Map<string, string>,
+  titleLcMap: Map<string, string> = new Map(),
 ): Promise<Page | null> {
   const page = await cosense.page(title)
   if (!page) {

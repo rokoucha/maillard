@@ -71,6 +71,11 @@ async function resolveInternalImage(node: Node): Promise<Node | null> {
 }
 
 export async function findByTitle(title: string): Promise<PageResponse | null> {
+  const exists = await PageRepository.findByTitle(title)
+  if (!exists) {
+    return null
+  }
+
   const pageInfos = await PageInfoRepository.findMany()
 
   const titleLcMap = new Map(
