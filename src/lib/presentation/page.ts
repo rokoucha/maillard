@@ -8,12 +8,12 @@ import {
 } from '../domain/page'
 import { type PageInfo } from '../domain/pageinfo'
 import { SCRAPBOX_BASE_URL, SCRAPBOX_PROJECT } from '../env'
-import { pagePathFromTitle } from '../page-path'
+import { cosensePageTitleEscape } from '../escape'
 
 export type PageResponse = {
   id: string
   title: string
-  pagePath: string
+  escapedTitle: string
   image: string | null
   description: string
   created: Date
@@ -27,7 +27,7 @@ export type PageResponse = {
 export type RelatedPageResponse = {
   id: string
   title: string
-  pagePath: string
+  escapedTitle: string
   image: string | null
   description: string
   created: Date
@@ -42,7 +42,7 @@ export async function present(
   return {
     id: page.id,
     title: page.title,
-    pagePath: pagePathFromTitle(page.title),
+    escapedTitle: cosensePageTitleEscape(page.title),
     image: page.image,
     description: nodesToText(page.description),
     created: page.created,
@@ -67,7 +67,7 @@ export async function presentRelatedPage(
   return {
     id: relatedPage.id,
     title: relatedPage.title,
-    pagePath: pagePathFromTitle(relatedPage.title),
+    escapedTitle: cosensePageTitleEscape(relatedPage.title),
     image: relatedPage.image,
     description: nodesToText(relatedPage.description),
     created: relatedPage.created,
@@ -90,7 +90,7 @@ function convertDomainNodeToPresentationNode(pageInfo: Map<string, PageInfo>) {
               raw: node.raw,
               pathType: page ? 'internal' : 'external',
               href: page
-                ? pagePathFromTitle(node.path)
+                ? `/${cosensePageTitleEscape(node.path)}`
                 : `${SCRAPBOX_BASE_URL}${SCRAPBOX_PROJECT}/${node.path}`,
               src: node.src,
             } satisfies IconNode | StrongIconNode
@@ -115,7 +115,7 @@ function convertDomainNodeToPresentationNode(pageInfo: Map<string, PageInfo>) {
               raw: node.raw,
               pathType: page ? 'internal' : 'external',
               href: page
-                ? pagePathFromTitle(node.href)
+                ? `/${cosensePageTitleEscape(node.href)}`
                 : `${SCRAPBOX_BASE_URL}${SCRAPBOX_PROJECT}/${node.href}`,
               content: node.content || node.href,
             } satisfies LinkNode
@@ -147,7 +147,7 @@ function convertDomainNodeToPresentationNode(pageInfo: Map<string, PageInfo>) {
           raw: node.raw,
           pathType: page ? 'internal' : 'external',
           href: page
-            ? pagePathFromTitle(node.href)
+            ? `/${cosensePageTitleEscape(node.href)}`
             : `${SCRAPBOX_BASE_URL}${SCRAPBOX_PROJECT}/${node.href}`,
           content: node.href,
         } satisfies HashTagNode

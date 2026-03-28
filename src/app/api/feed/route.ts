@@ -6,7 +6,6 @@ import {
   SITE_LANG,
   SITE_NAME,
 } from '../../../lib/env'
-import { pageUrlFromPath } from '../../../lib/page-path'
 
 export const dynamic = 'force-static'
 
@@ -31,7 +30,7 @@ export async function GET(): Promise<Response> {
       .sort((a, b) => b.updated.getTime() - a.updated.getTime())
       .map((page) => ({
         id: `tag:${baseUrl.hostname},2024-11-09:${page.id}`,
-        url: pageUrlFromPath(baseUrl, page.pagePath),
+        url: `${baseUrl.href}/${page.escapedTitle}`,
         title: page.title,
         content_text: page.description,
         image: page.image,

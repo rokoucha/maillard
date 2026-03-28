@@ -16,11 +16,6 @@ import {
   SCRAPBOX_INDEX_PAGE,
   SITE_NAME,
 } from '../../lib/env'
-import { escapePageTitleForPath } from '../../lib/escape'
-import {
-  pageUrlFromPath,
-  resolvePageTitleFromSlugParts,
-} from '../../lib/page-path'
 import styles from './page.module.css'
 
 export async function generateStaticParams(): Promise<
@@ -38,7 +33,12 @@ export async function generateStaticParams(): Promise<
         slug:
           NEXT_PHASE === PHASE_PRODUCTION_BUILD
             ? p.title.split('/')
-            : [escapePageTitleForPath(p.title)],
+            : [
+                p.title
+                  .split('/')
+                  .map((p) => encodeURIComponent(p))
+                  .join('/'),
+              ],
       }))
   )
 }
@@ -48,14 +48,9 @@ type Props = Readonly<{
 }>
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const pageTitle = await params.then((p) =>
-    resolvePageTitleFromSlugParts(p.slug),
-  )
-  if (!pageTitle) {
-    notFound()
-  }
+  const slug = await params.then((p) => p.slug.join('/'))
 
-  const page = await getPage(pageTitle)
+  const page = await getPage(slug)
   if (!page) {
     notFound()
   }
@@ -71,7 +66,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       publishedTime: page.created.toISOString(),
       tags: page.links,
       type: 'article',
-      url: pageUrlFromPath(BASE_URL, page.pagePath),
+      url: `${BASE_URL}/${page.escapedTitle}`,
     },
     twitter: {
       title: page.title,
@@ -90,14 +85,9 @@ export default async function Page({
     throw new Error('Index page not found')
   }
 
-  const pageTitle = await params.then((p) =>
-    resolvePageTitleFromSlugParts(p.slug),
-  )
-  if (!pageTitle) {
-    notFound()
-  }
+  const slug = await params.then((p) => p.slug.join('/'))
 
-  const page = await getPage(pageTitle)
+  const page = await getPage(slug)
   if (!page) {
     notFound()
   }
