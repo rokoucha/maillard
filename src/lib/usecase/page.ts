@@ -1,4 +1,10 @@
-import { Page, processBlocks, processNodes, type Node } from '../domain/page'
+import {
+  Page,
+  PageSummary,
+  processBlocks,
+  processNodes,
+  type Node,
+} from '../domain/page'
 import {
   SCRAPBOX_BASE_URL,
   SCRAPBOX_COLLECT_PAGE,
@@ -70,30 +76,34 @@ export async function findByTitle(title: string): Promise<PageResponse | null> {
     return null
   }
 
-  const pageInfos = await PageInfoRepository.findMany().then((i) =>
-    i.filter((p) => {
-      // 全ページ公開なら何もフィルタしない
-      if (!SCRAPBOX_COLLECT_PAGE) {
-        return true
-      }
+  const pageInfos = await PageInfoRepository.findMany()
 
-      // 一部公開のフィルタリング
-
-      // インデックスページは無条件で公開(たとえ収集ページと同一だとしても)
-      if (p.title === SCRAPBOX_INDEX_PAGE) {
-        return true
-      }
-
-      // 収集ページは基本非公開、インデックスページと同一なら公開される
-      if (p.title === SCRAPBOX_COLLECT_PAGE) {
-        return false
-      }
-
-      // 一般ページは収集ページがリンクに含まれているなら公開
-      return p.links.includes(SCRAPBOX_COLLECT_PAGE)
-    }),
+  const titleLcMap = new Map(
+    pageInfos.map((p) => [p.title.toLowerCase(), p.title]),
   )
-  const pages = new Map(pageInfos.map((p) => [p.title, p]))
+
+  const filteredPageInfos = pageInfos.filter((p) => {
+    // 全ページ公開なら何もフィルタしない
+    if (!SCRAPBOX_COLLECT_PAGE) {
+      return true
+    }
+
+    // 一部公開のフィルタリング
+
+    // インデックスページは無条件で公開(たとえ収集ページと同一だとしても)
+    if (p.title === SCRAPBOX_INDEX_PAGE) {
+      return true
+    }
+
+    // 収集ページは基本非公開、インデックスページと同一なら公開される
+    if (p.title === SCRAPBOX_COLLECT_PAGE) {
+      return false
+    }
+
+    // 一般ページは収集ページがリンクに含まれているなら公開
+    return p.links.includes(SCRAPBOX_COLLECT_PAGE)
+  })
+  const pages = new Map(filteredPageInfos.map((p) => [p.title, p]))
 
   let image: string | null = null
   if (page.image) {
@@ -123,6 +133,8 @@ export async function findByTitle(title: string): Promise<PageResponse | null> {
     // 一般ページは公開対象なら公開
     return pages.has(l)
   })
+
+  const linksSet = new Set(links)
 
   const direct = await Promise.all(
     page.relatedPages.direct
@@ -166,22 +178,24 @@ export async function findByTitle(title: string): Promise<PageResponse | null> {
           ]),
           created: p.created,
           updated: p.updated,
-          links: p.links.filter((l) => {
-            // 全ページ公開なら何もフィルタしない
-            if (!SCRAPBOX_COLLECT_PAGE) {
-              return true
-            }
+          links: p.links
+            .map((l) => titleLcMap.get(l) ?? l)
+            .filter((l) => {
+              // 全ページ公開なら何もフィルタしない
+              if (!SCRAPBOX_COLLECT_PAGE) {
+                return true
+              }
 
-            // 一部公開のフィルタリング
+              // 一部公開のフィルタリング
 
-            // 収集ページは非公開
-            if (l === SCRAPBOX_COLLECT_PAGE) {
-              return false
-            }
+              // 収集ページは非公開
+              if (l === SCRAPBOX_COLLECT_PAGE) {
+                return false
+              }
 
-            // 一般ページは公開対象なら公開
-            return pages.has(l)
-          }),
+              // 一般ページは公開対象なら公開
+              return pages.has(l)
+            }),
         }
       }),
   )
@@ -209,9 +223,9 @@ export async function findByTitle(title: string): Promise<PageResponse | null> {
 
         // 収集ページ以外でリンクされていないならリンクされてない扱いにする
         if (
-          !p.links.some((l) =>
-            page.links.filter((l) => l !== SCRAPBOX_COLLECT_PAGE).includes(l),
-          )
+          !p.links
+            .map((l) => titleLcMap.get(l) ?? l)
+            .some((l) => linksSet.has(l))
         ) {
           return false
         }
@@ -243,20 +257,22 @@ export async function findByTitle(title: string): Promise<PageResponse | null> {
           ]),
           created: p.created,
           updated: p.updated,
-          links: p.links.filter((l) => {
-            // 全ページ公開なら何もフィルタしない
-            if (!SCRAPBOX_COLLECT_PAGE) {
-              return true
-            }
+          links: p.links
+            .map((l) => titleLcMap.get(l) ?? l)
+            .filter((l) => {
+              // 全ページ公開なら何もフィルタしない
+              if (!SCRAPBOX_COLLECT_PAGE) {
+                return true
+              }
 
-            // 収集ページは非公開
-            if (l === SCRAPBOX_COLLECT_PAGE) {
-              return false
-            }
+              // 収集ページは非公開
+              if (l === SCRAPBOX_COLLECT_PAGE) {
+                return false
+              }
 
-            // 一般ページは公開対象なら公開
-            return pages.has(l)
-          }),
+              // 一般ページは公開対象なら公開
+              return pages.has(l)
+            }),
         }
       }),
   )
@@ -313,12 +329,14 @@ export async function findAllTitles(): Promise<RelatedPageResponse[]> {
   const pageInfosMap = new Map(pageInfos.map((p) => [p.title, p]))
 
   const pages = await Promise.all(
-    pageInfos.map(async (p) => await PageRepository.findByTitle(p.title)),
+    pageInfos.map(
+      async (p) => await PageRepository.findSummaryByTitle(p.title),
+    ),
   )
 
   const filteredPages = await Promise.all(
     pages
-      .filter((p): p is Page => p !== null)
+      .filter((p): p is PageSummary => p !== null)
       .map(async (p) => {
         let image: string | null = null
         if (p.image) {

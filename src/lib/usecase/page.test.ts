@@ -1,0 +1,184 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import type { PageInfo } from '../domain/pageinfo'
+import * as ImageRepository from '../repository/image'
+import * as PageRepository from '../repository/page'
+import * as PageInfoRepository from '../repository/pageinfo'
+import { findAllTitles, findByTitle } from './page'
+
+vi.mock('../env', () => ({
+  SCRAPBOX_BASE_URL: 'https://scrapbox.io/',
+  SCRAPBOX_COLLECT_PAGE: undefined,
+  SCRAPBOX_INDEX_PAGE: 'Index',
+  SCRAPBOX_PROJECT: 'project',
+  SCRAPBOX_PROXY_URL: undefined,
+  SCRAPBOX_CONNECT_SID: undefined,
+  BASE_URL: 'https://example.com/',
+  SITE_NAME: 'Test',
+  SITE_LANG: undefined,
+  NEXT_PHASE: undefined,
+}))
+
+vi.mock('../repository/page', () => ({
+  findSummaryByTitle: vi.fn(),
+  findByTitle: vi.fn(),
+}))
+
+vi.mock('../repository/pageinfo', () => ({
+  findMany: vi.fn(),
+}))
+
+vi.mock('../repository/image', () => ({
+  resolveInternalImageByUrl: vi.fn(),
+}))
+
+const makePageInfo = (overrides: Partial<PageInfo> = {}): PageInfo => ({
+  id: 'pi-1',
+  title: 'Page One',
+  links: [],
+  updated: new Date('2024-01-01T00:00:00Z'),
+  image: null,
+  ...overrides,
+})
+
+const makePageSummary = (
+  overrides: Partial<
+    Awaited<ReturnType<typeof PageRepository.findSummaryByTitle>>
+  > = {},
+) => ({
+  id: 'page-1',
+  title: 'Page One',
+  image: null,
+  description: [{ type: 'plain' as const, raw: 'desc', text: 'description' }],
+  created: new Date('2024-01-01T00:00:00Z'),
+  updated: new Date('2024-01-02T00:00:00Z'),
+  links: [],
+  ...overrides,
+})
+
+const makePage = (
+  overrides: Partial<
+    Awaited<ReturnType<typeof PageRepository.findByTitle>>
+  > = {},
+) => ({
+  id: 'page-1',
+  title: 'Page One',
+  image: null,
+  description: [{ type: 'plain' as const, raw: 'desc', text: 'description' }],
+  created: new Date('2024-01-01T00:00:00Z'),
+  updated: new Date('2024-01-02T00:00:00Z'),
+  persistent: true,
+  blocks: [],
+  links: [],
+  relatedPages: { direct: [], indirect: [] },
+  ...overrides,
+})
+
+describe('findAllTitles', () => {
+  beforeEach(() => {
+    vi.mocked(PageRepository.findSummaryByTitle).mockReset()
+    vi.mocked(PageInfoRepository.findMany).mockReset()
+    vi.mocked(ImageRepository.resolveInternalImageByUrl).mockReset()
+    vi.mocked(ImageRepository.resolveInternalImageByUrl).mockResolvedValue(null)
+  })
+
+  it('findSummaryByTitleを使う(findByTitleは使わない)', async () => {
+    vi.mocked(PageInfoRepository.findMany).mockResolvedValue([
+      makePageInfo({ title: 'Page One' }),
+    ])
+    vi.mocked(PageRepository.findSummaryByTitle).mockResolvedValue(
+      makePageSummary(),
+    )
+
+    await findAllTitles()
+
+    expect(PageRepository.findSummaryByTitle).toHaveBeenCalledOnce()
+    expect(PageRepository.findByTitle).not.toHaveBeenCalled()
+  })
+
+  it('createdの降順でソートされる', async () => {
+    vi.mocked(PageInfoRepository.findMany).mockResolvedValue([
+      makePageInfo({ title: 'Old Page' }),
+      makePageInfo({ title: 'New Page' }),
+    ])
+    vi.mocked(PageRepository.findSummaryByTitle).mockImplementation(
+      async (title) =>
+        makePageSummary({
+          title,
+          created:
+            title === 'New Page'
+              ? new Date('2024-02-01T00:00:00Z')
+              : new Date('2024-01-01T00:00:00Z'),
+        }),
+    )
+
+    const result = await findAllTitles()
+
+    expect(result[0].title).toBe('New Page')
+    expect(result[1].title).toBe('Old Page')
+  })
+
+  it('SCRAPBOX_COLLECT_PAGEが未設定のとき全ページを返す', async () => {
+    vi.mocked(PageInfoRepository.findMany).mockResolvedValue([
+      makePageInfo({ title: 'Page A' }),
+      makePageInfo({ title: 'Page B' }),
+    ])
+    vi.mocked(PageRepository.findSummaryByTitle).mockImplementation(
+      async (title) => makePageSummary({ title }),
+    )
+
+    const result = await findAllTitles()
+
+    expect(result).toHaveLength(2)
+  })
+})
+
+describe('findByTitle', () => {
+  beforeEach(() => {
+    vi.mocked(PageRepository.findByTitle).mockReset()
+    vi.mocked(PageInfoRepository.findMany).mockReset()
+    vi.mocked(ImageRepository.resolveInternalImageByUrl).mockReset()
+    vi.mocked(ImageRepository.resolveInternalImageByUrl).mockResolvedValue(null)
+  })
+
+  it('ページが存在しない場合はnullを返す', async () => {
+    vi.mocked(PageRepository.findByTitle).mockResolvedValue(null)
+
+    const result = await findByTitle('Nonexistent')
+
+    expect(result).toBeNull()
+    expect(PageInfoRepository.findMany).not.toHaveBeenCalled()
+  })
+
+  it('linksLcをpageInfosでoriginal caseに解決する', async () => {
+    vi.mocked(PageInfoRepository.findMany).mockResolvedValue([
+      makePageInfo({ title: 'Direct Page' }),
+      makePageInfo({ title: 'Test Page' }),
+    ])
+    vi.mocked(PageRepository.findByTitle).mockResolvedValue(
+      makePage({
+        relatedPages: {
+          direct: [
+            {
+              id: 'r-1',
+              title: 'Direct Page',
+              image: null,
+              description: [],
+              created: new Date('2024-01-01T00:00:00Z'),
+              updated: new Date('2024-01-02T00:00:00Z'),
+              links: ['direct page', 'test page', 'unknown page'],
+            },
+          ],
+          indirect: [],
+        },
+      }),
+    )
+
+    const result = await findByTitle('Test Page')
+
+    expect(result!.relatedPages[0].links).toEqual([
+      'Direct Page',
+      'Test Page',
+      'unknown page',
+    ])
+  })
+})
