@@ -8,8 +8,8 @@ vi.mock('../cosense', () => ({
   page: vi.fn(),
 }))
 
-vi.mock('../domain/page', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../domain/page')>()),
+vi.mock('../domain/page', () => ({
+  parseDescription: vi.fn(),
   parseLines: vi.fn(),
 }))
 
