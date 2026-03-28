@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { GetPage } from '../../schema/cosense'
 import * as cosense from '../cosense'
 import * as domainPage from '../domain/page'
-import { findByTitle, findPageSummaryByTitle } from './page'
+import { findByTitle, findSummaryByTitle } from './page'
 
 vi.mock('../cosense', () => ({
   page: vi.fn(),
@@ -95,7 +95,7 @@ const mockGetPage = (overrides: Partial<GetPage> = {}): GetPage => ({
   ...overrides,
 })
 
-describe('findPageSummaryByTitle', () => {
+describe('findSummaryByTitle', () => {
   beforeEach(() => {
     vi.mocked(cosense.page).mockReset()
   })
@@ -103,7 +103,7 @@ describe('findPageSummaryByTitle', () => {
   it('ページが存在しない場合はnullを返す', async () => {
     vi.mocked(cosense.page).mockResolvedValue(null)
 
-    const result = await findPageSummaryByTitle('Test Page')
+    const result = await findSummaryByTitle('Test Page')
 
     expect(result).toBeNull()
     expect(cosense.page).toHaveBeenCalledOnce()
@@ -113,7 +113,7 @@ describe('findPageSummaryByTitle', () => {
   it('cosense.pageを1回だけ呼ぶ', async () => {
     vi.mocked(cosense.page).mockResolvedValue(mockGetPage())
 
-    await findPageSummaryByTitle('Test Page')
+    await findSummaryByTitle('Test Page')
 
     expect(cosense.page).toHaveBeenCalledOnce()
   })
@@ -121,7 +121,7 @@ describe('findPageSummaryByTitle', () => {
   it('parseLinesを呼ばない', async () => {
     vi.mocked(cosense.page).mockResolvedValue(mockGetPage())
 
-    await findPageSummaryByTitle('Test Page')
+    await findSummaryByTitle('Test Page')
 
     expect(domainPage.parseLines).not.toHaveBeenCalled()
   })
@@ -137,7 +137,7 @@ describe('findPageSummaryByTitle', () => {
       }),
     )
 
-    const result = await findPageSummaryByTitle('My Page')
+    const result = await findSummaryByTitle('My Page')
 
     expect(result).not.toBeNull()
     expect(result!.id).toBe('page-xyz')
@@ -152,7 +152,7 @@ describe('findPageSummaryByTitle', () => {
       mockGetPage({ image: 'https://i.gyazo.com/abc123/raw' }),
     )
 
-    const result = await findPageSummaryByTitle('Test Page')
+    const result = await findSummaryByTitle('Test Page')
 
     expect(result!.image).toBe('https://i.gyazo.com/abc123')
   })
@@ -162,7 +162,7 @@ describe('findPageSummaryByTitle', () => {
       mockGetPage({ image: 'https://example.com/image.png' }),
     )
 
-    const result = await findPageSummaryByTitle('Test Page')
+    const result = await findSummaryByTitle('Test Page')
 
     expect(result!.image).toBe('https://example.com/image.png')
   })

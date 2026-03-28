@@ -19,7 +19,7 @@ vi.mock('../env', () => ({
 }))
 
 vi.mock('../repository/page', () => ({
-  findPageSummaryByTitle: vi.fn(),
+  findSummaryByTitle: vi.fn(),
   findByTitle: vi.fn(),
 }))
 
@@ -42,7 +42,7 @@ const makePageInfo = (overrides: Partial<PageInfo> = {}): PageInfo => ({
 
 const makePage = (
   overrides: Partial<
-    Awaited<ReturnType<typeof PageRepository.findPageSummaryByTitle>>
+    Awaited<ReturnType<typeof PageRepository.findSummaryByTitle>>
   > = {},
 ) => ({
   id: 'page-1',
@@ -60,23 +60,21 @@ const makePage = (
 
 describe('findAllTitles', () => {
   beforeEach(() => {
-    vi.mocked(PageRepository.findPageSummaryByTitle).mockReset()
+    vi.mocked(PageRepository.findSummaryByTitle).mockReset()
     vi.mocked(PageInfoRepository.findMany).mockReset()
     vi.mocked(ImageRepository.resolveInternalImageByUrl).mockReset()
     vi.mocked(ImageRepository.resolveInternalImageByUrl).mockResolvedValue(null)
   })
 
-  it('findPageSummaryByTitleを使う(findByTitleは使わない)', async () => {
+  it('findSummaryByTitleを使う(findByTitleは使わない)', async () => {
     vi.mocked(PageInfoRepository.findMany).mockResolvedValue([
       makePageInfo({ title: 'Page One' }),
     ])
-    vi.mocked(PageRepository.findPageSummaryByTitle).mockResolvedValue(
-      makePage(),
-    )
+    vi.mocked(PageRepository.findSummaryByTitle).mockResolvedValue(makePage())
 
     await findAllTitles()
 
-    expect(PageRepository.findPageSummaryByTitle).toHaveBeenCalledOnce()
+    expect(PageRepository.findSummaryByTitle).toHaveBeenCalledOnce()
     expect(PageRepository.findByTitle).not.toHaveBeenCalled()
   })
 
@@ -85,7 +83,7 @@ describe('findAllTitles', () => {
       makePageInfo({ title: 'Old Page' }),
       makePageInfo({ title: 'New Page' }),
     ])
-    vi.mocked(PageRepository.findPageSummaryByTitle).mockImplementation(
+    vi.mocked(PageRepository.findSummaryByTitle).mockImplementation(
       async (title) =>
         makePage({
           title,
@@ -107,7 +105,7 @@ describe('findAllTitles', () => {
       makePageInfo({ title: 'Page A' }),
       makePageInfo({ title: 'Page B' }),
     ])
-    vi.mocked(PageRepository.findPageSummaryByTitle).mockImplementation(
+    vi.mocked(PageRepository.findSummaryByTitle).mockImplementation(
       async (title) => makePage({ title }),
     )
 
