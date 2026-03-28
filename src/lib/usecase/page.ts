@@ -134,6 +134,8 @@ export async function findByTitle(title: string): Promise<PageResponse | null> {
     return pages.has(l)
   })
 
+  const linksSet = new Set(links)
+
   const direct = await Promise.all(
     page.relatedPages.direct
       .filter((p) => {
@@ -223,9 +225,7 @@ export async function findByTitle(title: string): Promise<PageResponse | null> {
         if (
           !p.links
             .map((l) => titleLcMap.get(l) ?? l)
-            .some((l) =>
-              page.links.filter((l) => l !== SCRAPBOX_COLLECT_PAGE).includes(l),
-            )
+            .some((l) => linksSet.has(l))
         ) {
           return false
         }
