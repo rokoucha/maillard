@@ -85,20 +85,6 @@ export async function findByTitle(title: string): Promise<PageResponse | null> {
   const resolveLinks = (links: string[]) =>
     links.map((l) => titleLcMap.get(l) ?? l)
 
-  const resolvedPage = {
-    ...page,
-    relatedPages: {
-      direct: page.relatedPages.direct.map((p) => ({
-        ...p,
-        links: resolveLinks(p.links),
-      })),
-      indirect: page.relatedPages.indirect.map((p) => ({
-        ...p,
-        links: resolveLinks(p.links),
-      })),
-    },
-  }
-
   const filteredPageInfos = pageInfos.filter((p) => {
     // 全ページ公開なら何もフィルタしない
     if (!SCRAPBOX_COLLECT_PAGE) {
@@ -123,20 +109,20 @@ export async function findByTitle(title: string): Promise<PageResponse | null> {
   const pages = new Map(filteredPageInfos.map((p) => [p.title, p]))
 
   let image: string | null = null
-  if (resolvedPage.image) {
-    if (resolvedPage.image.startsWith(SCRAPBOX_BASE_URL)) {
+  if (page.image) {
+    if (page.image.startsWith(SCRAPBOX_BASE_URL)) {
       const resolved = await ImageRepository.resolveInternalImageByUrl(
-        resolvedPage.image,
+        page.image,
       )
       if (resolved) {
         image = `/api/assets/${resolved}`
       }
     } else {
-      image = resolvedPage.image
+      image = page.image
     }
   }
 
-  const links = resolvedPage.links.filter((l) => {
+  const links = page.links.filter((l) => {
     // 全ページ公開なら何もフィルタしない
     if (!SCRAPBOX_COLLECT_PAGE) {
       return true
@@ -152,7 +138,7 @@ export async function findByTitle(title: string): Promise<PageResponse | null> {
   })
 
   const direct = await Promise.all(
-    resolvedPage.relatedPages.direct
+    page.relatedPages.direct
       .filter((p) => {
         // 全ページ公開なら何もフィルタしない
         if (!SCRAPBOX_COLLECT_PAGE) {
@@ -193,7 +179,7 @@ export async function findByTitle(title: string): Promise<PageResponse | null> {
           ]),
           created: p.created,
           updated: p.updated,
-          links: p.links.filter((l) => {
+          links: resolveLinks(p.links).filter((l) => {
             // 全ページ公開なら何もフィルタしない
             if (!SCRAPBOX_COLLECT_PAGE) {
               return true
@@ -214,7 +200,7 @@ export async function findByTitle(title: string): Promise<PageResponse | null> {
   )
 
   const indirect = await Promise.all(
-    resolvedPage.relatedPages.indirect
+    page.relatedPages.indirect
       .filter((p) => {
         // 全ページ公開なら何もフィルタしない
         if (!SCRAPBOX_COLLECT_PAGE) {
@@ -236,10 +222,8 @@ export async function findByTitle(title: string): Promise<PageResponse | null> {
 
         // 収集ページ以外でリンクされていないならリンクされてない扱いにする
         if (
-          !p.links.some((l) =>
-            resolvedPage.links
-              .filter((l) => l !== SCRAPBOX_COLLECT_PAGE)
-              .includes(l),
+          !resolveLinks(p.links).some((l) =>
+            page.links.filter((l) => l !== SCRAPBOX_COLLECT_PAGE).includes(l),
           )
         ) {
           return false
@@ -272,7 +256,7 @@ export async function findByTitle(title: string): Promise<PageResponse | null> {
           ]),
           created: p.created,
           updated: p.updated,
-          links: p.links.filter((l) => {
+          links: resolveLinks(p.links).filter((l) => {
             // 全ページ公開なら何もフィルタしない
             if (!SCRAPBOX_COLLECT_PAGE) {
               return true
@@ -292,16 +276,16 @@ export async function findByTitle(title: string): Promise<PageResponse | null> {
 
   return present(
     {
-      id: resolvedPage.id,
-      title: resolvedPage.title,
+      id: page.id,
+      title: page.title,
       image: image,
-      description: await processNodes(resolvedPage.description, [
+      description: await processNodes(page.description, [
         filterCollectPageLink,
       ]),
-      created: resolvedPage.created,
-      updated: resolvedPage.updated,
-      persistent: resolvedPage.persistent,
-      blocks: await processBlocks(resolvedPage.blocks, [
+      created: page.created,
+      updated: page.updated,
+      persistent: page.persistent,
+      blocks: await processBlocks(page.blocks, [
         filterCollectPageLink,
         resolveInternalImage,
       ]),
