@@ -1,4 +1,3 @@
-import type { GetPage } from '../../schema/cosense'
 import * as cosense from '../cosense'
 import {
   parseDescription,
@@ -6,8 +5,6 @@ import {
   type Page,
   type RelatedPage,
 } from '../domain/page'
-
-type LinksHop = GetPage['relatedPages']['links1hop'][number]
 
 function normalizeImage(image: string | null | undefined): string | null {
   if (!image) return null
@@ -48,28 +45,28 @@ export async function findByTitle(
     return null
   }
 
-  function resolveLinks(linksLc: string[]): string[] {
-    return linksLc.map((lc) => titleLcMap.get(lc) ?? lc)
-  }
-
-  async function buildRelatedPage(link: LinksHop): Promise<RelatedPage> {
-    return {
+  const direct: RelatedPage[] = await Promise.all(
+    page.relatedPages.links1hop.map(async (link) => ({
       id: link.id,
       title: link.title,
       image: normalizeImage(link.image),
       description: await parseDescription(link.descriptions),
       created: new Date(link.created * 1000),
       updated: new Date(link.updated * 1000),
-      links: resolveLinks(link.linksLc),
-    }
-  }
-
-  const direct = await Promise.all(
-    page.relatedPages.links1hop.map(buildRelatedPage),
+      links: link.linksLc.map((lc) => titleLcMap.get(lc) ?? lc),
+    })),
   )
 
-  const indirect = await Promise.all(
-    page.relatedPages.links2hop.map(buildRelatedPage),
+  const indirect: RelatedPage[] = await Promise.all(
+    page.relatedPages.links2hop.map(async (link) => ({
+      id: link.id,
+      title: link.title,
+      image: normalizeImage(link.image),
+      description: await parseDescription(link.descriptions),
+      created: new Date(link.created * 1000),
+      updated: new Date(link.updated * 1000),
+      links: link.linksLc.map((lc) => titleLcMap.get(lc) ?? lc),
+    })),
   )
 
   return {
