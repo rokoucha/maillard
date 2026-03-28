@@ -173,16 +173,10 @@ describe('findByTitle', () => {
     vi.mocked(cosense.page).mockReset()
   })
 
-  const titleLcMap = new Map([
-    ['direct page', 'Direct Page'],
-    ['indirect page', 'Indirect Page'],
-    ['test page', 'Test Page'],
-  ])
-
   it('ページが存在しない場合はnullを返す', async () => {
     vi.mocked(cosense.page).mockResolvedValue(null)
 
-    const result = await findByTitle('Test Page', titleLcMap)
+    const result = await findByTitle('Test Page')
 
     expect(result).toBeNull()
     expect(cosense.page).toHaveBeenCalledOnce()
@@ -191,7 +185,7 @@ describe('findByTitle', () => {
   it('cosense.pageを1回だけ呼ぶ(関連ページを個別取得しない)', async () => {
     vi.mocked(cosense.page).mockResolvedValue(mockGetPage())
 
-    await findByTitle('Test Page', titleLcMap)
+    await findByTitle('Test Page')
 
     expect(cosense.page).toHaveBeenCalledOnce()
   })
@@ -221,7 +215,7 @@ describe('findByTitle', () => {
       }),
     )
 
-    const result = await findByTitle('Test Page', titleLcMap)
+    const result = await findByTitle('Test Page')
 
     expect(result!.relatedPages.direct).toHaveLength(1)
     expect(result!.relatedPages.direct[0].id).toBe('hop-1')
@@ -255,14 +249,14 @@ describe('findByTitle', () => {
       }),
     )
 
-    const result = await findByTitle('Test Page', titleLcMap)
+    const result = await findByTitle('Test Page')
 
     expect(result!.relatedPages.indirect).toHaveLength(1)
     expect(result!.relatedPages.indirect[0].id).toBe('hop-2')
     expect(result!.relatedPages.indirect[0].title).toBe('Indirect Page')
   })
 
-  it('linksLcをtitleLcMapでoriginal caseに復元する', async () => {
+  it('linksLcをそのまま返す(解決はusecase層で行う)', async () => {
     vi.mocked(cosense.page).mockResolvedValue(
       mockGetPage({
         relatedPages: {
@@ -280,12 +274,12 @@ describe('findByTitle', () => {
       }),
     )
 
-    const result = await findByTitle('Test Page', titleLcMap)
+    const result = await findByTitle('Test Page')
 
     expect(result!.relatedPages.direct[0].links).toEqual([
-      'Direct Page',
-      'Test Page',
-      'unknown page', // mapにないものはそのまま
+      'direct page',
+      'test page',
+      'unknown page',
     ])
   })
 
@@ -303,7 +297,7 @@ describe('findByTitle', () => {
       }),
     )
 
-    const result = await findByTitle('Test Page', titleLcMap)
+    const result = await findByTitle('Test Page')
 
     expect(result!.relatedPages.direct[0].image).toBe('https://i.gyazo.com/abc')
   })

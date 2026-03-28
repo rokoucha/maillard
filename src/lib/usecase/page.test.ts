@@ -124,35 +124,44 @@ describe('findByTitle', () => {
   })
 
   it('ページが存在しない場合はnullを返す', async () => {
-    vi.mocked(PageInfoRepository.findMany).mockResolvedValue([])
     vi.mocked(PageRepository.findByTitle).mockResolvedValue(null)
 
     const result = await findByTitle('Nonexistent')
 
     expect(result).toBeNull()
+    expect(PageInfoRepository.findMany).not.toHaveBeenCalled()
   })
 
-  it('titleLcMapをPageRepository.findByTitleに渡す', async () => {
+  it('linksLcをpageInfosでoriginal caseに解決する', async () => {
     vi.mocked(PageInfoRepository.findMany).mockResolvedValue([
-      makePageInfo({ title: 'Page One' }),
-      makePageInfo({ title: 'Page Two' }),
+      makePageInfo({ title: 'Direct Page' }),
+      makePageInfo({ title: 'Test Page' }),
     ])
-    // 1回目(存在確認)はページを返し、2回目(map付き)はnullを返す
-    vi.mocked(PageRepository.findByTitle)
-      .mockResolvedValueOnce(makePage())
-      .mockResolvedValueOnce(null)
-
-    await findByTitle('Page One')
-
-    expect(PageRepository.findByTitle).toHaveBeenCalledTimes(2)
-    expect(PageRepository.findByTitle).toHaveBeenNthCalledWith(
-      2,
-      'Page One',
-      expect.any(Map),
+    vi.mocked(PageRepository.findByTitle).mockResolvedValue(
+      makePage({
+        relatedPages: {
+          direct: [
+            {
+              id: 'r-1',
+              title: 'Direct Page',
+              image: null,
+              description: [],
+              created: new Date('2024-01-01T00:00:00Z'),
+              updated: new Date('2024-01-02T00:00:00Z'),
+              links: ['direct page', 'test page', 'unknown page'],
+            },
+          ],
+          indirect: [],
+        },
+      }),
     )
 
-    const passedMap = vi.mocked(PageRepository.findByTitle).mock.calls[1][1]
-    expect(passedMap.get('page one')).toBe('Page One')
-    expect(passedMap.get('page two')).toBe('Page Two')
+    const result = await findByTitle('Test Page')
+
+    expect(result!.relatedPages[0].links).toEqual([
+      'Direct Page',
+      'Test Page',
+      'unknown page',
+    ])
   })
 })

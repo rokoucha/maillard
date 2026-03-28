@@ -71,8 +71,8 @@ async function resolveInternalImage(node: Node): Promise<Node | null> {
 }
 
 export async function findByTitle(title: string): Promise<PageResponse | null> {
-  const exists = await PageRepository.findByTitle(title)
-  if (!exists) {
+  const page = await PageRepository.findByTitle(title)
+  if (!page) {
     return null
   }
 
@@ -82,9 +82,21 @@ export async function findByTitle(title: string): Promise<PageResponse | null> {
     pageInfos.map((p) => [p.title.toLowerCase(), p.title]),
   )
 
-  const page = await PageRepository.findByTitle(title, titleLcMap)
-  if (!page) {
-    return null
+  const resolveLinks = (links: string[]) =>
+    links.map((l) => titleLcMap.get(l) ?? l)
+
+  const resolvedPage = {
+    ...page,
+    relatedPages: {
+      direct: page.relatedPages.direct.map((p) => ({
+        ...p,
+        links: resolveLinks(p.links),
+      })),
+      indirect: page.relatedPages.indirect.map((p) => ({
+        ...p,
+        links: resolveLinks(p.links),
+      })),
+    },
   }
 
   const filteredPageInfos = pageInfos.filter((p) => {
@@ -111,20 +123,20 @@ export async function findByTitle(title: string): Promise<PageResponse | null> {
   const pages = new Map(filteredPageInfos.map((p) => [p.title, p]))
 
   let image: string | null = null
-  if (page.image) {
-    if (page.image.startsWith(SCRAPBOX_BASE_URL)) {
+  if (resolvedPage.image) {
+    if (resolvedPage.image.startsWith(SCRAPBOX_BASE_URL)) {
       const resolved = await ImageRepository.resolveInternalImageByUrl(
-        page.image,
+        resolvedPage.image,
       )
       if (resolved) {
         image = `/api/assets/${resolved}`
       }
     } else {
-      image = page.image
+      image = resolvedPage.image
     }
   }
 
-  const links = page.links.filter((l) => {
+  const links = resolvedPage.links.filter((l) => {
     // 全ページ公開なら何もフィルタしない
     if (!SCRAPBOX_COLLECT_PAGE) {
       return true
@@ -140,7 +152,7 @@ export async function findByTitle(title: string): Promise<PageResponse | null> {
   })
 
   const direct = await Promise.all(
-    page.relatedPages.direct
+    resolvedPage.relatedPages.direct
       .filter((p) => {
         // 全ページ公開なら何もフィルタしない
         if (!SCRAPBOX_COLLECT_PAGE) {
@@ -202,7 +214,7 @@ export async function findByTitle(title: string): Promise<PageResponse | null> {
   )
 
   const indirect = await Promise.all(
-    page.relatedPages.indirect
+    resolvedPage.relatedPages.indirect
       .filter((p) => {
         // 全ページ公開なら何もフィルタしない
         if (!SCRAPBOX_COLLECT_PAGE) {
@@ -225,7 +237,9 @@ export async function findByTitle(title: string): Promise<PageResponse | null> {
         // 収集ページ以外でリンクされていないならリンクされてない扱いにする
         if (
           !p.links.some((l) =>
-            page.links.filter((l) => l !== SCRAPBOX_COLLECT_PAGE).includes(l),
+            resolvedPage.links
+              .filter((l) => l !== SCRAPBOX_COLLECT_PAGE)
+              .includes(l),
           )
         ) {
           return false
@@ -278,16 +292,16 @@ export async function findByTitle(title: string): Promise<PageResponse | null> {
 
   return present(
     {
-      id: page.id,
-      title: page.title,
+      id: resolvedPage.id,
+      title: resolvedPage.title,
       image: image,
-      description: await processNodes(page.description, [
+      description: await processNodes(resolvedPage.description, [
         filterCollectPageLink,
       ]),
-      created: page.created,
-      updated: page.updated,
-      persistent: page.persistent,
-      blocks: await processBlocks(page.blocks, [
+      created: resolvedPage.created,
+      updated: resolvedPage.updated,
+      persistent: resolvedPage.persistent,
+      blocks: await processBlocks(resolvedPage.blocks, [
         filterCollectPageLink,
         resolveInternalImage,
       ]),

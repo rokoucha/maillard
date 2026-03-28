@@ -33,10 +33,7 @@ export async function findSummaryByTitle(
   }
 }
 
-export async function findByTitle(
-  title: string,
-  titleLcMap: Map<string, string> = new Map(),
-): Promise<Page | null> {
+export async function findByTitle(title: string): Promise<Page | null> {
   const page = await cosense.page(title)
   if (!page) {
     return null
@@ -50,7 +47,7 @@ export async function findByTitle(
       description: await parseDescription(link.descriptions),
       created: new Date(link.created * 1000),
       updated: new Date(link.updated * 1000),
-      links: link.linksLc.map((lc) => titleLcMap.get(lc) ?? lc),
+      links: link.linksLc,
     })),
   )
 
@@ -62,7 +59,7 @@ export async function findByTitle(
       description: await parseDescription(link.descriptions),
       created: new Date(link.created * 1000),
       updated: new Date(link.updated * 1000),
-      links: link.linksLc.map((lc) => titleLcMap.get(lc) ?? lc),
+      links: link.linksLc,
     })),
   )
 
