@@ -17,6 +17,16 @@ export type Page = {
   }
 }
 
+export type PageSummary = {
+  id: string
+  title: string
+  image: string | null
+  description: Node[]
+  created: Date
+  updated: Date
+  links: string[]
+}
+
 export type RelatedPage = {
   id: string
   title: string

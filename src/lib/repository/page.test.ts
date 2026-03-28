@@ -1,10 +1,16 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { GetPage } from '../../schema/cosense'
 import * as cosense from '../cosense'
+import * as domainPage from '../domain/page'
 import { findByTitle, findPageSummary } from './page'
 
 vi.mock('../cosense', () => ({
   page: vi.fn(),
+}))
+
+vi.mock('../domain/page', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../domain/page')>()),
+  parseLines: vi.fn(),
 }))
 
 const mockLinksHop = (
@@ -112,14 +118,12 @@ describe('findPageSummary', () => {
     expect(cosense.page).toHaveBeenCalledOnce()
   })
 
-  it('relatedPagesが空で返る', async () => {
+  it('parseLinesを呼ばない', async () => {
     vi.mocked(cosense.page).mockResolvedValue(mockGetPage())
 
-    const result = await findPageSummary('Test Page')
+    await findPageSummary('Test Page')
 
-    expect(result).not.toBeNull()
-    expect(result!.relatedPages.direct).toEqual([])
-    expect(result!.relatedPages.indirect).toEqual([])
+    expect(domainPage.parseLines).not.toHaveBeenCalled()
   })
 
   it('ページのメタデータが正しくマッピングされる', async () => {
@@ -130,7 +134,6 @@ describe('findPageSummary', () => {
         links: ['Link A', 'Link B'],
         created: 1700000000,
         updated: 1700001000,
-        persistent: true,
       }),
     )
 
@@ -142,7 +145,6 @@ describe('findPageSummary', () => {
     expect(result!.links).toEqual(['Link A', 'Link B'])
     expect(result!.created).toEqual(new Date(1700000000 * 1000))
     expect(result!.updated).toEqual(new Date(1700001000 * 1000))
-    expect(result!.persistent).toBe(true)
   })
 
   it('Gyazo画像URLの末尾の/rawを除去する', async () => {

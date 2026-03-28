@@ -1,4 +1,10 @@
-import { Page, processBlocks, processNodes, type Node } from '../domain/page'
+import {
+  Page,
+  PageSummary,
+  processBlocks,
+  processNodes,
+  type Node,
+} from '../domain/page'
 import {
   SCRAPBOX_BASE_URL,
   SCRAPBOX_COLLECT_PAGE,
@@ -322,7 +328,7 @@ export async function findAllTitles(): Promise<RelatedPageResponse[]> {
 
   const filteredPages = await Promise.all(
     pages
-      .filter((p): p is Page => p !== null)
+      .filter((p): p is PageSummary => p !== null)
       .map(async (p) => {
         let image: string | null = null
         if (p.image) {

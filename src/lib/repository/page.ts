@@ -3,6 +3,7 @@ import {
   parseDescription,
   parseLines,
   type Page,
+  type PageSummary,
   type RelatedPage,
 } from '../domain/page'
 
@@ -13,7 +14,9 @@ function normalizeImage(image: string | null | undefined): string | null {
     : image
 }
 
-export async function findPageSummary(title: string): Promise<Page | null> {
+export async function findPageSummary(
+  title: string,
+): Promise<PageSummary | null> {
   const page = await cosense.page(title)
   if (!page) {
     return null
@@ -26,13 +29,7 @@ export async function findPageSummary(title: string): Promise<Page | null> {
     description: await parseDescription(page.descriptions),
     created: new Date(page.created * 1000),
     updated: new Date(page.updated * 1000),
-    persistent: page.persistent,
-    blocks: await parseLines(page.lines.map((l) => l.text)),
     links: page.links,
-    relatedPages: {
-      direct: [],
-      indirect: [],
-    },
   }
 }
 
