@@ -82,9 +82,6 @@ export async function findByTitle(title: string): Promise<PageResponse | null> {
     pageInfos.map((p) => [p.title.toLowerCase(), p.title]),
   )
 
-  const resolveLinks = (links: string[]) =>
-    links.map((l) => titleLcMap.get(l) ?? l)
-
   const filteredPageInfos = pageInfos.filter((p) => {
     // 全ページ公開なら何もフィルタしない
     if (!SCRAPBOX_COLLECT_PAGE) {
@@ -179,22 +176,24 @@ export async function findByTitle(title: string): Promise<PageResponse | null> {
           ]),
           created: p.created,
           updated: p.updated,
-          links: resolveLinks(p.links).filter((l) => {
-            // 全ページ公開なら何もフィルタしない
-            if (!SCRAPBOX_COLLECT_PAGE) {
-              return true
-            }
+          links: p.links
+            .map((l) => titleLcMap.get(l) ?? l)
+            .filter((l) => {
+              // 全ページ公開なら何もフィルタしない
+              if (!SCRAPBOX_COLLECT_PAGE) {
+                return true
+              }
 
-            // 一部公開のフィルタリング
+              // 一部公開のフィルタリング
 
-            // 収集ページは非公開
-            if (l === SCRAPBOX_COLLECT_PAGE) {
-              return false
-            }
+              // 収集ページは非公開
+              if (l === SCRAPBOX_COLLECT_PAGE) {
+                return false
+              }
 
-            // 一般ページは公開対象なら公開
-            return pages.has(l)
-          }),
+              // 一般ページは公開対象なら公開
+              return pages.has(l)
+            }),
         }
       }),
   )
@@ -222,9 +221,11 @@ export async function findByTitle(title: string): Promise<PageResponse | null> {
 
         // 収集ページ以外でリンクされていないならリンクされてない扱いにする
         if (
-          !resolveLinks(p.links).some((l) =>
-            page.links.filter((l) => l !== SCRAPBOX_COLLECT_PAGE).includes(l),
-          )
+          !p.links
+            .map((l) => titleLcMap.get(l) ?? l)
+            .some((l) =>
+              page.links.filter((l) => l !== SCRAPBOX_COLLECT_PAGE).includes(l),
+            )
         ) {
           return false
         }
@@ -256,20 +257,22 @@ export async function findByTitle(title: string): Promise<PageResponse | null> {
           ]),
           created: p.created,
           updated: p.updated,
-          links: resolveLinks(p.links).filter((l) => {
-            // 全ページ公開なら何もフィルタしない
-            if (!SCRAPBOX_COLLECT_PAGE) {
-              return true
-            }
+          links: p.links
+            .map((l) => titleLcMap.get(l) ?? l)
+            .filter((l) => {
+              // 全ページ公開なら何もフィルタしない
+              if (!SCRAPBOX_COLLECT_PAGE) {
+                return true
+              }
 
-            // 収集ページは非公開
-            if (l === SCRAPBOX_COLLECT_PAGE) {
-              return false
-            }
+              // 収集ページは非公開
+              if (l === SCRAPBOX_COLLECT_PAGE) {
+                return false
+              }
 
-            // 一般ページは公開対象なら公開
-            return pages.has(l)
-          }),
+              // 一般ページは公開対象なら公開
+              return pages.has(l)
+            }),
         }
       }),
   )
