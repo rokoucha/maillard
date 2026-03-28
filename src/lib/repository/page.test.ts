@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { GetPage } from '../../schema/cosense'
 import * as cosense from '../cosense'
-import { findByTitle, findPageOnly } from './page'
+import { findByTitle, findPageSummary } from './page'
 
 vi.mock('../cosense', () => ({
   page: vi.fn(),
@@ -89,7 +89,7 @@ const mockGetPage = (overrides: Partial<GetPage> = {}): GetPage => ({
   ...overrides,
 })
 
-describe('findPageOnly', () => {
+describe('findPageSummary', () => {
   beforeEach(() => {
     vi.mocked(cosense.page).mockReset()
   })
@@ -97,7 +97,7 @@ describe('findPageOnly', () => {
   it('ページが存在しない場合はnullを返す', async () => {
     vi.mocked(cosense.page).mockResolvedValue(null)
 
-    const result = await findPageOnly('Test Page')
+    const result = await findPageSummary('Test Page')
 
     expect(result).toBeNull()
     expect(cosense.page).toHaveBeenCalledOnce()
@@ -107,7 +107,7 @@ describe('findPageOnly', () => {
   it('cosense.pageを1回だけ呼ぶ', async () => {
     vi.mocked(cosense.page).mockResolvedValue(mockGetPage())
 
-    await findPageOnly('Test Page')
+    await findPageSummary('Test Page')
 
     expect(cosense.page).toHaveBeenCalledOnce()
   })
@@ -115,7 +115,7 @@ describe('findPageOnly', () => {
   it('relatedPagesが空で返る', async () => {
     vi.mocked(cosense.page).mockResolvedValue(mockGetPage())
 
-    const result = await findPageOnly('Test Page')
+    const result = await findPageSummary('Test Page')
 
     expect(result).not.toBeNull()
     expect(result!.relatedPages.direct).toEqual([])
@@ -134,7 +134,7 @@ describe('findPageOnly', () => {
       }),
     )
 
-    const result = await findPageOnly('My Page')
+    const result = await findPageSummary('My Page')
 
     expect(result).not.toBeNull()
     expect(result!.id).toBe('page-xyz')
@@ -150,7 +150,7 @@ describe('findPageOnly', () => {
       mockGetPage({ image: 'https://i.gyazo.com/abc123/raw' }),
     )
 
-    const result = await findPageOnly('Test Page')
+    const result = await findPageSummary('Test Page')
 
     expect(result!.image).toBe('https://i.gyazo.com/abc123')
   })
@@ -160,7 +160,7 @@ describe('findPageOnly', () => {
       mockGetPage({ image: 'https://example.com/image.png' }),
     )
 
-    const result = await findPageOnly('Test Page')
+    const result = await findPageSummary('Test Page')
 
     expect(result!.image).toBe('https://example.com/image.png')
   })

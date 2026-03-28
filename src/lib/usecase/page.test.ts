@@ -19,7 +19,7 @@ vi.mock('../env', () => ({
 }))
 
 vi.mock('../repository/page', () => ({
-  findPageOnly: vi.fn(),
+  findPageSummary: vi.fn(),
   findByTitle: vi.fn(),
 }))
 
@@ -42,7 +42,7 @@ const makePageInfo = (overrides: Partial<PageInfo> = {}): PageInfo => ({
 
 const makePage = (
   overrides: Partial<
-    Awaited<ReturnType<typeof PageRepository.findPageOnly>>
+    Awaited<ReturnType<typeof PageRepository.findPageSummary>>
   > = {},
 ) => ({
   id: 'page-1',
@@ -60,21 +60,21 @@ const makePage = (
 
 describe('findAllTitles', () => {
   beforeEach(() => {
-    vi.mocked(PageRepository.findPageOnly).mockReset()
+    vi.mocked(PageRepository.findPageSummary).mockReset()
     vi.mocked(PageInfoRepository.findMany).mockReset()
     vi.mocked(ImageRepository.resolveInternalImageByUrl).mockReset()
     vi.mocked(ImageRepository.resolveInternalImageByUrl).mockResolvedValue(null)
   })
 
-  it('findPageOnlyを使う(findByTitleは使わない)', async () => {
+  it('findPageSummaryを使う(findByTitleは使わない)', async () => {
     vi.mocked(PageInfoRepository.findMany).mockResolvedValue([
       makePageInfo({ title: 'Page One' }),
     ])
-    vi.mocked(PageRepository.findPageOnly).mockResolvedValue(makePage())
+    vi.mocked(PageRepository.findPageSummary).mockResolvedValue(makePage())
 
     await findAllTitles()
 
-    expect(PageRepository.findPageOnly).toHaveBeenCalledOnce()
+    expect(PageRepository.findPageSummary).toHaveBeenCalledOnce()
     expect(PageRepository.findByTitle).not.toHaveBeenCalled()
   })
 
@@ -83,14 +83,15 @@ describe('findAllTitles', () => {
       makePageInfo({ title: 'Old Page' }),
       makePageInfo({ title: 'New Page' }),
     ])
-    vi.mocked(PageRepository.findPageOnly).mockImplementation(async (title) =>
-      makePage({
-        title,
-        created:
-          title === 'New Page'
-            ? new Date('2024-02-01T00:00:00Z')
-            : new Date('2024-01-01T00:00:00Z'),
-      }),
+    vi.mocked(PageRepository.findPageSummary).mockImplementation(
+      async (title) =>
+        makePage({
+          title,
+          created:
+            title === 'New Page'
+              ? new Date('2024-02-01T00:00:00Z')
+              : new Date('2024-01-01T00:00:00Z'),
+        }),
     )
 
     const result = await findAllTitles()
@@ -104,8 +105,8 @@ describe('findAllTitles', () => {
       makePageInfo({ title: 'Page A' }),
       makePageInfo({ title: 'Page B' }),
     ])
-    vi.mocked(PageRepository.findPageOnly).mockImplementation(async (title) =>
-      makePage({ title }),
+    vi.mocked(PageRepository.findPageSummary).mockImplementation(
+      async (title) => makePage({ title }),
     )
 
     const result = await findAllTitles()

@@ -13,7 +13,7 @@ function normalizeImage(image: string | null | undefined): string | null {
     : image
 }
 
-export async function findPageOnly(title: string): Promise<Page | null> {
+export async function findPageSummary(title: string): Promise<Page | null> {
   const page = await cosense.page(title)
   if (!page) {
     return null
