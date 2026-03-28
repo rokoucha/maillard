@@ -42,8 +42,22 @@ const mockGetPage = (overrides: Partial<GetPage> = {}): GetPage => ({
   pageRank: 0,
   lastAccessed: null,
   persistent: true,
-  lines: [{ id: 'l-1', text: 'Test Page', userId: 'u-1', created: 1700000000, updated: 1700000001 },
-          { id: 'l-2', text: 'body text', userId: 'u-1', created: 1700000000, updated: 1700000001 }],
+  lines: [
+    {
+      id: 'l-1',
+      text: 'Test Page',
+      userId: 'u-1',
+      created: 1700000000,
+      updated: 1700000001,
+    },
+    {
+      id: 'l-2',
+      text: 'body text',
+      userId: 'u-1',
+      created: 1700000000,
+      updated: 1700000001,
+    },
+  ],
   links: ['Other Page', 'Another Page'],
   icons: [],
   files: [],
@@ -51,8 +65,22 @@ const mockGetPage = (overrides: Partial<GetPage> = {}): GetPage => ({
   infoboxResult: [],
   infoboxDisableLinks: [],
   relatedPages: {
-    links1hop: [mockLinksHop({ id: 'hop-1', title: 'Direct Page', titleLc: 'direct page', linksLc: ['test page'] })],
-    links2hop: [mockLinksHop({ id: 'hop-2', title: 'Indirect Page', titleLc: 'indirect page', linksLc: ['direct page'] })],
+    links1hop: [
+      mockLinksHop({
+        id: 'hop-1',
+        title: 'Direct Page',
+        titleLc: 'direct page',
+        linksLc: ['test page'],
+      }),
+    ],
+    links2hop: [
+      mockLinksHop({
+        id: 'hop-2',
+        title: 'Indirect Page',
+        titleLc: 'indirect page',
+        linksLc: ['direct page'],
+      }),
+    ],
     projectLinks1hop: [],
     hasBackLinksOrIcons: false,
     search: '',
@@ -196,8 +224,12 @@ describe('findByTitle', () => {
     expect(result!.relatedPages.direct).toHaveLength(1)
     expect(result!.relatedPages.direct[0].id).toBe('hop-1')
     expect(result!.relatedPages.direct[0].title).toBe('Direct Page')
-    expect(result!.relatedPages.direct[0].created).toEqual(new Date(1700000100 * 1000))
-    expect(result!.relatedPages.direct[0].updated).toEqual(new Date(1700000200 * 1000))
+    expect(result!.relatedPages.direct[0].created).toEqual(
+      new Date(1700000100 * 1000),
+    )
+    expect(result!.relatedPages.direct[0].updated).toEqual(
+      new Date(1700000200 * 1000),
+    )
   })
 
   it('links2hopからindirect related pagesを構築する', async () => {
@@ -259,9 +291,7 @@ describe('findByTitle', () => {
     vi.mocked(cosense.page).mockResolvedValue(
       mockGetPage({
         relatedPages: {
-          links1hop: [
-            mockLinksHop({ image: 'https://i.gyazo.com/abc/raw' }),
-          ],
+          links1hop: [mockLinksHop({ image: 'https://i.gyazo.com/abc/raw' })],
           links2hop: [],
           projectLinks1hop: [],
           hasBackLinksOrIcons: false,

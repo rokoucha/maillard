@@ -41,7 +41,9 @@ const makePageInfo = (overrides: Partial<PageInfo> = {}): PageInfo => ({
 })
 
 const makePage = (
-  overrides: Partial<Awaited<ReturnType<typeof PageRepository.findPageOnly>>> = {},
+  overrides: Partial<
+    Awaited<ReturnType<typeof PageRepository.findPageOnly>>
+  > = {},
 ) => ({
   id: 'page-1',
   title: 'Page One',
@@ -81,15 +83,14 @@ describe('findAllTitles', () => {
       makePageInfo({ title: 'Old Page' }),
       makePageInfo({ title: 'New Page' }),
     ])
-    vi.mocked(PageRepository.findPageOnly).mockImplementation(
-      async (title) =>
-        makePage({
-          title,
-          created:
-            title === 'New Page'
-              ? new Date('2024-02-01T00:00:00Z')
-              : new Date('2024-01-01T00:00:00Z'),
-        }),
+    vi.mocked(PageRepository.findPageOnly).mockImplementation(async (title) =>
+      makePage({
+        title,
+        created:
+          title === 'New Page'
+            ? new Date('2024-02-01T00:00:00Z')
+            : new Date('2024-01-01T00:00:00Z'),
+      }),
     )
 
     const result = await findAllTitles()
