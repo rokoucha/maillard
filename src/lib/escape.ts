@@ -4,3 +4,7 @@ export function cosensePageTitleEscape(title: string) {
     .replaceAll('?', '%3F')
     .replaceAll('#', '%23')
 }
+
+export function escapePageTitleForPath(title: string) {
+  return encodeURIComponent(title)
+}

@@ -11,7 +11,7 @@ export type Props = Readonly<{
 export function PageCard({ className, page }: Props): React.ReactNode {
   return (
     <article className={clsx(styles.wrapper, className)}>
-      <Link href={`/${page.escapedTitle}`}>
+      <Link href={page.pagePath}>
         {page.image ? (
           <img
             alt={page.title}

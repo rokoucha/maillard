@@ -3,6 +3,11 @@ import { digestSHA1 } from '../digest'
 import type { PageInfo } from '../domain/pageinfo'
 import { present, presentRelatedPage } from './page'
 
+vi.mock('../env', () => ({
+  SCRAPBOX_BASE_URL: 'https://scrapbox.io/',
+  SCRAPBOX_PROJECT: 'project',
+}))
+
 vi.mock('../digest', () => ({
   digestSHA1: vi.fn(async (raw: string) => `hashed:${raw}`),
 }))
@@ -144,7 +149,7 @@ describe('present', () => {
 
     expect(response.id).toBe('page-1')
     expect(response.title).toBe('Top/Title')
-    expect(response.escapedTitle).toBe('Top%2FTitle')
+    expect(response.pagePath).toBe('/Top%2FTitle')
     expect(response.description).toBe('Hello Internal Page')
     expect(response.blocks).toHaveLength(3)
 
@@ -156,7 +161,7 @@ describe('present', () => {
       expect(icon).toMatchObject({
         type: 'icon',
         pathType: 'internal',
-        href: '/Internal Page',
+        href: '/Internal%20Page',
       })
       expect(link).toMatchObject({
         type: 'link',
@@ -167,7 +172,7 @@ describe('present', () => {
       expect(hashTag).toMatchObject({
         type: 'hashTag',
         pathType: 'internal',
-        href: '/Internal Page',
+        href: '/Internal%20Page',
         content: 'Internal Page',
       })
       expect(decoration).toMatchObject({
@@ -179,7 +184,7 @@ describe('present', () => {
         expect(decoration.nodes[0]).toMatchObject({
           type: 'link',
           pathType: 'internal',
-          href: '/Internal Page',
+          href: '/Internal%20Page',
           content: 'Internal Page',
         })
       }
@@ -194,7 +199,7 @@ describe('present', () => {
     }
 
     expect(response.relatedPages.map((p) => p.id)).toEqual(['rp-1', 'rp-2'])
-    expect(response.relatedPages[0].escapedTitle).toBe('Direct%2FPage')
+    expect(response.relatedPages[0].pagePath).toBe('/Direct%2FPage')
     expect(digestSHA1).toHaveBeenCalledWith('/Internal Page/')
   })
 })
@@ -218,7 +223,7 @@ describe('presentRelatedPage', () => {
     expect(response).toMatchObject({
       id: 'r-1',
       title: 'tag/page',
-      escapedTitle: 'tag%2Fpage',
+      pagePath: '/tag%2Fpage',
       image: 'https://example.com/image.png',
       description: 'A #topic$ echo ok',
       links: ['topic'],
