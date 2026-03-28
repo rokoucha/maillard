@@ -40,9 +40,24 @@ const makePageInfo = (overrides: Partial<PageInfo> = {}): PageInfo => ({
   ...overrides,
 })
 
-const makePage = (
+const makePageSummary = (
   overrides: Partial<
     Awaited<ReturnType<typeof PageRepository.findSummaryByTitle>>
+  > = {},
+) => ({
+  id: 'page-1',
+  title: 'Page One',
+  image: null,
+  description: [{ type: 'plain' as const, raw: 'desc', text: 'description' }],
+  created: new Date('2024-01-01T00:00:00Z'),
+  updated: new Date('2024-01-02T00:00:00Z'),
+  links: [],
+  ...overrides,
+})
+
+const makePage = (
+  overrides: Partial<
+    Awaited<ReturnType<typeof PageRepository.findByTitle>>
   > = {},
 ) => ({
   id: 'page-1',
@@ -70,7 +85,9 @@ describe('findAllTitles', () => {
     vi.mocked(PageInfoRepository.findMany).mockResolvedValue([
       makePageInfo({ title: 'Page One' }),
     ])
-    vi.mocked(PageRepository.findSummaryByTitle).mockResolvedValue(makePage())
+    vi.mocked(PageRepository.findSummaryByTitle).mockResolvedValue(
+      makePageSummary(),
+    )
 
     await findAllTitles()
 
@@ -85,7 +102,7 @@ describe('findAllTitles', () => {
     ])
     vi.mocked(PageRepository.findSummaryByTitle).mockImplementation(
       async (title) =>
-        makePage({
+        makePageSummary({
           title,
           created:
             title === 'New Page'
@@ -106,7 +123,7 @@ describe('findAllTitles', () => {
       makePageInfo({ title: 'Page B' }),
     ])
     vi.mocked(PageRepository.findSummaryByTitle).mockImplementation(
-      async (title) => makePage({ title }),
+      async (title) => makePageSummary({ title }),
     )
 
     const result = await findAllTitles()
