@@ -65,35 +65,39 @@ async function resolveInternalImage(node: Node): Promise<Node | null> {
 }
 
 export async function findByTitle(title: string): Promise<PageResponse | null> {
-  const page = await PageRepository.findByTitle(title)
+  const pageInfos = await PageInfoRepository.findMany()
+
+  const titleLcMap = new Map(
+    pageInfos.map((p) => [p.title.toLowerCase(), p.title]),
+  )
+
+  const page = await PageRepository.findByTitle(title, titleLcMap)
   if (!page) {
     return null
   }
 
-  const pageInfos = await PageInfoRepository.findMany().then((i) =>
-    i.filter((p) => {
-      // 全ページ公開なら何もフィルタしない
-      if (!SCRAPBOX_COLLECT_PAGE) {
-        return true
-      }
+  const filteredPageInfos = pageInfos.filter((p) => {
+    // 全ページ公開なら何もフィルタしない
+    if (!SCRAPBOX_COLLECT_PAGE) {
+      return true
+    }
 
-      // 一部公開のフィルタリング
+    // 一部公開のフィルタリング
 
-      // インデックスページは無条件で公開(たとえ収集ページと同一だとしても)
-      if (p.title === SCRAPBOX_INDEX_PAGE) {
-        return true
-      }
+    // インデックスページは無条件で公開(たとえ収集ページと同一だとしても)
+    if (p.title === SCRAPBOX_INDEX_PAGE) {
+      return true
+    }
 
-      // 収集ページは基本非公開、インデックスページと同一なら公開される
-      if (p.title === SCRAPBOX_COLLECT_PAGE) {
-        return false
-      }
+    // 収集ページは基本非公開、インデックスページと同一なら公開される
+    if (p.title === SCRAPBOX_COLLECT_PAGE) {
+      return false
+    }
 
-      // 一般ページは収集ページがリンクに含まれているなら公開
-      return p.links.includes(SCRAPBOX_COLLECT_PAGE)
-    }),
-  )
-  const pages = new Map(pageInfos.map((p) => [p.title, p]))
+    // 一般ページは収集ページがリンクに含まれているなら公開
+    return p.links.includes(SCRAPBOX_COLLECT_PAGE)
+  })
+  const pages = new Map(filteredPageInfos.map((p) => [p.title, p]))
 
   let image: string | null = null
   if (page.image) {
@@ -313,7 +317,7 @@ export async function findAllTitles(): Promise<RelatedPageResponse[]> {
   const pageInfosMap = new Map(pageInfos.map((p) => [p.title, p]))
 
   const pages = await Promise.all(
-    pageInfos.map(async (p) => await PageRepository.findByTitle(p.title)),
+    pageInfos.map(async (p) => await PageRepository.findPageOnly(p.title)),
   )
 
   const filteredPages = await Promise.all(

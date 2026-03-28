@@ -7,6 +7,19 @@ vi.mock('../digest', () => ({
   digestSHA1: vi.fn(async (raw: string) => `hashed:${raw}`),
 }))
 
+vi.mock('../env', () => ({
+  SCRAPBOX_BASE_URL: 'https://scrapbox.io/',
+  SCRAPBOX_PROJECT: 'project',
+  SCRAPBOX_COLLECT_PAGE: undefined,
+  SCRAPBOX_INDEX_PAGE: 'Index',
+  SCRAPBOX_PROXY_URL: undefined,
+  SCRAPBOX_CONNECT_SID: undefined,
+  BASE_URL: 'https://example.com/',
+  SITE_NAME: 'Test',
+  SITE_LANG: undefined,
+  NEXT_PHASE: undefined,
+}))
+
 describe('present', () => {
   it('ページ情報を表示用データへ変換する', async () => {
     const pageInfos = new Map<string, PageInfo>([
