@@ -49,10 +49,6 @@ async function digestRequest(request: Request) {
 export const onRequest: PagesFunction<Env> = async (context) => {
   const now = Date.now()
 
-  const baseUrl = new URL(
-    context.env.SCRAPBOX_BASE_URL ?? SCRAPBOX_DEFAULT_BASE_URL,
-  )
-
   const proxyTtl = Number(context.env.SCRAPBOX_PROXY_TTL) * 1000
 
   const path = Array.isArray(context.params.path)
@@ -61,7 +57,14 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
   const currentUrl = new URL(context.request.url)
 
-  const upstreamUrl = new URL(path, baseUrl)
+  // Note: buildUrl() は src/lib/url.ts にあるが、Cloudflare Pages Function は
+  // 独自の tsconfig でコンパイルされ functions/ に出力されるため、
+  // src/lib への import は本番環境で解決できない。
+  // よって URL 正規化ロジックをここにインライン実装している。
+  const rawBase = context.env.SCRAPBOX_BASE_URL ?? SCRAPBOX_DEFAULT_BASE_URL
+  const normalizedBase = rawBase.endsWith('/') ? rawBase : rawBase + '/'
+  const normalizedPath = path.startsWith('/') ? path.slice(1) : path
+  const upstreamUrl = new URL(normalizedBase + normalizedPath)
   upstreamUrl.search = currentUrl.search
 
   const request = new Request(upstreamUrl.toString(), {

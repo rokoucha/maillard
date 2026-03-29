@@ -13,6 +13,7 @@ import {
   SCRAPBOX_PROXY_URL,
 } from './env'
 import { cosensePageTitleEscape } from './escape'
+import { buildUrl, rebaseUrl } from './url'
 
 const BASE_URL = SCRAPBOX_PROXY_URL ?? SCRAPBOX_BASE_URL
 
@@ -27,7 +28,10 @@ export async function searchTitles(): Promise<SearchTitlePage[]> {
   const pages: SearchTitlePage[] = []
   let followingId = ''
   do {
-    const url = new URL(`api/pages/${SCRAPBOX_PROJECT}/search/titles`, BASE_URL)
+    const url = buildUrl(
+      BASE_URL,
+      `api/pages/${SCRAPBOX_PROJECT}/search/titles`,
+    )
     if (followingId) {
       url.searchParams.append('followingId', followingId)
     }
@@ -47,9 +51,9 @@ export async function searchTitles(): Promise<SearchTitlePage[]> {
 }
 
 export async function page(title: string): Promise<GetPage | null> {
-  const url = new URL(
-    `api/pages/${SCRAPBOX_PROJECT}/${cosensePageTitleEscape(title)}`,
+  const url = buildUrl(
     BASE_URL,
+    `api/pages/${SCRAPBOX_PROJECT}/${cosensePageTitleEscape(title)}`,
   )
   const res = await fetch(url, { cache: 'force-cache', headers })
 
@@ -70,7 +74,7 @@ export async function headInternalImage(url: string): Promise<Response> {
     throw new Error(`Invalid internal image URL: ${url}`)
   }
 
-  const u = new URL(url.replace(SCRAPBOX_BASE_URL, ''), BASE_URL)
+  const u = rebaseUrl(url, SCRAPBOX_BASE_URL, BASE_URL)
 
   const res = await fetch(u, { cache: 'force-cache', headers, method: 'HEAD' })
   return res
@@ -81,7 +85,7 @@ export async function getInternalImage(url: string): Promise<Response> {
     throw new Error(`Invalid internal image URL: ${url}`)
   }
 
-  const u = new URL(url.replace(SCRAPBOX_BASE_URL, ''), BASE_URL)
+  const u = rebaseUrl(url, SCRAPBOX_BASE_URL, BASE_URL)
 
   const res = await fetch(u, { cache: 'force-cache', headers })
   return res
