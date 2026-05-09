@@ -11,7 +11,7 @@
     "next": "16.2.6",
     "react": "19.2.6",
     "react-dom": "19.2.6",
-    "react-spotify-embed": "2.0.4",
+    "react-spotify-embed": "3.0.1",
     "react-tweet": "3.3.0",
     "temml": "0.13.2",
     "valibot": "1.4.0"
