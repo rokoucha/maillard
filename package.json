@@ -17,7 +17,7 @@
     "valibot": "1.4.0"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "4.20260508.1",
+    "@cloudflare/workers-types": "4.20260509.1",
     "@types/node": "24.12.3",
     "@types/react": "19.2.14",
     "prettier": "3.8.3",
