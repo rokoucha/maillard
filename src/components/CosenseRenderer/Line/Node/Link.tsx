@@ -1,7 +1,6 @@
 import clsx from 'clsx'
 import NextLink from 'next/link'
 import { Spotify } from 'react-spotify-embed'
-import { Tweet } from 'react-tweet'
 import styles from './Link.module.css'
 
 type Props = Readonly<{
@@ -14,8 +13,7 @@ export function Link({ children, href, type }: Props): React.ReactNode {
   let embed: React.ReactNode = false
   let prefix = ''
   switch (true) {
-    case href.match(TwitterEmbedMatcher) !== null: {
-      embed = <TwitterEmbed href={href} />
+    case href.match(TwitterLinkMatcher) !== null: {
       if (children.startsWith('@')) {
         prefix = styles.twitter_prefix
       }
@@ -45,23 +43,8 @@ export function Link({ children, href, type }: Props): React.ReactNode {
   )
 }
 
-const TwitterEmbedMatcher =
+const TwitterLinkMatcher =
   /^https?:\/\/(?:twitter|x)\.com\/[@\w_]+\/status\/(\d+)/
-
-type TwitterEmbedProps = Readonly<{
-  href: string
-}>
-
-export function TwitterEmbed({ href }: TwitterEmbedProps): React.ReactNode {
-  const id = href.match(TwitterEmbedMatcher)?.[1]
-  if (!id) throw new Error('Invalid Twitter URL')
-
-  return (
-    <div className={styles.tweet_embed}>
-      <Tweet id={id} />
-    </div>
-  )
-}
 
 const SpotifyEmbedMatcher = /^https?:\/\/open\.spotify\.com\//
 

@@ -34,10 +34,6 @@
   color: #1da1f2;
 }
 
-.tweet_embed :global(.react-tweet-theme) {
-  margin: 0.5rem 0 0;
-}
-
 .spotify_embed {
   display: block;
   max-width: 550px;
