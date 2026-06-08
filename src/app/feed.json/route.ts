@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server'
-import { getPage, getPages } from '../../../lib/actions/cosense'
+import { getPage, getPages } from '../../lib/actions/cosense'
 import {
   BASE_URL,
   SCRAPBOX_INDEX_PAGE,
   SITE_LANG,
   SITE_NAME,
-} from '../../../lib/env'
-import { buildJsonFeed } from '../../../lib/feed'
+} from '../../lib/env'
+import { buildJsonFeed } from '../../lib/feed'
 
 export const dynamic = 'force-static'
 

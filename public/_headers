@@ -1,2 +1,8 @@
 /api/feed
-  Content-Type: application/json
+  Content-Type: application/feed+json; charset=utf-8
+
+/feed.json
+  Content-Type: application/feed+json; charset=utf-8
+
+/feed.atom
+  Content-Type: application/atom+xml; charset=utf-8

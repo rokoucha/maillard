@@ -42,7 +42,13 @@ export async function generateMetadata(): Promise<Metadata> {
         'application/feed+json': [
           {
             title: SITE_NAME,
-            url: `/api/feed`,
+            url: `/feed.json`,
+          },
+        ],
+        'application/atom+xml': [
+          {
+            title: SITE_NAME,
+            url: `/feed.atom`,
           },
         ],
       },
