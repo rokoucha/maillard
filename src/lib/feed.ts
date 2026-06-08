@@ -78,7 +78,7 @@ export function buildAtomFeed({
     <updated>${page.updated.toISOString()}</updated>
     <published>${page.created.toISOString()}</published>
     <link rel="alternate" href="${escapeXml(pageUrl(baseUrl, page))}" />
-    <summary type="text">${escapeXml(page.description)}</summary>
+    <summary type="text">${escapeXml(pageSummary(page))}</summary>
   </entry>`,
     )
     .join('\n')
@@ -89,6 +89,7 @@ export function buildAtomFeed({
     `  <id>${escapeXml(baseUrl.href)}</id>`,
     `  <title>${escapeXml(siteName)}</title>`,
     `  <updated>${updated}</updated>`,
+    `  <author><name>${escapeXml(siteName)}</name></author>`,
     `  <link rel="alternate" href="${escapeXml(baseUrl.href)}" />`,
     `  <link rel="self" href="${escapeXml(feedUrl)}" />`,
     icon,
@@ -110,7 +111,11 @@ function pageTagUri(baseUrl: URL, page: RelatedPageResponse): string {
 }
 
 function pageUrl(baseUrl: URL, page: RelatedPageResponse): string {
-  return new URL(page.escapedTitle, baseUrl).href
+  return new URL(`./${page.escapedTitle}`, baseUrl).href
+}
+
+function pageSummary(page: RelatedPageResponse): string {
+  return page.description || page.title
 }
 
 function escapeXml(value: string): string {
