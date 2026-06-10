@@ -51,6 +51,20 @@ const LinksHop = v.object({
   lastAccessed: v.optional(v.nullable(v.number())),
   infoboxResult: v.optional(v.array(v.any())),
 })
+export type LinksHop = v.InferOutput<typeof LinksHop>
+
+export const Links1HopResponse = v.union([
+  ErrorResponse,
+  v.object({
+    links1hop: v.array(LinksHop),
+    pagination: v.object({
+      perPage: v.number(),
+      total: v.number(),
+      hasNext: v.boolean(),
+      nextId: v.nullable(v.string()),
+    }),
+  }),
+])
 
 const ProjectLinks1Hop = v.object({
   id: v.string(),

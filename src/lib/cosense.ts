@@ -3,6 +3,8 @@ import pkg from '../../package.json' with { type: 'json' }
 import {
   GetPage,
   GetPageResponse,
+  Links1HopResponse,
+  LinksHop,
   SearchTitlePage,
   SearchTitleResponse,
 } from '../schema/cosense'
@@ -67,6 +69,33 @@ export async function page(title: string): Promise<GetPage | null> {
   }
 
   return data
+}
+
+export async function links1hop(title: string): Promise<LinksHop[]> {
+  const pages: LinksHop[] = []
+  let followingId: string | null = null
+
+  do {
+    const url = buildUrl(
+      BASE_URL,
+      `api/pages/v2/${SCRAPBOX_PROJECT}/${cosensePageTitleEscape(title)}/links1hop`,
+    )
+    url.searchParams.set('perPage', '1000')
+    if (followingId) {
+      url.searchParams.set('followingId', followingId)
+    }
+
+    const res = await fetch(url, { cache: 'force-cache', headers })
+    const data = await v.parseAsync(Links1HopResponse, await res.json())
+    if ('message' in data) {
+      throw new Error(data.message)
+    }
+
+    pages.push(...data.links1hop)
+    followingId = data.pagination.hasNext ? data.pagination.nextId : null
+  } while (followingId)
+
+  return pages
 }
 
 export async function headInternalImage(url: string): Promise<Response> {

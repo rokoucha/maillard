@@ -10,7 +10,7 @@ vi.mock('../digest', () => ({
 vi.mock('../env', () => ({
   SCRAPBOX_BASE_URL: 'https://scrapbox.io/',
   SCRAPBOX_PROJECT: 'project',
-  SCRAPBOX_COLLECT_PAGE: undefined,
+  SCRAPBOX_COLLECT_PAGE: 'Collect',
   SCRAPBOX_INDEX_PAGE: 'Index',
   SCRAPBOX_PROXY_URL: undefined,
   SCRAPBOX_CONNECT_SID: undefined,
@@ -28,7 +28,10 @@ describe('present', () => {
         {
           id: 'pi-1',
           title: 'Internal Page',
+          titleLc: 'internal_page',
           links: [],
+          description: [],
+          created: new Date('2024-01-01T00:00:00Z'),
           updated: new Date('2024-01-01T00:00:00Z'),
           image: null,
         },

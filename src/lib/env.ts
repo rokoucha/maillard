@@ -35,7 +35,7 @@ export const {
     BASE_URL: baseUrlString,
     NEXT_PHASE: emptyString,
     SCRAPBOX_BASE_URL: v.optional(baseUrlString, SCRAPBOX_DEFAULT_BASE_URL),
-    SCRAPBOX_COLLECT_PAGE: emptyString,
+    SCRAPBOX_COLLECT_PAGE: v.string(),
     SCRAPBOX_CONNECT_SID: emptyString,
     SCRAPBOX_INDEX_PAGE: v.string(),
     SCRAPBOX_PROJECT: v.string(),

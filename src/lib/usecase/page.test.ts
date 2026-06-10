@@ -7,7 +7,7 @@ import { findAllTitles, findByTitle } from './page'
 
 vi.mock('../env', () => ({
   SCRAPBOX_BASE_URL: 'https://scrapbox.io/',
-  SCRAPBOX_COLLECT_PAGE: undefined,
+  SCRAPBOX_COLLECT_PAGE: 'Collect',
   SCRAPBOX_INDEX_PAGE: 'Index',
   SCRAPBOX_PROJECT: 'project',
   SCRAPBOX_PROXY_URL: undefined,
@@ -34,24 +34,12 @@ vi.mock('../repository/image', () => ({
 const makePageInfo = (overrides: Partial<PageInfo> = {}): PageInfo => ({
   id: 'pi-1',
   title: 'Page One',
+  titleLc: 'page_one',
   links: [],
-  updated: new Date('2024-01-01T00:00:00Z'),
-  image: null,
-  ...overrides,
-})
-
-const makePageSummary = (
-  overrides: Partial<
-    Awaited<ReturnType<typeof PageRepository.findSummaryByTitle>>
-  > = {},
-) => ({
-  id: 'page-1',
-  title: 'Page One',
-  image: null,
   description: [{ type: 'plain' as const, raw: 'desc', text: 'description' }],
   created: new Date('2024-01-01T00:00:00Z'),
-  updated: new Date('2024-01-02T00:00:00Z'),
-  links: [],
+  updated: new Date('2024-01-01T00:00:00Z'),
+  image: null,
   ...overrides,
 })
 
@@ -81,35 +69,30 @@ describe('findAllTitles', () => {
     vi.mocked(ImageRepository.resolveInternalImageByUrl).mockResolvedValue(null)
   })
 
-  it('findSummaryByTitleを使う(findByTitleは使わない)', async () => {
+  it('findSummaryByTitleを使わない(findByTitleも使わない)', async () => {
     vi.mocked(PageInfoRepository.findMany).mockResolvedValue([
       makePageInfo({ title: 'Page One' }),
     ])
-    vi.mocked(PageRepository.findSummaryByTitle).mockResolvedValue(
-      makePageSummary(),
-    )
 
     await findAllTitles()
 
-    expect(PageRepository.findSummaryByTitle).toHaveBeenCalledOnce()
+    expect(PageRepository.findSummaryByTitle).not.toHaveBeenCalled()
     expect(PageRepository.findByTitle).not.toHaveBeenCalled()
   })
 
   it('createdの降順でソートされる', async () => {
     vi.mocked(PageInfoRepository.findMany).mockResolvedValue([
-      makePageInfo({ title: 'Old Page' }),
-      makePageInfo({ title: 'New Page' }),
+      makePageInfo({
+        title: 'Old Page',
+        titleLc: 'old_page',
+        created: new Date('2024-01-01T00:00:00Z'),
+      }),
+      makePageInfo({
+        title: 'New Page',
+        titleLc: 'new_page',
+        created: new Date('2024-02-01T00:00:00Z'),
+      }),
     ])
-    vi.mocked(PageRepository.findSummaryByTitle).mockImplementation(
-      async (title) =>
-        makePageSummary({
-          title,
-          created:
-            title === 'New Page'
-              ? new Date('2024-02-01T00:00:00Z')
-              : new Date('2024-01-01T00:00:00Z'),
-        }),
-    )
 
     const result = await findAllTitles()
 
@@ -117,18 +100,21 @@ describe('findAllTitles', () => {
     expect(result[1].title).toBe('Old Page')
   })
 
-  it('SCRAPBOX_COLLECT_PAGEが未設定のとき全ページを返す', async () => {
+  it('収集ページへのリンクを一覧から除外する', async () => {
     vi.mocked(PageInfoRepository.findMany).mockResolvedValue([
-      makePageInfo({ title: 'Page A' }),
-      makePageInfo({ title: 'Page B' }),
+      makePageInfo({
+        title: 'Page A',
+        links: ['collect', 'page_b'],
+      }),
+      makePageInfo({
+        title: 'Page B',
+        titleLc: 'page_b',
+      }),
     ])
-    vi.mocked(PageRepository.findSummaryByTitle).mockImplementation(
-      async (title) => makePageSummary({ title }),
-    )
 
     const result = await findAllTitles()
 
-    expect(result).toHaveLength(2)
+    expect(result[0].links).toEqual(['Page B'])
   })
 })
 
@@ -151,8 +137,8 @@ describe('findByTitle', () => {
 
   it('linksLcをpageInfosでoriginal caseに解決する', async () => {
     vi.mocked(PageInfoRepository.findMany).mockResolvedValue([
-      makePageInfo({ title: 'Direct Page' }),
-      makePageInfo({ title: 'Test Page' }),
+      makePageInfo({ title: 'Direct Page', titleLc: 'direct_page' }),
+      makePageInfo({ title: 'Test Page', titleLc: 'test_page' }),
     ])
     vi.mocked(PageRepository.findByTitle).mockResolvedValue(
       makePage({
@@ -175,10 +161,6 @@ describe('findByTitle', () => {
 
     const result = await findByTitle('Test Page')
 
-    expect(result!.relatedPages[0].links).toEqual([
-      'Direct Page',
-      'Test Page',
-      'unknown page',
-    ])
+    expect(result!.relatedPages[0].links).toEqual(['Direct Page', 'Test Page'])
   })
 })
