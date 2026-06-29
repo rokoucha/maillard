@@ -13,7 +13,7 @@
     "react-dom": "19.2.7",
     "react-spotify-embed": "3.0.1",
     "temml": "0.13.3",
-    "valibot": "1.4.1"
+    "valibot": "1.4.2"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "4.20260628.1",
