@@ -19,16 +19,16 @@ importers:
         version: 11.11.1
       next:
         specifier: 16.2.11
-        version: 16.2.11(react-dom@19.2.7(react@19.2.8))(react@19.2.8)
+        version: 16.2.11(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       react:
         specifier: 19.2.8
         version: 19.2.8
       react-dom:
-        specifier: 19.2.7
-        version: 19.2.7(react@19.2.8)
+        specifier: 19.2.8
+        version: 19.2.8(react@19.2.8)
       react-spotify-embed:
         specifier: 3.0.1
-        version: 3.0.1(react-dom@19.2.7(react@19.2.8))(react@19.2.8)
+        version: 3.0.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       temml:
         specifier: 0.13.3
         version: 0.13.3
@@ -1041,10 +1041,10 @@ packages:
     resolution: {integrity: sha512-y3bGgqKj3QBdxLbLkomlohkvsA8gdAiUQlSBJnBhfn+BPxg4bc62d8TcBW15wavDfgexCgccckhcZvywyQYPOw==}
     hasBin: true
 
-  react-dom@19.2.7:
-    resolution: {integrity: sha512-t0BRVXvbiE/o20Hfw669rLbMCDWtYZLvmJigy2f0MxsXF+71pxhR3xOkspmsO8h3ZlNzyibAmtCa3l4lYKk6gQ==}
+  react-dom@19.2.8:
+    resolution: {integrity: sha512-rVprimfGBG3DR+Tq0IQG2DT5PxKth1WIGDmj5yPmlzr4YBe7uyE+Du4oVqTDXZSHGGGXRtTJEGSSePyQCMBglQ==}
     peerDependencies:
-      react: ^19.2.7
+      react: ^19.2.8
 
   react-spotify-embed@3.0.1:
     resolution: {integrity: sha512-0uoFi6eAMWUve3sbHRN5gVNwVKj2NCla86JwtXUUMOjScfLbL6h/tmEOaupg+x5qnMZKdBaTVwimpggu29sbSw==}
@@ -1947,7 +1947,7 @@ snapshots:
 
   negotiator@0.6.4: {}
 
-  next@16.2.11(react-dom@19.2.7(react@19.2.8))(react@19.2.8):
+  next@16.2.11(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
     dependencies:
       '@next/env': 16.2.11
       '@swc/helpers': 0.5.15
@@ -1955,7 +1955,7 @@ snapshots:
       caniuse-lite: 1.0.30001793
       postcss: 8.4.31
       react: 19.2.8
-      react-dom: 19.2.7(react@19.2.8)
+      react-dom: 19.2.8(react@19.2.8)
       styled-jsx: 5.1.6(react@19.2.8)
     optionalDependencies:
       '@next/swc-darwin-arm64': 16.2.11
@@ -2018,15 +2018,15 @@ snapshots:
       minimist: 1.2.8
       strip-json-comments: 2.0.1
 
-  react-dom@19.2.7(react@19.2.8):
+  react-dom@19.2.8(react@19.2.8):
     dependencies:
       react: 19.2.8
       scheduler: 0.27.0
 
-  react-spotify-embed@3.0.1(react-dom@19.2.7(react@19.2.8))(react@19.2.8):
+  react-spotify-embed@3.0.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
     dependencies:
       react: 19.2.8
-      react-dom: 19.2.7(react@19.2.8)
+      react-dom: 19.2.8(react@19.2.8)
 
   react@19.2.8: {}
 
