@@ -23,7 +23,8 @@
     "prettier": "3.9.6",
     "serve": "14.2.6",
     "typescript": "7.0.2",
-    "vitest": "^4.0.18"
+    "vite": "8.1.5",
+    "vitest": "^4.1.10"
   },
   "scripts": {
     "build:functions": "tsc -p ./src/functions/tsconfig.json",
