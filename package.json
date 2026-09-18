@@ -16,7 +16,7 @@
     "valibot": "1.5.0"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "5.20260916.1",
+    "@cloudflare/workers-types": "5.20260917.1",
     "@types/node": "24.13.5",
     "@types/react": "19.3.0",
     "@typescript/native-preview": "7.0.0-dev.20260707.2",
