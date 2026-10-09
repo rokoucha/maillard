@@ -188,8 +188,8 @@ importers:
         specifier: 3.0.1
         version: 3.0.1(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       temml:
-        specifier: 0.13.5
-        version: 0.13.5
+        specifier: 0.14.0
+        version: 0.14.0
       valibot:
         specifier: 1.5.0
         version: 1.5.0(typescript@7.0.2)
@@ -1316,8 +1316,8 @@ packages:
     resolution: {integrity: sha512-qpCAvRl9stuOHveKsn7HncJRvv501qIacKzQlO/+Lwxc9+0q2wLyv4Dfvt80/DPn2pqOBsJdDiogXGR9+OvwRw==}
     engines: {node: '>=8'}
 
-  temml@0.13.5:
-    resolution: {integrity: sha512-aPkDDgunanpLNL0ql32HbolqLep+w8DRcVXRql7rWrMt/PhczdLgL4UBYYVU3BYjCNjkGq4EqwIicu/zWr1iOg==}
+  temml@0.14.0:
+    resolution: {integrity: sha512-tz1LW/5IZpThK8c7ZpdTSH/n56eAj+ThirLieErtKxYC3EKCIiB4sKdRUehAgH+fQmvIKqMfP3gqTLBdLpy9zw==}
     engines: {node: '>=18.13.0'}
 
   tinybench@6.1.4:
@@ -2289,7 +2289,7 @@ snapshots:
     dependencies:
       has-flag: 4.0.0
 
-  temml@0.13.5: {}
+  temml@0.14.0: {}
 
   tinybench@6.1.4: {}
 
